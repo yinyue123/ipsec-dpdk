@@ -114,6 +114,30 @@ ipsec-vpn/fast:
 	$(MAKE) -f CMakeFiles/ipsec-vpn.dir/build.make CMakeFiles/ipsec-vpn.dir/build
 .PHONY : ipsec-vpn/fast
 
+ipsec.o: ipsec.cpp.o
+.PHONY : ipsec.o
+
+# target to build an object file
+ipsec.cpp.o:
+	$(MAKE) -f CMakeFiles/ipsec-vpn.dir/build.make CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o
+.PHONY : ipsec.cpp.o
+
+ipsec.i: ipsec.cpp.i
+.PHONY : ipsec.i
+
+# target to preprocess a source file
+ipsec.cpp.i:
+	$(MAKE) -f CMakeFiles/ipsec-vpn.dir/build.make CMakeFiles/ipsec-vpn.dir/ipsec.cpp.i
+.PHONY : ipsec.cpp.i
+
+ipsec.s: ipsec.cpp.s
+.PHONY : ipsec.s
+
+# target to generate assembly for a file
+ipsec.cpp.s:
+	$(MAKE) -f CMakeFiles/ipsec-vpn.dir/build.make CMakeFiles/ipsec-vpn.dir/ipsec.cpp.s
+.PHONY : ipsec.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -171,6 +195,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... ipsec-vpn"
 	@echo "... rebuild_cache"
+	@echo "... ipsec.o"
+	@echo "... ipsec.i"
+	@echo "... ipsec.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

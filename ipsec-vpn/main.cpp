@@ -33,6 +33,7 @@
 #include <rte_kni.h>
 
 #include "xfrm.h"
+#include "ipsec.h"
 //#include "dns.h"
 //#include "config.h"
 //#include "worker.h"
@@ -268,8 +269,10 @@ worker_thread(void *arg) {
         }
 
         for (j = 0; j < nb_rx; j++) {
+            //ret=0;
             //ret = worker.decoder.process_pkts(pkts_burst[j]);
-            ret=1;
+            ret = process_pkt(pkts_burst[j]);
+            printf("ret:%d\n",ret);
             if (ret)
                 sent = rte_ring_sp_enqueue_burst(tx_ring, (void **) &pkts_burst[j], 1);
             else

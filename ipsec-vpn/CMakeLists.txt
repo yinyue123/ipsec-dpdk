@@ -1,8 +1,8 @@
 project(ipsec-vpn)
 cmake_minimum_required(VERSION 2.8)
 #SET(CMAKE_INSTALL_PREFIX /usr/local/testmain)	#设置安装目录
-#SET(CMAKE_CXX_COMPILER "g++")
-SET(CMAKE_CXX_COMPILER "gcc")
+SET(CMAKE_CXX_COMPILER "g++")
+#SET(CMAKE_CXX_COMPILER "gcc")
 
 SET(RTE_SDK $ENV{RTE_SDK})
 SET(RTE_TARGET $ENV{RTE_TARGET})

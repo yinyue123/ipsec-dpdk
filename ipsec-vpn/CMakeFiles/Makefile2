@@ -62,7 +62,7 @@ CMAKE_BINARY_DIR = /mnt/share/ipsec-vpn
 CMakeFiles/ipsec-vpn.dir/all:
 	$(MAKE) -f CMakeFiles/ipsec-vpn.dir/build.make CMakeFiles/ipsec-vpn.dir/depend
 	$(MAKE) -f CMakeFiles/ipsec-vpn.dir/build.make CMakeFiles/ipsec-vpn.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /mnt/share/ipsec-vpn/CMakeFiles  1 2
+	$(CMAKE_COMMAND) -E cmake_progress_report /mnt/share/ipsec-vpn/CMakeFiles  1 2 3
 	@echo "Built target ipsec-vpn"
 .PHONY : CMakeFiles/ipsec-vpn.dir/all
 
@@ -72,7 +72,7 @@ all: CMakeFiles/ipsec-vpn.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ipsec-vpn.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/ipsec-vpn/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/ipsec-vpn/CMakeFiles 3
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/ipsec-vpn.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/ipsec-vpn/CMakeFiles 0
 .PHONY : CMakeFiles/ipsec-vpn.dir/rule

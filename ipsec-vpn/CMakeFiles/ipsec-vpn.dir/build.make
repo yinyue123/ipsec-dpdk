@@ -52,19 +52,42 @@ include CMakeFiles/ipsec-vpn.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/ipsec-vpn.dir/flags.make
 
+CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o: CMakeFiles/ipsec-vpn.dir/flags.make
+CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o: ipsec.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /mnt/share/ipsec-vpn/CMakeFiles $(CMAKE_PROGRESS_1)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o"
+	g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o -c /mnt/share/ipsec-vpn/ipsec.cpp
+
+CMakeFiles/ipsec-vpn.dir/ipsec.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ipsec-vpn.dir/ipsec.cpp.i"
+	g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /mnt/share/ipsec-vpn/ipsec.cpp > CMakeFiles/ipsec-vpn.dir/ipsec.cpp.i
+
+CMakeFiles/ipsec-vpn.dir/ipsec.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ipsec-vpn.dir/ipsec.cpp.s"
+	g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /mnt/share/ipsec-vpn/ipsec.cpp -o CMakeFiles/ipsec-vpn.dir/ipsec.cpp.s
+
+CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o.requires:
+.PHONY : CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o.requires
+
+CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o.provides: CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o.requires
+	$(MAKE) -f CMakeFiles/ipsec-vpn.dir/build.make CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o.provides.build
+.PHONY : CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o.provides
+
+CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o.provides.build: CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o
+
 CMakeFiles/ipsec-vpn.dir/main.cpp.o: CMakeFiles/ipsec-vpn.dir/flags.make
 CMakeFiles/ipsec-vpn.dir/main.cpp.o: main.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /mnt/share/ipsec-vpn/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /mnt/share/ipsec-vpn/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/ipsec-vpn.dir/main.cpp.o"
-	gcc   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/ipsec-vpn.dir/main.cpp.o -c /mnt/share/ipsec-vpn/main.cpp
+	g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/ipsec-vpn.dir/main.cpp.o -c /mnt/share/ipsec-vpn/main.cpp
 
 CMakeFiles/ipsec-vpn.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ipsec-vpn.dir/main.cpp.i"
-	gcc  $(CXX_DEFINES) $(CXX_FLAGS) -E /mnt/share/ipsec-vpn/main.cpp > CMakeFiles/ipsec-vpn.dir/main.cpp.i
+	g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /mnt/share/ipsec-vpn/main.cpp > CMakeFiles/ipsec-vpn.dir/main.cpp.i
 
 CMakeFiles/ipsec-vpn.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ipsec-vpn.dir/main.cpp.s"
-	gcc  $(CXX_DEFINES) $(CXX_FLAGS) -S /mnt/share/ipsec-vpn/main.cpp -o CMakeFiles/ipsec-vpn.dir/main.cpp.s
+	g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /mnt/share/ipsec-vpn/main.cpp -o CMakeFiles/ipsec-vpn.dir/main.cpp.s
 
 CMakeFiles/ipsec-vpn.dir/main.cpp.o.requires:
 .PHONY : CMakeFiles/ipsec-vpn.dir/main.cpp.o.requires
@@ -77,7 +100,7 @@ CMakeFiles/ipsec-vpn.dir/main.cpp.o.provides.build: CMakeFiles/ipsec-vpn.dir/mai
 
 CMakeFiles/ipsec-vpn.dir/xfrm.c.o: CMakeFiles/ipsec-vpn.dir/flags.make
 CMakeFiles/ipsec-vpn.dir/xfrm.c.o: xfrm.c
-	$(CMAKE_COMMAND) -E cmake_progress_report /mnt/share/ipsec-vpn/CMakeFiles $(CMAKE_PROGRESS_2)
+	$(CMAKE_COMMAND) -E cmake_progress_report /mnt/share/ipsec-vpn/CMakeFiles $(CMAKE_PROGRESS_3)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/ipsec-vpn.dir/xfrm.c.o"
 	/usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/ipsec-vpn.dir/xfrm.c.o   -c /mnt/share/ipsec-vpn/xfrm.c
 
@@ -100,12 +123,14 @@ CMakeFiles/ipsec-vpn.dir/xfrm.c.o.provides.build: CMakeFiles/ipsec-vpn.dir/xfrm.
 
 # Object files for target ipsec-vpn
 ipsec__vpn_OBJECTS = \
+"CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o" \
 "CMakeFiles/ipsec-vpn.dir/main.cpp.o" \
 "CMakeFiles/ipsec-vpn.dir/xfrm.c.o"
 
 # External object files for target ipsec-vpn
 ipsec__vpn_EXTERNAL_OBJECTS =
 
+bin/ipsec-vpn: CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o
 bin/ipsec-vpn: CMakeFiles/ipsec-vpn.dir/main.cpp.o
 bin/ipsec-vpn: CMakeFiles/ipsec-vpn.dir/xfrm.c.o
 bin/ipsec-vpn: CMakeFiles/ipsec-vpn.dir/build.make
@@ -117,6 +142,7 @@ bin/ipsec-vpn: CMakeFiles/ipsec-vpn.dir/link.txt
 CMakeFiles/ipsec-vpn.dir/build: bin/ipsec-vpn
 .PHONY : CMakeFiles/ipsec-vpn.dir/build
 
+CMakeFiles/ipsec-vpn.dir/requires: CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o.requires
 CMakeFiles/ipsec-vpn.dir/requires: CMakeFiles/ipsec-vpn.dir/main.cpp.o.requires
 CMakeFiles/ipsec-vpn.dir/requires: CMakeFiles/ipsec-vpn.dir/xfrm.c.o.requires
 .PHONY : CMakeFiles/ipsec-vpn.dir/requires

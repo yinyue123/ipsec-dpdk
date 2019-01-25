@@ -6,48 +6,22 @@
 
 #IncludeRegexTransform: 
 
-/mnt/share/ipsec-vpn/main.cpp
-stdio.h
+/mnt/share/ipsec-vpn/ipsec.cpp
+rte_ether.h
 -
-errno.h
+rte_ip.h
 -
-getopt.h
+netinet/ip.h
 -
-sys/socket.h
+netinet/ip6.h
 -
-netinet/in.h
--
-arpa/inet.h
--
-netinet/in.h
--
-signal.h
--
-rte_ethdev.h
--
-rte_string_fns.h
--
-rte_cycles.h
--
-rte_malloc.h
--
-rte_kni.h
--
-xfrm.h
-/mnt/share/ipsec-vpn/xfrm.h
+ipsec.h
+/mnt/share/ipsec-vpn/ipsec.h
 
-/mnt/share/ipsec-vpn/xfrm.h
+/mnt/share/ipsec-vpn/ipsec.h
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/exec-env/rte_dom0_common.h
 linux/if.h
--
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/exec-env/rte_interrupts.h
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/exec-env/rte_kni_common.h
-linux/if.h
--
-rte_common.h
 -
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/generic/rte_atomic.h
@@ -68,14 +42,6 @@ rte_common.h
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/generic/rte_cpuflags.h
 errno.h
--
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/generic/rte_cycles.h
-stdint.h
--
-rte_debug.h
--
-rte_atomic.h
 -
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/generic/rte_prefetch.h
@@ -166,39 +132,11 @@ emmintrin.h
 generic/rte_cpuflags.h
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/generic/rte_cpuflags.h
 
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_cycles.h
-generic/rte_cycles.h
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/generic/rte_cycles.h
-rte_branch_prediction.h
--
-rte_common.h
--
-
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_debug.h
 rte_log.h
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_log.h
 rte_branch_prediction.h
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_branch_prediction.h
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_dev.h
-stdio.h
--
-sys/queue.h
--
-rte_log.h
--
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_dev_info.h
-stdint.h
--
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_devargs.h
-stdio.h
--
-sys/queue.h
--
-rte_pci.h
--
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_eal.h
 stdint.h
@@ -209,42 +147,6 @@ rte_per_lcore.h
 -
 rte_config.h
 -
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_errno.h
-rte_per_lcore.h
--
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_eth_ctrl.h
-stdint.h
--
-rte_common.h
--
-rte_ether.h
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_ether.h
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_ethdev.h
-stdint.h
--
-rte_dev.h
--
-rte_log.h
--
-rte_interrupts.h
--
-rte_pci.h
--
-rte_dev.h
--
-rte_devargs.h
--
-rte_errno.h
--
-rte_ether.h
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_ether.h
-rte_eth_ctrl.h
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_eth_ctrl.h
-rte_dev_info.h
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_dev_info.h
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_ether.h
 stdint.h
@@ -260,20 +162,14 @@ rte_mbuf.h
 rte_byteorder.h
 -
 
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_interrupts.h
-rte_common.h
+/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_ip.h
+stdint.h
 -
-exec-env/rte_interrupts.h
+netinet/in.h
 -
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_kni.h
-rte_pci.h
+rte_byteorder.h
 -
-rte_memory.h
--
-rte_mempool.h
--
-exec-env/rte_kni_common.h
+rte_mbuf.h
 -
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_launch.h
@@ -294,14 +190,6 @@ stdint.h
 stdio.h
 -
 stdarg.h
--
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_malloc.h
-stdio.h
--
-stddef.h
--
-rte_memory.h
 -
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_mbuf.h
@@ -392,28 +280,6 @@ rte_memory.h
 rte_common.h
 -
 
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_pci.h
-stdio.h
--
-stdlib.h
--
-limits.h
--
-errno.h
--
-sys/queue.h
--
-stdint.h
--
-inttypes.h
--
-rte_debug.h
--
-rte_interrupts.h
--
-rte_dev.h
--
-
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_per_lcore.h
 pthread.h
 -
@@ -467,8 +333,6 @@ rte_branch_prediction.h
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_branch_prediction.h
 rte_common.h
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_common.h
-
-/root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_string_fns.h
 
 /root/dpdk-stable-17.02.1/x86_64-native-linuxapp-gcc/include/rte_vect.h
 stdint.h

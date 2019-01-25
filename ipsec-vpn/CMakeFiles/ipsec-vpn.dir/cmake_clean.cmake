@@ -1,4 +1,5 @@
 FILE(REMOVE_RECURSE
+  "CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o"
   "CMakeFiles/ipsec-vpn.dir/main.cpp.o"
   "CMakeFiles/ipsec-vpn.dir/xfrm.c.o"
   "bin/ipsec-vpn.pdb"

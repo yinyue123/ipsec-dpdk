@@ -42,6 +42,7 @@ int xfrm_listen(volatile int *force_quit)
     nl_socket_modify_cb(sock,
                         NL_CB_MSG_IN, NL_CB_CUSTOM, parse_nlmsg, NULL);
 
+    printf("xfrm_listen in num:%d\n",*force_quit);
     while (!*force_quit)
         nl_recvmsgs_default(sock);
     return 0;

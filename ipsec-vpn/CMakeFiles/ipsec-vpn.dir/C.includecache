@@ -6,25 +6,3 @@
 
 #IncludeRegexTransform: 
 
-/mnt/share/ipsec-vpn/xfrm.c
-arpa/inet.h
--
-linux/netlink.h
--
-linux/xfrm.h
--
-netlink/types.h
--
-netlink/genl/genl.h
--
-netlink/genl/ctrl.h
--
-stdio.h
--
-string.h
--
-xfrm.h
-/mnt/share/ipsec-vpn/xfrm.h
-
-/mnt/share/ipsec-vpn/xfrm.h
-

@@ -5,4 +5,6 @@
 #ifndef BYSJ_IPSEC_H
 #define BYSJ_IPSEC_H
 
+int process_pkt(struct rte_mbuf *pkt);
+
 #endif //BYSJ_IPSEC_H

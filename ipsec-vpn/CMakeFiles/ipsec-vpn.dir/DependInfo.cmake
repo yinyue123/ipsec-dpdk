@@ -9,6 +9,7 @@ SET(CMAKE_DEPENDS_CHECK_C
   )
 SET(CMAKE_C_COMPILER_ID "GNU")
 SET(CMAKE_DEPENDS_CHECK_CXX
+  "/mnt/share/ipsec-vpn/ipsec.cpp" "/mnt/share/ipsec-vpn/CMakeFiles/ipsec-vpn.dir/ipsec.cpp.o"
   "/mnt/share/ipsec-vpn/main.cpp" "/mnt/share/ipsec-vpn/CMakeFiles/ipsec-vpn.dir/main.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
