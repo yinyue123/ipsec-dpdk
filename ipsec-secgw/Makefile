@@ -60,6 +60,7 @@ SRCS-y += sp4.c
 SRCS-y += sp6.c
 SRCS-y += sa.c
 SRCS-y += rt.c
+SRCS-y += kni.c
 SRCS-y += ipsec-secgw.c
 
 include $(RTE_SDK)/mk/rte.extapp.mk

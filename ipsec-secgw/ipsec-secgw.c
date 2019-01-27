@@ -71,6 +71,7 @@
 #include <rte_jhash.h>
 #include <rte_cryptodev.h>
 
+#include "kni.h"
 #include "ipsec.h"
 #include "parser.h"
 
@@ -1491,7 +1492,7 @@ main(int32_t argc, char **argv)
 		port_init(portid);
 	}
 
-	kni_main();//init_all
+	kni_main(&port_conf);//init_all
 
 	cryptodevs_init();
 
@@ -1523,6 +1524,8 @@ main(int32_t argc, char **argv)
 		if (rte_eal_wait_lcore(lcore_id) < 0)
 			return -1;
 	}
+
+    kni_free();
 
 	return 0;
 }
