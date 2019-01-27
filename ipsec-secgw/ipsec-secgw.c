@@ -104,6 +104,8 @@
 
 #define UNPROTECTED_PORT(port) (unprotected_port_mask & (1 << portid))
 
+#define KNI_PORT(port) (kni_port_mask & (1 << portid))
+
 /*
  * Configurable number of RX/TX ring descriptors
  */
@@ -156,6 +158,7 @@ struct ethaddr_info ethaddr_tbl[RTE_MAX_ETHPORTS] = {
 /* mask of enabled ports */
 static uint32_t enabled_port_mask;
 static uint32_t unprotected_port_mask;
+static uint32_t kni_port_mask;
 static int32_t promiscuous_on = 1;
 static int32_t numa_on = 1; /**< NUMA is enabled by default. */
 static uint32_t nb_lcores;
@@ -235,15 +238,24 @@ struct ipsec_traffic {
 	struct traffic_type ipsec;
 	struct traffic_type ip4;
 	struct traffic_type ip6;
+	struct traffic_type kni;
 };
 
 static inline void
-prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t)
+prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid)
 {
 	uint8_t *nlp;
 	struct ether_hdr *eth;
 
 	eth = rte_pktmbuf_mtod(pkt, struct ether_hdr *);
+	/*forward to kni check*/
+	if(KNI_PORT(portid)){
+		if(check_kni_data(pkt)){
+			t->kni.pkts[(t->kni.num)++] = pkt;
+			return ;
+		}
+	}
+
 	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
 		nlp = (uint8_t *)rte_pktmbuf_adj(pkt, ETHER_HDR_LEN);
 		nlp = RTE_PTR_ADD(nlp, offsetof(struct ip, ip_p));
@@ -271,22 +283,23 @@ prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t)
 
 static inline void
 prepare_traffic(struct rte_mbuf **pkts, struct ipsec_traffic *t,
-		uint16_t nb_pkts)
+		uint16_t nb_pkts, uint8_t portid)
 {
 	int32_t i;
 
 	t->ipsec.num = 0;
 	t->ip4.num = 0;
 	t->ip6.num = 0;
+	t->kni.num = 0;
 
 	for (i = 0; i < (nb_pkts - PREFETCH_OFFSET); i++) {
 		rte_prefetch0(rte_pktmbuf_mtod(pkts[i + PREFETCH_OFFSET],
 					void *));
-		prepare_one_packet(pkts[i], t);
+		prepare_one_packet(pkts[i], t, portid);
 	}
 	/* Process left packets */
 	for (; i < nb_pkts; i++)
-		prepare_one_packet(pkts[i], t);
+		prepare_one_packet(pkts[i], t, portid);
 }
 
 static inline void
@@ -650,7 +663,7 @@ process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 {
 	struct ipsec_traffic traffic;
 
-	prepare_traffic(pkts, &traffic, nb_pkts);
+	prepare_traffic(pkts, &traffic, nb_pkts, portid);
 
 	if (unlikely(single_sa)) {
 		if (UNPROTECTED_PORT(portid))
@@ -662,6 +675,11 @@ process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 			process_pkts_inbound(&qconf->inbound, &traffic);
 		else
 			process_pkts_outbound(&qconf->outbound, &traffic);
+	}
+	/*forward to kni check*/
+	if(KNI_PORT(portid)){
+		send_to_kni(portid,traffic.kni.pkts,traffic.kni.num);
+		forward_from_kni_to_eth(qconf->tx_queue_id[portid],portid);
 	}
 
 	route4_pkts(qconf->rt4_ctx, traffic.ip4.pkts, traffic.ip4.num);
@@ -841,6 +859,7 @@ print_usage(const char *prgname)
 		"  -p PORTMASK: hexadecimal bitmask of ports to configure\n"
 		"  -P : enable promiscuous mode\n"
 		"  -u PORTMASK: hexadecimal bitmask of unprotected ports\n"
+		"  -k PORTMASK: hexadecimal bitmask of kni port\n"
 		"  --"OPTION_CONFIG": (port,queue,lcore): "
 		"rx queues configuration\n"
 		"  --single-sa SAIDX: use single SA index for outbound, "
@@ -998,6 +1017,14 @@ parse_args(int32_t argc, char **argv)
 		case 'u':
 			unprotected_port_mask = parse_portmask(optarg);
 			if (unprotected_port_mask == 0) {
+				printf("invalid unprotected portmask\n");
+				print_usage(prgname);
+				return -1;
+			}
+			break;
+		case 'k':
+			kni_port_mask = parse_portmask(optarg);
+			if (kni_port_mask == 0) {
 				printf("invalid unprotected portmask\n");
 				print_usage(prgname);
 				return -1;
@@ -1463,6 +1490,8 @@ main(int32_t argc, char **argv)
 
 		port_init(portid);
 	}
+
+	kni_main();//init_all
 
 	cryptodevs_init();
 
