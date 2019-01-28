@@ -40,6 +40,7 @@ include $(RTE_SDK)/mk/rte.vars.mk
 
 APP = ipsec-secgw
 
+CFLAGS += `pkg-config --cflags --libs libnl-3.0 libnl-xfrm-3.0`
 CFLAGS += -O3 -gdwarf-2
 CFLAGS += $(WERROR_FLAGS)
 ifeq ($(CONFIG_RTE_TOOLCHAIN_ICC),y)
@@ -61,6 +62,7 @@ SRCS-y += sp6.c
 SRCS-y += sa.c
 SRCS-y += rt.c
 SRCS-y += kni.c
+SRCS-y += xfrm.c
 SRCS-y += ipsec-secgw.c
 
 include $(RTE_SDK)/mk/rte.extapp.mk
