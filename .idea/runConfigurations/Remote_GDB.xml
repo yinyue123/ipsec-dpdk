@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Remote GDB" type="CLion_Remote" factoryName="GDB Remote Debug" debugger="/usr/local/bin/gdb" remoteCommand="tcp:192.168.10.120:2333" symbolFile="" sysroot="">
+    <pathMapping remote=":/mnt/share/xfrm-listen" local="$PROJECT_DIR$/xfrm-listen" />
+    <method />
+  </configuration>
+</component>
