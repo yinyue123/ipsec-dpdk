@@ -991,7 +991,7 @@ parse_args(int32_t argc, char **argv) {
 
 	argvopt = argv;
 
-	while ((opt = getopt_long(argc, argvopt, "p:Pu:f:",
+	while ((opt = getopt_long(argc, argvopt, "p:Pu:k:f:",
 							  lgopts, &option_index)) != EOF) {
 
 		switch (opt) {
@@ -1477,6 +1477,8 @@ main(int32_t argc, char **argv) {
 		rt_init(&socket_ctx[socket_id], socket_id);
 
 		pool_init(&socket_ctx[socket_id], socket_id, NB_MBUF);
+
+		kni_main(&socket_ctx[socket_id].mbuf_pool, &port_conf);//init_all
 	}
 
 	for (portid = 0; portid < nb_ports; portid++) {
@@ -1485,8 +1487,6 @@ main(int32_t argc, char **argv) {
 
 		port_init(portid);
 	}
-
-	kni_main(&port_conf);//init_all
 
 	cryptodevs_init();
 
