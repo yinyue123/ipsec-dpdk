@@ -1,0 +1,7 @@
+/ipsec-secgw/build/
+*.o
+*.map
+*.cmd
+*.o.d
+ipsec-secgw
+_*

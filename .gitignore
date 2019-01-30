@@ -1,0 +1,7 @@
+*.o
+*.map
+*.cmd
+*.d
+*.out
+.idea
+.com.apple.timemachine.supported
