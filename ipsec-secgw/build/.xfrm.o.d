@@ -56,4 +56,7 @@ dep_xfrm.o = /mnt/share/ipsec-secgw/xfrm.c /usr/include/stdc-predef.h \
  /usr/include/libnl3/netlink/attr.h /usr/include/libnl3/netlink/addr.h \
  /usr/include/libnl3/netlink/data.h \
  /usr/include/libnl3/netlink/genl/ctrl.h \
- /usr/include/libnl3/netlink/cache.h /mnt/share/ipsec-secgw/xfrm.h
+ /usr/include/libnl3/netlink/cache.h \
+ /usr/include/libnl3/netlink/xfrm/sa.h \
+ /usr/include/libnl3/netlink/xfrm/selector.h \
+ /mnt/share/ipsec-secgw/xfrm.h

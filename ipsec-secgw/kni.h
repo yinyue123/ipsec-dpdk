@@ -9,15 +9,15 @@ int
 check_kni_data(struct rte_mbuf *pkt);
 
 void
-send_to_kni(uint8_t port_id, struct rte_mbuf *pkts, uint32_t nb_rx);
+send_to_kni(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx);
 
 void
 forward_from_kni_to_eth(uint16_t tx_queue_id, uint8_t port_id);
 
 void
-kni_main(struct rte_mempool *mbuf_pool, struct rte_eth_conf *portconf);
+kni_main(struct rte_mempool *mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask);
 
 void
-kni_free();
+kni_free(void);
 
 #endif /* __KNI_H__ */

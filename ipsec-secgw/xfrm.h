@@ -5,6 +5,6 @@
 #ifndef BYSJ_XFRM_H
 #define BYSJ_XFRM_H
 
-int xfrm_main();
+int xfrm_main(void);
 
 #endif //BYSJ_XFRM_H

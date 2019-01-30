@@ -13,10 +13,30 @@
 #include <netlink/genl/ctrl.h>
 #include <stdio.h>
 #include <string.h>
+#include <netlink/xfrm/sa.h>
+#include <netlink/xfrm/selector.h>
 
 #include "xfrm.h"
 
-void parse_sa(struct nlmsghdr *nlh)
+void
+dump_hex(char *buf, int len);
+
+static int
+parse_nlmsg(struct nl_msg *nlmsg,void *arg);
+
+void
+dump_hex(char *buf, int len)
+{
+	int i;
+	printf("0x");
+	for (i = 0; i < len; i++) {
+		printf("%02x", buf[i] & 0xff);
+	}
+	printf("\n");
+}
+
+static void
+parse_sa(struct nlmsghdr *nlh)
 {
 	//PFUNC();
 	/*
@@ -80,36 +100,28 @@ void parse_sa(struct nlmsghdr *nlh)
 	xfrmnl_sa_put(sa);
 }
 
-void dump_hex(char *buf, int len)
-{
-	int i;
-	printf("0x");
-	for (i = 0; i < len; i++) {
-		printf("%02x", buf[i] & 0xff);
-	}
-	printf("\n");
-}
+//void
+//parse_sp(struct nlmsghdr *nlh)
+//{
+//	//PFUNC();
+//	/*
+//	   libnl/include/netlink/xfrm/sp.h
+//	 */
+//}
 
-void parse_sp(struct nlmsghdr *nlh)
-{
-	//PFUNC();
-	/*
-	   libnl/include/netlink/xfrm/sp.h
-	 */
-}
-
-int parse_nlmsg(struct nl_msg *nlmsg, void *arg)
+static int
+parse_nlmsg(struct nl_msg *nlmsg,void *arg)
 {
 	//PFUNC();
 	//nlmsg_type_map();
 	//nl_msg_dump(nlmsg, stdout);
-
+	(void)arg;
 	struct nlmsghdr *nlhdr;
 	int len;
 	nlhdr = nlmsg_hdr(nlmsg);
 	len = nlhdr->nlmsg_len;
 
-	for (nlhdr; NLMSG_OK(nlhdr, len); nlhdr = NLMSG_NEXT(nlhdr, len)) {
+	for (; NLMSG_OK(nlhdr, len); nlhdr = NLMSG_NEXT(nlhdr, len)) {
 		switch (nlhdr->nlmsg_type) {
 			case XFRM_MSG_NEWSA:
 			case 29:
@@ -126,22 +138,23 @@ int parse_nlmsg(struct nl_msg *nlmsg, void *arg)
 				break;
 			case XFRM_MSG_NEWPOLICY:
 				printf("XFRM_MSG_NEWPOLICY runs\n");
-				parse_sp(nlhdr);
+//				parse_sp(nlhdr);
 				break;
 			case XFRM_MSG_DELPOLICY:
 				printf("XFRM_MSG_DELPOLICY runs\n");
-				parse_sp(nlhdr);
+//				parse_sp(nlhdr);
 				break;
 			case XFRM_MSG_GETPOLICY:
 				printf("XFRM_MSG_GETPOLICY runs\n");
-				parse_sp(nlhdr);
+//				parse_sp(nlhdr);
 				break;
 		}
 	}
 	return 0;
 }
 
-int xfrm_main() {
+int
+xfrm_main(void) {
 	struct nl_sock *sock;
 	sock = nl_socket_alloc();
 

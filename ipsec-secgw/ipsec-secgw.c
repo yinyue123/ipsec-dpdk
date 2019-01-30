@@ -44,8 +44,9 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <getopt.h>
-#include <signal.h>
-#include <sys/prctl.h>
+#include <unistd.h>
+//#include <signal.h>
+//#include <sys/prctl.h>
 
 #include <rte_common.h>
 #include <rte_byteorder.h>
@@ -1478,7 +1479,7 @@ main(int32_t argc, char **argv) {
 
 		pool_init(&socket_ctx[socket_id], socket_id, NB_MBUF);
 
-		kni_main(&socket_ctx[socket_id].mbuf_pool, &port_conf);//init_all
+		kni_main(socket_ctx[socket_id].mbuf_pool, &port_conf, kni_port_mask);//init_all
 	}
 
 	for (portid = 0; portid < nb_ports; portid++) {

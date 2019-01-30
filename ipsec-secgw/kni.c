@@ -78,9 +78,9 @@ check_kni_data(struct rte_mbuf *pkt) {
 }
 
 void
-send_to_kni(uint8_t port_id, struct rte_mbuf *pkts, uint32_t nb_rx) {
+send_to_kni(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx) {
 	unsigned num;
-	num = rte_kni_tx_burst(kni_port_params_array[port_id]->kni, pkts, num);
+	num = rte_kni_tx_burst(kni_port_params_array[port_id]->kni, pkts, nb_rx);
 	rte_kni_handle_request(kni_port_params_array[port_id]->kni);
 	if (unlikely(num < nb_rx)) {
 		/* Free mbufs not tx to kni interface */
@@ -122,9 +122,10 @@ init_kni(void) {
 		if (kni_port_params_array[i])
 			num_of_kni_ports++;
 	}
-
+	//printf("%d--------------------\n",num_of_kni_ports);
 	/* Invoke rte KNI init to preallocate the ports */
-	rte_kni_init(num_of_kni_ports);
+	//rte_kni_init(num_of_kni_ports);
+	rte_kni_init(1);
 }
 
 //不用改，在kni_alloc中
@@ -212,6 +213,7 @@ kni_alloc(uint8_t port_id) {
 	snprintf(conf.name, RTE_KNI_NAMESIZE, "vEth%u", port_id);
 	conf.group_id = (uint16_t) port_id;
 	conf.mbuf_size = MAX_PACKET_SZ;
+	printf("conf.name:%s\n",conf.name);
 
 	struct rte_kni_ops ops;
 	struct rte_eth_dev_info dev_info;
@@ -266,18 +268,21 @@ kni_free_kni(uint8_t port_id) {
 //        rte_mempool_free(pktmbuf_pool);
 //}
 
-void
+static void
 init_kni_param(uint8_t port_id) {
 	memset(&kni_port_params_array, 0, sizeof(kni_port_params_array));
 	kni_port_params_array[port_id]->port_id = port_id;
 }
 
 void
-kni_main(struct rte_mempool *mbuf_pool, struct rte_eth_conf *portconf) {
+kni_main(struct rte_mempool *mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask) {
+	printf("-----------kni-----------\n");
 	uint8_t nb_sys_ports, port;
 	pktmbuf_pool = mbuf_pool;
+	ports_mask = kni_port_mask;
+	port_conf = portconf;
 //    pool_create();
-
+	print_config();
 	/* Get number of ports found in scan */
 	nb_sys_ports = rte_eth_dev_count();
 	if (nb_sys_ports == 0)
@@ -286,13 +291,15 @@ kni_main(struct rte_mempool *mbuf_pool, struct rte_eth_conf *portconf) {
 	/* Initialize KNI subsystem */
 	init_kni();
 
-	port_conf = portconf;
 
+	printf("nb_sys_ports:%d\n",nb_sys_ports);
+	printf("ports_mask:%d\n",ports_mask);
 	/* Initialise each port */
 	for (port = 0; port < nb_sys_ports; port++) {
 		/* Skip ports that are not enabled */
 		if (!(ports_mask & (1 << port)))
 			continue;
+		printf("init_kni_param:%d\n",port);
 		init_kni_param(port);
 
 		if (port >= RTE_MAX_ETHPORTS)
@@ -301,10 +308,11 @@ kni_main(struct rte_mempool *mbuf_pool, struct rte_eth_conf *portconf) {
 
 		kni_alloc(port);
 	}
+	printf("-----------kni-----------\n");
 }
 
 void
-kni_free() {
+kni_free(void) {
 	uint8_t nb_sys_ports, port;
 
 	/* Get number of ports found in scan */
