@@ -234,7 +234,7 @@ kni_thread(struct kni_port_params *p) {
             nanosleep(&nano, NULL);
             continue;
         }
-
+        printf("rte_kni_tx_burst\n");
         num = rte_kni_tx_burst(p->kni, pkts_burst, nb_rx);
         rte_kni_handle_request(p->kni);
         if (unlikely(num < nb_rx)) {
@@ -304,6 +304,7 @@ tx_thread(void *arg) {
         /* Burst rx from kni */
         num = rte_kni_rx_burst(p->kni, pkts_burst, PKT_BURST_SZ);
         if (likely(num)) {
+			printf("rte_kni_tx_burst\n");
             nb_tx = rte_eth_tx_burst(port_id, 0, pkts_burst, num);
             if (unlikely(nb_tx < num))
                 kni_burst_free_mbufs(&pkts_burst[nb_tx], num - nb_tx);

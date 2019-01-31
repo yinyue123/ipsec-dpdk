@@ -47,6 +47,7 @@
 #include <unistd.h>
 //#include <signal.h>
 //#include <sys/prctl.h>
+#include <sys/time.h>
 
 #include <rte_common.h>
 #include <rte_byteorder.h>
@@ -247,11 +248,23 @@ struct ipsec_traffic {
 	struct traffic_type kni;
 };
 
+double tick(void)
+{
+	struct timeval t;
+	gettimeofday(&t, 0);
+	return t.tv_sec + 1E-6 * t.tv_usec;
+}
+
+//double t=0;
+//printf("process_pkts in %.3f secs \n", tick() - t);
+//t = tick();
+
 static inline void
 prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid) {
 	uint8_t *nlp;
 	struct ether_hdr *eth;
 
+	//printf("prepare_one_packet\tportid:%d\n",portid);
 	eth = rte_pktmbuf_mtod(pkt,
 	struct ether_hdr *);
 	/*forward to kni check*/
@@ -667,6 +680,10 @@ process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 	struct ipsec_traffic traffic;
 
 	prepare_traffic(pkts, &traffic, nb_pkts, portid);
+	/*forward to kni check*/
+	if (KNI_PORT(portid)) {
+		send_to_kni(portid, traffic.kni.pkts, traffic.kni.num);
+	}
 
 	if (unlikely(single_sa)) {
 		if (UNPROTECTED_PORT(portid))
@@ -678,11 +695,6 @@ process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 			process_pkts_inbound(&qconf->inbound, &traffic);
 		else
 			process_pkts_outbound(&qconf->outbound, &traffic);
-	}
-	/*forward to kni check*/
-	if (KNI_PORT(portid)) {
-		send_to_kni(portid, traffic.kni.pkts, traffic.kni.num);
-		forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
 	}
 
 	route4_pkts(qconf->rt4_ctx, traffic.ip4.pkts, traffic.ip4.num);
@@ -769,6 +781,10 @@ main_loop(__attribute__((unused)) void *dummy) {
 
 			if (nb_rx > 0)
 				process_pkts(qconf, pkts, nb_rx, portid);
+
+			if (KNI_PORT(portid)) {
+				forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
+			}
 		}
 	}
 }
