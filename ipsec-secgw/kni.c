@@ -46,7 +46,7 @@ static struct kni_port_params *kni_port_params_array[RTE_MAX_ETHPORTS];
 static uint32_t ports_mask = 0;
 
 /* Mempool for mbufs */
-static struct rte_mempool *pktmbuf_pool = NULL;
+static struct rte_mempool **pktmbuf_pool = NULL;
 
 static struct rte_eth_conf *port_conf = NULL;
 
@@ -127,7 +127,7 @@ init_kni(void) {
 		if (kni_port_params_array[i])
 			num_of_kni_ports++;
 	}
-	printf("%d--------------------\n",num_of_kni_ports);
+	printf("%d--------------------\n", num_of_kni_ports);
 	/* Invoke rte KNI init to preallocate the ports */
 	rte_kni_init(num_of_kni_ports);
 }
@@ -232,7 +232,7 @@ kni_alloc(uint8_t port_id) {
 	ops.change_mtu = kni_change_mtu;
 	ops.config_network_if = kni_config_network_interface;
 
-	kni = rte_kni_alloc(pktmbuf_pool, &conf, &ops);
+	kni = rte_kni_alloc(pktmbuf_pool[port_id], &conf, &ops);
 	if (!kni)
 		rte_exit(EXIT_FAILURE, "Fail to create kni for "
 				"port: %d\n", port_id);
@@ -281,7 +281,7 @@ init_kni_param(uint8_t port_id) {
 }
 
 void
-kni_main(struct rte_mempool *mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask) {
+kni_main(struct rte_mempool **mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask) {
 	printf("-----------kni-----------\n");
 
 	uint8_t nb_sys_ports, port;

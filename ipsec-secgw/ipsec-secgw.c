@@ -47,7 +47,7 @@
 #include <unistd.h>
 //#include <signal.h>
 //#include <sys/prctl.h>
-#include <sys/time.h>
+//#include <sys/time.h>
 
 #include <rte_common.h>
 #include <rte_byteorder.h>
@@ -165,6 +165,7 @@ struct ethaddr_info ethaddr_tbl[RTE_MAX_ETHPORTS] = {
 static uint32_t enabled_port_mask;
 static uint32_t unprotected_port_mask;
 static uint32_t kni_port_mask;
+static struct rte_mempool *kni_mempool[RTE_MAX_ETHPORTS];
 static int32_t promiscuous_on = 1;
 static int32_t numa_on = 1; /**< NUMA is enabled by default. */
 static uint32_t nb_lcores;
@@ -248,12 +249,12 @@ struct ipsec_traffic {
 	struct traffic_type kni;
 };
 
-double tick(void)
-{
-	struct timeval t;
-	gettimeofday(&t, 0);
-	return t.tv_sec + 1E-6 * t.tv_usec;
-}
+//double tick(void)
+//{
+//	struct timeval t;
+//	gettimeofday(&t, 0);
+//	return t.tv_sec + 1E-6 * t.tv_usec;
+//}
 
 //double t=0;
 //printf("process_pkts in %.3f secs \n", tick() - t);
@@ -1403,6 +1404,9 @@ port_init(uint8_t portid) {
 			ret = rte_eth_rx_queue_setup(portid, rx_queueid,
 										 nb_rxd, socket_id, NULL,
 										 socket_ctx[socket_id].mbuf_pool);
+
+			kni_mempool[portid] = socket_ctx[socket_id].mbuf_pool;
+
 			if (ret < 0)
 				rte_exit(EXIT_FAILURE,
 						 "rte_eth_rx_queue_setup: err=%d, "
@@ -1495,7 +1499,6 @@ main(int32_t argc, char **argv) {
 
 		pool_init(&socket_ctx[socket_id], socket_id, NB_MBUF);
 
-		kni_main(socket_ctx[socket_id].mbuf_pool, &port_conf, kni_port_mask);//init_all
 	}
 
 	for (portid = 0; portid < nb_ports; portid++) {
@@ -1504,6 +1507,8 @@ main(int32_t argc, char **argv) {
 
 		port_init(portid);
 	}
+
+	kni_main(kni_mempool, &port_conf, kni_port_mask);//init_all
 
 	cryptodevs_init();
 
