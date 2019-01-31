@@ -15,7 +15,7 @@ void
 forward_from_kni_to_eth(uint16_t tx_queue_id, uint8_t port_id);
 
 void
-kni_main(struct rte_mempool *mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask);
+kni_main(struct rte_mempool **mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask);
 
 void
 kni_free(void);
