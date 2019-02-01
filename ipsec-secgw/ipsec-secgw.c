@@ -1451,14 +1451,14 @@ main(int32_t argc, char **argv) {
 	if (ret < 0)
 		rte_exit(EXIT_FAILURE, "Invalid parameters\n");
 
-//	pid = fork();
-//	if (pid < 0) {
-//		printf("Fork faild\n");
-//	} else if (pid == 0) {
-//		//prctl(PR_SET_PDEATHSIG,SIGHUP);
-//		xfrm_main();
-//		return 0;
-//	}
+	pid = fork();
+	if (pid < 0) {
+		printf("Fork faild\n");
+	} else if (pid == 0) {
+		//prctl(PR_SET_PDEATHSIG,SIGHUP);
+		xfrm_main();
+		return 0;
+	}
 
 	if ((unprotected_port_mask & enabled_port_mask) !=
 		unprotected_port_mask)
