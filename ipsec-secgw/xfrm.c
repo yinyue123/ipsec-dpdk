@@ -158,6 +158,7 @@ xfrm_main(void) {
 	struct nl_sock *sock;
 	sock = nl_socket_alloc();
 
+	printf("------------xfrm_main------------\n");
 /* broadcast group
 #define XFRMGRP_ACQUIRE         1
 #define XFRMGRP_EXPIRE          2
