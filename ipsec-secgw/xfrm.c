@@ -22,11 +22,10 @@ void
 dump_hex(char *buf, int len);
 
 static int
-parse_nlmsg(struct nl_msg *nlmsg,void *arg);
+parse_nlmsg(struct nl_msg *nlmsg, void *arg);
 
 void
-dump_hex(char *buf, int len)
-{
+dump_hex(char *buf, int len) {
 	int i;
 	printf("0x");
 	for (i = 0; i < len; i++) {
@@ -36,8 +35,194 @@ dump_hex(char *buf, int len)
 }
 
 static void
-parse_sa(struct nlmsghdr *nlh)
-{
+dump_hex_string(char *output, char *buf, int len) {
+	int i, j;
+	for (i = 0, j = 0; i < len; i++) {
+		j += sprintf(output + j, "%02x:", buf[i] & 0xff);
+	}
+	output[strlen(output) - 1] = '\0';
+}
+
+static void
+add_sa(
+		const char *in_out,
+		const char *spi,
+		const char *cipher_algo,
+		const char *cipher_key,
+		const char *auth_algo,
+		const char *auth_key,
+		const char *mode,
+		const char *src,
+		const char *dst
+) {
+	const char *tokens[16];
+	int i;
+/*
+	out--
+	5--
+	cipher_algo--
+	aes-128-cbc--
+	cipher_key--
+	c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3--
+    3f:dd:9f:49:6b:8e:1d:01:e2:3a:20:b8:e1:8f:bc:4a:
+    f3:8a:cf:ab:7c:89:6f:b1:c2:10:72:c3:cc:62:26:6b
+	auth_algo--sha1-hmac--
+	auth_key--0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0--
+	mode--ipv4-tunnel--
+	src--172.16.1.5--
+	dst--172.17.2.5--
+	in--5--cipher_algo--aes-128-cbc--cipher_key--c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3:c3--auth_algo--sha1-hmac--auth_key--0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0--mode--ipv4-tunnel--src--172.16.1.5--dst--172.17.2.5--
+*/
+
+	tokens[0] = in_out;
+	tokens[1] = spi;
+	tokens[2] = "cipher_algo";
+	tokens[3] = cipher_algo;
+	tokens[4] = "cipher_key";
+	tokens[5] = cipher_key;
+	tokens[6] = "auth_algo";
+	tokens[7] = auth_algo;
+	tokens[8] = "auth_key";
+	tokens[9] = auth_key;
+	tokens[10] = "mode";
+	tokens[11] = mode;
+	tokens[12] = "src";
+	tokens[13] = src;
+	tokens[14] = "dst";
+	tokens[15] = dst;
+	for (i = 0; i < 16; i++) {
+		printf("%s ", tokens[i]);
+	}
+	printf("\n");
+	//parse_sa_tokens();
+
+}
+
+static void
+deal_sa(
+		char *saddr,
+		char *daddr,
+		uint8_t proto,
+		uint32_t spi,
+		char *mode,
+		char *auth_alg,
+		char *auth_key,
+		unsigned int auth_key_len,
+		char *enc_alg,
+		char *enc_key,
+		unsigned int enc_key_len
+) {
+/*
+ src : 192.168.10.120		 dst : 192.168.10.231
+ proto : 50(esp:50 ah:51)		spi : 0x6a304f4
+ repid : 1 		mode : tunnel
+ replay window : 0
+ hmac(sha1) 	0x47b224b8a178d11070b5fb561e0f047d7e160d35 len:160
+ cbc(aes) 	0x39af2456054c8f07dbb3b9688e9c3454 len:128
+ sel src : 00:00:00:00:00:	 dst : 00:00:00:00:00:
+*/
+	const char *s_in_out;
+	char s_spi[20];
+	const char *s_cipher_algo;
+	char s_cipher_key[100];
+	const char *s_auth_algo;
+	char s_auth_key[100];
+	const char *s_mode;
+	const char *s_src;
+	const char *s_dst;
+	const char *localIp = "192.168.10.120";
+
+	// check esp package
+	if (proto != 50)
+		return;
+
+	// s_in_out
+	if (strcmp(saddr, localIp) == 0)
+		s_in_out = "in";
+	else
+		s_in_out = "out";
+
+	// s_spi
+	sprintf(s_spi, "%u", spi);
+
+	// s_cipher_algo null aes-128-cbc aes-128-ctr aes-128-gcm
+	if (strcmp(enc_alg, "cbc(aes)") == 0) {
+		if (enc_key_len == 128) {
+			s_cipher_algo = "aes-128-cbc";
+		} else {
+			printf("unsupport cipher algo length\n");
+			return;
+		}
+	} else if (strcmp(enc_alg, "cbc(ctr)") == 0) {
+		if (enc_key_len == 128) {
+			s_cipher_algo = "aes-128-ctr";
+		} else {
+			printf("unsupport cipher algo length\n");
+			return;
+		}
+	} else if (strcmp(enc_alg, "cbc(gcm)") == 0) {
+		if (enc_key_len == 128) {
+			s_cipher_algo = "aes-128-gcm";
+		} else {
+			printf("unsupport cipher algo length\n");
+			return;
+		}
+	} else if (strcmp(enc_alg, "null") == 0) {
+		s_cipher_algo = "null";
+	}
+
+	// s_cipher_key
+	dump_hex_string(s_cipher_key, enc_key, enc_key_len / 8);
+
+	// s_auth_algo
+	if (strcmp(auth_alg, "hmac(sha1)") == 0) {
+		if (auth_key_len == 160) {
+			s_auth_algo = "sha1-hmac";
+		} else {
+			printf("unsupport cipher algo length\n");
+			return;
+		}
+	} else if (strcmp(auth_alg, "hmac(sha256)") == 0) {
+		if (auth_key_len == 256) {
+			s_auth_algo = "sha256-hmac";
+		} else {
+			printf("unsupport cipher algo length\n");
+			return;
+		}
+	} else if (strcmp(auth_alg, "gcm(aes)") == 0) {
+		if (auth_key_len == 128) {
+			s_auth_algo = "aes-128-gcm";
+		} else {
+			printf("unsupport cipher algo length\n");
+			return;
+		}
+	} else if (strcmp(auth_alg, "null") == 0) {
+		s_auth_algo = "null";
+	}
+
+	// s_auth_key
+	dump_hex_string(s_auth_key, auth_key, auth_key_len / 8);
+
+	//s_mode
+	if (strcmp(mode, "tunnel") == 0) {
+		s_mode = "ipv4-tunnel";
+	} else if (strcmp(mode, "transport") == 0) {
+		s_mode = "transport";
+	} else
+		s_mode = "";
+
+	// s_src
+	s_src = saddr;
+
+	// s_dst
+	s_dst = daddr;
+
+	add_sa(s_in_out, s_spi, s_cipher_algo, s_cipher_key, s_auth_algo, s_auth_key, s_mode, s_src, s_dst);
+}
+
+
+static void
+parse_sa(struct nlmsghdr *nlh) {
 	//PFUNC();
 	/*
 	   libnl/include/netlink/xfrm/sa.h
@@ -96,7 +281,8 @@ parse_sa(struct nlmsghdr *nlh)
 	printf(" %s \t", enc_alg);
 	dump_hex(enc_key, enc_key_len / 8);
 	printf(" sel src : %s\t dst : %s\n", src, dst);
-
+	if (nlh->nlmsg_type == XFRM_MSG_NEWSA || nlh->nlmsg_type == 26)
+		deal_sa(saddr, daddr, proto, spi, s_mode, auth_alg, auth_key, auth_key_len, enc_alg, enc_key, enc_key_len);
 	xfrmnl_sa_put(sa);
 }
 
@@ -110,12 +296,11 @@ parse_sa(struct nlmsghdr *nlh)
 //}
 
 static int
-parse_nlmsg(struct nl_msg *nlmsg,void *arg)
-{
+parse_nlmsg(struct nl_msg *nlmsg, void *arg) {
 	//PFUNC();
 	//nlmsg_type_map();
 	//nl_msg_dump(nlmsg, stdout);
-	(void)arg;
+	(void) arg;
 	struct nlmsghdr *nlhdr;
 	int len;
 	nlhdr = nlmsg_hdr(nlmsg);
@@ -124,7 +309,7 @@ parse_nlmsg(struct nl_msg *nlmsg,void *arg)
 	for (; NLMSG_OK(nlhdr, len); nlhdr = NLMSG_NEXT(nlhdr, len)) {
 		switch (nlhdr->nlmsg_type) {
 			case XFRM_MSG_NEWSA:
-			case 29:
+			case 26:
 				printf("XFRM_MSG_NEWSA runs\n");
 				parse_sa(nlhdr);
 				break;
