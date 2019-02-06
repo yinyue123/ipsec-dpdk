@@ -786,6 +786,8 @@ main_loop(__attribute__((unused)) void *dummy) {
 			if (KNI_PORT(portid)) {
 				forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
 			}
+
+			recv_xfrm();
 		}
 	}
 }
@@ -1434,7 +1436,6 @@ pool_init(struct socket_ctx *ctx, int32_t socket_id, uint32_t nb_mbuf) {
 
 int32_t
 main(int32_t argc, char **argv) {
-	pid_t pid;
 	int32_t ret;
 	uint32_t lcore_id, nb_ports;
 	uint8_t portid, socket_id;
@@ -1451,13 +1452,8 @@ main(int32_t argc, char **argv) {
 	if (ret < 0)
 		rte_exit(EXIT_FAILURE, "Invalid parameters\n");
 
-	pid = fork();
-	if (pid < 0) {
-		printf("Fork faild\n");
-	} else if (pid == 0) {
-		//prctl(PR_SET_PDEATHSIG,SIGHUP);
-		xfrm_main();
-		return 0;
+	if (xfrm_init() < 0) {
+		return 1;
 	}
 
 	if ((unprotected_port_mask & enabled_port_mask) !=
