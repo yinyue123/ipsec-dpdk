@@ -43,8 +43,8 @@
 #include "ipsec.h"
 #include "parser.h"
 
-#define RT_IPV4_MAX_RULES	1024
-#define RT_IPV6_MAX_RULES	1024
+#define RT_IPV4_MAX_RULES    1024
+#define RT_IPV6_MAX_RULES    1024
 
 struct ip4_route {
 	uint32_t ip;
@@ -66,8 +66,7 @@ uint32_t nb_rt_ip6;
 
 void
 parse_rt_tokens(char **tokens, uint32_t n_tokens,
-	struct parse_status *status)
-{
+				struct parse_status *status) {
 	uint32_t ti;
 	uint32_t *n_rts = NULL;
 	struct ip4_route *route_ipv4 = NULL;
@@ -78,7 +77,7 @@ parse_rt_tokens(char **tokens, uint32_t n_tokens,
 		route_ipv4 = &rt_ip4[*n_rts];
 
 		APP_CHECK(*n_rts <= RT_IPV4_MAX_RULES - 1, status,
-			"too many rt rules, abort insertion\n");
+				  "too many rt rules, abort insertion\n");
 		if (status->status < 0)
 			return;
 
@@ -87,12 +86,12 @@ parse_rt_tokens(char **tokens, uint32_t n_tokens,
 		route_ipv6 = &rt_ip6[*n_rts];
 
 		APP_CHECK(*n_rts <= RT_IPV6_MAX_RULES - 1, status,
-			"too many rt rules, abort insertion\n");
+				  "too many rt rules, abort insertion\n");
 		if (status->status < 0)
 			return;
 	} else {
 		APP_CHECK(0, status, "unrecognized input \"%s\"",
-			tokens[0]);
+				  tokens[0]);
 		return;
 	}
 
@@ -107,28 +106,28 @@ parse_rt_tokens(char **tokens, uint32_t n_tokens,
 				uint32_t depth = 0;
 
 				APP_CHECK(parse_ipv4_addr(tokens[ti],
-					&ip, &depth) == 0, status,
-					"unrecognized input \"%s\", "
-					"expect valid ipv4 addr",
-					tokens[ti]);
+										  &ip, &depth) == 0, status,
+						  "unrecognized input \"%s\", "
+								  "expect valid ipv4 addr",
+						  tokens[ti]);
 				if (status->status < 0)
 					return;
 				route_ipv4->ip = rte_bswap32(
-					(uint32_t)ip.s_addr);
-				route_ipv4->depth = (uint8_t)depth;
+						(uint32_t) ip.s_addr);
+				route_ipv4->depth = (uint8_t) depth;
 			} else {
 				struct in6_addr ip;
 				uint32_t depth;
 
 				APP_CHECK(parse_ipv6_addr(tokens[ti],
-					&ip, &depth) == 0, status,
-					"unrecognized input \"%s\", "
-					"expect valid ipv6 address",
-					tokens[ti]);
+										  &ip, &depth) == 0, status,
+						  "unrecognized input \"%s\", "
+								  "expect valid ipv6 address",
+						  tokens[ti]);
 				if (status->status < 0)
 					return;
 				memcpy(route_ipv6->ip, ip.s6_addr, 16);
-				route_ipv6->depth = (uint8_t)depth;
+				route_ipv6->depth = (uint8_t) depth;
 			}
 		}
 
@@ -150,33 +149,32 @@ parse_rt_tokens(char **tokens, uint32_t n_tokens,
 }
 
 void
-rt_init(struct socket_ctx *ctx, int32_t socket_id)
-{
+rt_init(struct socket_ctx *ctx, int32_t socket_id) {
 	char name[PATH_MAX];
 	uint32_t i;
 	int32_t ret;
 	struct rte_lpm *lpm;
 	struct rte_lpm6 *lpm6;
 	char a, b, c, d;
-	struct rte_lpm_config conf = { 0 };
-	struct rte_lpm6_config conf6 = { 0 };
+	struct rte_lpm_config conf = {0};
+	struct rte_lpm6_config conf6 = {0};
 
 	if (ctx == NULL)
 		rte_exit(EXIT_FAILURE, "NULL context.\n");
 
 	if (ctx->rt_ip4 != NULL)
 		rte_exit(EXIT_FAILURE, "IPv4 Routing Table for socket %u "
-			"already initialized\n", socket_id);
+				"already initialized\n", socket_id);
 
 	if (ctx->rt_ip6 != NULL)
 		rte_exit(EXIT_FAILURE, "IPv6 Routing Table for socket %u "
-			"already initialized\n", socket_id);
+				"already initialized\n", socket_id);
 
 	if (nb_rt_ip4 == 0 && nb_rt_ip6 == 0)
 		RTE_LOG(WARNING, IPSEC, "No Routing rule specified\n");
 
 	printf("Creating IPv4 Routing Table (RT) context with %u max routes\n",
-			RT_IPV4_MAX_RULES);
+		   RT_IPV4_MAX_RULES);
 
 	/* create the LPM table */
 	snprintf(name, sizeof(name), "%s_%u", "rt_ip4", socket_id);
@@ -185,20 +183,20 @@ rt_init(struct socket_ctx *ctx, int32_t socket_id)
 	lpm = rte_lpm_create(name, socket_id, &conf);
 	if (lpm == NULL)
 		rte_exit(EXIT_FAILURE, "Unable to create %s LPM table "
-			"on socket %d\n", name, socket_id);
+				"on socket %d\n", name, socket_id);
 
 	/* populate the LPM table */
 	for (i = 0; i < nb_rt_ip4; i++) {
 		ret = rte_lpm_add(lpm, rt_ip4[i].ip, rt_ip4[i].depth,
-			rt_ip4[i].if_out);
+						  rt_ip4[i].if_out);
 		if (ret < 0)
 			rte_exit(EXIT_FAILURE, "Fail to add entry num %u to %s "
-				"LPM table on socket %d\n", i, name, socket_id);
+					"LPM table on socket %d\n", i, name, socket_id);
 
 		uint32_t_to_char(rt_ip4[i].ip, &a, &b, &c, &d);
 		printf("LPM: Adding route %hhu.%hhu.%hhu.%hhu/%hhu (%hhu)\n",
-				a, b, c, d, rt_ip4[i].depth,
-				rt_ip4[i].if_out);
+			   a, b, c, d, rt_ip4[i].depth,
+			   rt_ip4[i].if_out);
 	}
 
 	snprintf(name, sizeof(name), "%s_%u", "rt_ip6", socket_id);
@@ -207,29 +205,29 @@ rt_init(struct socket_ctx *ctx, int32_t socket_id)
 	lpm6 = rte_lpm6_create(name, socket_id, &conf6);
 	if (lpm6 == NULL)
 		rte_exit(EXIT_FAILURE, "Unable to create %s LPM table "
-			"on socket %d\n", name, socket_id);
+				"on socket %d\n", name, socket_id);
 
 	/* populate the LPM table */
 	for (i = 0; i < nb_rt_ip6; i++) {
 		ret = rte_lpm6_add(lpm6, rt_ip6[i].ip, rt_ip6[i].depth,
-				rt_ip6[i].if_out);
+						   rt_ip6[i].if_out);
 		if (ret < 0)
 			rte_exit(EXIT_FAILURE, "Fail to add entry num %u to %s "
-				"LPM table on socket %d\n", i, name, socket_id);
+					"LPM table on socket %d\n", i, name, socket_id);
 
 		printf("LPM6: Adding route "
-			" %hx:%hx:%hx:%hx:%hx:%hx:%hx:%hx/%hhx (%hhx)\n",
-			(uint16_t)((rt_ip6[i].ip[0] << 8) | rt_ip6[i].ip[1]),
-			(uint16_t)((rt_ip6[i].ip[2] << 8) | rt_ip6[i].ip[3]),
-			(uint16_t)((rt_ip6[i].ip[4] << 8) | rt_ip6[i].ip[5]),
-			(uint16_t)((rt_ip6[i].ip[6] << 8) | rt_ip6[i].ip[7]),
-			(uint16_t)((rt_ip6[i].ip[8] << 8) | rt_ip6[i].ip[9]),
-			(uint16_t)((rt_ip6[i].ip[10] << 8) | rt_ip6[i].ip[11]),
-			(uint16_t)((rt_ip6[i].ip[12] << 8) | rt_ip6[i].ip[13]),
-			(uint16_t)((rt_ip6[i].ip[14] << 8) | rt_ip6[i].ip[15]),
-			rt_ip6[i].depth, rt_ip6[i].if_out);
+					   " %hx:%hx:%hx:%hx:%hx:%hx:%hx:%hx/%hhx (%hhx)\n",
+			   (uint16_t)((rt_ip6[i].ip[0] << 8) | rt_ip6[i].ip[1]),
+			   (uint16_t)((rt_ip6[i].ip[2] << 8) | rt_ip6[i].ip[3]),
+			   (uint16_t)((rt_ip6[i].ip[4] << 8) | rt_ip6[i].ip[5]),
+			   (uint16_t)((rt_ip6[i].ip[6] << 8) | rt_ip6[i].ip[7]),
+			   (uint16_t)((rt_ip6[i].ip[8] << 8) | rt_ip6[i].ip[9]),
+			   (uint16_t)((rt_ip6[i].ip[10] << 8) | rt_ip6[i].ip[11]),
+			   (uint16_t)((rt_ip6[i].ip[12] << 8) | rt_ip6[i].ip[13]),
+			   (uint16_t)((rt_ip6[i].ip[14] << 8) | rt_ip6[i].ip[15]),
+			   rt_ip6[i].depth, rt_ip6[i].if_out);
 	}
 
-	ctx->rt_ip4 = (struct rt_ctx *)lpm;
-	ctx->rt_ip6 = (struct rt_ctx *)lpm6;
+	ctx->rt_ip4 = (struct rt_ctx *) lpm;
+	ctx->rt_ip6 = (struct rt_ctx *) lpm6;
 }

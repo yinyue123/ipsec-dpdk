@@ -52,8 +52,7 @@
 
 int
 esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,
-		struct rte_crypto_op *cop)
-{
+			struct rte_crypto_op *cop) {
 	struct ip *ip4;
 	struct rte_crypto_sym_op *sym_cop;
 	int32_t payload_len, ip_hdr_len;
@@ -62,7 +61,8 @@ esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 	RTE_ASSERT(sa != NULL);
 	RTE_ASSERT(cop != NULL);
 
-	ip4 = rte_pktmbuf_mtod(m, struct ip *);
+	ip4 = rte_pktmbuf_mtod(m,
+	struct ip *);
 	if (likely(ip4->ip_v == IPVERSION))
 		ip_hdr_len = ip4->ip_hl * 4;
 	else if (ip4->ip_v == IP6_VERSION)
@@ -75,19 +75,19 @@ esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 	}
 
 	payload_len = rte_pktmbuf_pkt_len(m) - ip_hdr_len -
-		sizeof(struct esp_hdr) - sa->iv_len - sa->digest_len;
+				  sizeof(struct esp_hdr) - sa->iv_len - sa->digest_len;
 
 	if ((payload_len & (sa->block_size - 1)) || (payload_len <= 0)) {
 		RTE_LOG_DP(DEBUG, IPSEC_ESP, "payload %d not multiple of %u\n",
-				payload_len, sa->block_size);
+				   payload_len, sa->block_size);
 		return -EINVAL;
 	}
 
 	sym_cop = get_sym_cop(cop);
 
 	sym_cop->m_src = m;
-	sym_cop->cipher.data.offset =  ip_hdr_len + sizeof(struct esp_hdr) +
-		sa->iv_len;
+	sym_cop->cipher.data.offset = ip_hdr_len + sizeof(struct esp_hdr) +
+								  sa->iv_len;
 	sym_cop->cipher.data.length = payload_len;
 
 	struct cnt_blk *icb;
@@ -95,56 +95,57 @@ esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 	uint8_t *iv = RTE_PTR_ADD(ip4, ip_hdr_len + sizeof(struct esp_hdr));
 
 	switch (sa->cipher_algo) {
-	case RTE_CRYPTO_CIPHER_NULL:
-	case RTE_CRYPTO_CIPHER_AES_CBC:
-		sym_cop->cipher.iv.data = iv;
-		sym_cop->cipher.iv.phys_addr = rte_pktmbuf_mtophys_offset(m,
-				 ip_hdr_len + sizeof(struct esp_hdr));
-		sym_cop->cipher.iv.length = sa->iv_len;
-		break;
-	case RTE_CRYPTO_CIPHER_AES_CTR:
-	case RTE_CRYPTO_CIPHER_AES_GCM:
-		icb = get_cnt_blk(m);
-		icb->salt = sa->salt;
-		memcpy(&icb->iv, iv, 8);
-		icb->cnt = rte_cpu_to_be_32(1);
-		sym_cop->cipher.iv.data = (uint8_t *)icb;
-		sym_cop->cipher.iv.phys_addr = rte_pktmbuf_mtophys_offset(m,
-			 (uint8_t *)icb - rte_pktmbuf_mtod(m, uint8_t *));
-		sym_cop->cipher.iv.length = 16;
-		break;
-	default:
-		RTE_LOG(ERR, IPSEC_ESP, "unsupported cipher algorithm %u\n",
-				sa->cipher_algo);
-		return -EINVAL;
+		case RTE_CRYPTO_CIPHER_NULL:
+		case RTE_CRYPTO_CIPHER_AES_CBC:
+			sym_cop->cipher.iv.data = iv;
+			sym_cop->cipher.iv.phys_addr = rte_pktmbuf_mtophys_offset(m,
+																	  ip_hdr_len + sizeof(struct esp_hdr));
+			sym_cop->cipher.iv.length = sa->iv_len;
+			break;
+		case RTE_CRYPTO_CIPHER_AES_CTR:
+		case RTE_CRYPTO_CIPHER_AES_GCM:
+			icb = get_cnt_blk(m);
+			icb->salt = sa->salt;
+			memcpy(&icb->iv, iv, 8);
+			icb->cnt = rte_cpu_to_be_32(1);
+			sym_cop->cipher.iv.data = (uint8_t *) icb;
+			sym_cop->cipher.iv.phys_addr = rte_pktmbuf_mtophys_offset(m,
+																	  (uint8_t *) icb -
+																	  rte_pktmbuf_mtod(m, uint8_t * ));
+			sym_cop->cipher.iv.length = 16;
+			break;
+		default:
+			RTE_LOG(ERR, IPSEC_ESP, "unsupported cipher algorithm %u\n",
+					sa->cipher_algo);
+			return -EINVAL;
 	}
 
 	switch (sa->auth_algo) {
-	case RTE_CRYPTO_AUTH_NULL:
-	case RTE_CRYPTO_AUTH_SHA1_HMAC:
-	case RTE_CRYPTO_AUTH_SHA256_HMAC:
-		sym_cop->auth.data.offset = ip_hdr_len;
-		sym_cop->auth.data.length = sizeof(struct esp_hdr) +
-			sa->iv_len + payload_len;
-		break;
-	case RTE_CRYPTO_AUTH_AES_GCM:
-		aad = get_aad(m);
-		memcpy(aad, iv - sizeof(struct esp_hdr), 8);
-		sym_cop->auth.aad.data = aad;
-		sym_cop->auth.aad.phys_addr = rte_pktmbuf_mtophys_offset(m,
-				aad - rte_pktmbuf_mtod(m, uint8_t *));
-		sym_cop->auth.aad.length = 8;
-		break;
-	default:
-		RTE_LOG(ERR, IPSEC_ESP, "unsupported auth algorithm %u\n",
-				sa->auth_algo);
-		return -EINVAL;
+		case RTE_CRYPTO_AUTH_NULL:
+		case RTE_CRYPTO_AUTH_SHA1_HMAC:
+		case RTE_CRYPTO_AUTH_SHA256_HMAC:
+			sym_cop->auth.data.offset = ip_hdr_len;
+			sym_cop->auth.data.length = sizeof(struct esp_hdr) +
+										sa->iv_len + payload_len;
+			break;
+		case RTE_CRYPTO_AUTH_AES_GCM:
+			aad = get_aad(m);
+			memcpy(aad, iv - sizeof(struct esp_hdr), 8);
+			sym_cop->auth.aad.data = aad;
+			sym_cop->auth.aad.phys_addr = rte_pktmbuf_mtophys_offset(m,
+																	 aad - rte_pktmbuf_mtod(m, uint8_t * ));
+			sym_cop->auth.aad.length = 8;
+			break;
+		default:
+			RTE_LOG(ERR, IPSEC_ESP, "unsupported auth algorithm %u\n",
+					sa->auth_algo);
+			return -EINVAL;
 	}
 
-	sym_cop->auth.digest.data = rte_pktmbuf_mtod_offset(m, void*,
-			rte_pktmbuf_pkt_len(m) - sa->digest_len);
+	sym_cop->auth.digest.data = rte_pktmbuf_mtod_offset(m, void * ,
+														rte_pktmbuf_pkt_len(m) - sa->digest_len);
 	sym_cop->auth.digest.phys_addr = rte_pktmbuf_mtophys_offset(m,
-			rte_pktmbuf_pkt_len(m) - sa->digest_len);
+																rte_pktmbuf_pkt_len(m) - sa->digest_len);
 	sym_cop->auth.digest.length = sa->digest_len;
 
 	return 0;
@@ -152,8 +153,7 @@ esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 
 int
 esp_inbound_post(struct rte_mbuf *m, struct ipsec_sa *sa,
-		struct rte_crypto_op *cop)
-{
+				 struct rte_crypto_op *cop) {
 	struct ip *ip4, *ip;
 	struct ip6_hdr *ip6;
 	uint8_t *nexthdr, *pad_len;
@@ -169,8 +169,8 @@ esp_inbound_post(struct rte_mbuf *m, struct ipsec_sa *sa,
 		return -1;
 	}
 
-	nexthdr = rte_pktmbuf_mtod_offset(m, uint8_t*,
-			rte_pktmbuf_pkt_len(m) - sa->digest_len - 1);
+	nexthdr = rte_pktmbuf_mtod_offset(m, uint8_t * ,
+									  rte_pktmbuf_pkt_len(m) - sa->digest_len - 1);
 	pad_len = nexthdr - 1;
 
 	padding = pad_len - *pad_len;
@@ -188,15 +188,16 @@ esp_inbound_post(struct rte_mbuf *m, struct ipsec_sa *sa,
 	}
 
 	if (unlikely(sa->flags == TRANSPORT)) {
-		ip = rte_pktmbuf_mtod(m, struct ip *);
-		ip4 = (struct ip *)rte_pktmbuf_adj(m,
-				sizeof(struct esp_hdr) + sa->iv_len);
+		ip = rte_pktmbuf_mtod(m,
+		struct ip *);
+		ip4 = (struct ip *) rte_pktmbuf_adj(m,
+											sizeof(struct esp_hdr) + sa->iv_len);
 		if (likely(ip->ip_v == IPVERSION)) {
 			memmove(ip4, ip, ip->ip_hl * 4);
 			ip4->ip_p = *nexthdr;
 			ip4->ip_len = htons(rte_pktmbuf_data_len(m));
 		} else {
-			ip6 = (struct ip6_hdr *)ip4;
+			ip6 = (struct ip6_hdr *) ip4;
 			/* XXX No option headers supported */
 			memmove(ip6, ip, sizeof(struct ip6_hdr));
 			ip6->ip6_nxt = *nexthdr;
@@ -210,8 +211,7 @@ esp_inbound_post(struct rte_mbuf *m, struct ipsec_sa *sa,
 
 int
 esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
-		struct rte_crypto_op *cop)
-{
+			 struct rte_crypto_op *cop) {
 	struct ip *ip4;
 	struct ip6_hdr *ip6;
 	struct esp_hdr *esp = NULL;
@@ -226,7 +226,8 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 
 	ip_hdr_len = 0;
 
-	ip4 = rte_pktmbuf_mtod(m, struct ip *);
+	ip4 = rte_pktmbuf_mtod(m,
+	struct ip *);
 	if (likely(ip4->ip_v == IPVERSION)) {
 		if (unlikely(sa->flags == TRANSPORT)) {
 			ip_hdr_len = ip4->ip_hl * 4;
@@ -237,7 +238,7 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 		if (unlikely(sa->flags == TRANSPORT)) {
 			/* XXX No option headers supported */
 			ip_hdr_len = sizeof(struct ip6_hdr);
-			ip6 = (struct ip6_hdr *)ip4;
+			ip6 = (struct ip6_hdr *) ip4;
 			nlp = ip6->ip6_nxt;
 		} else
 			nlp = IPPROTO_IPV6;
@@ -249,11 +250,11 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 
 	/* Padded payload length */
 	pad_payload_len = RTE_ALIGN_CEIL(rte_pktmbuf_pkt_len(m) -
-			ip_hdr_len + 2, sa->block_size);
+									 ip_hdr_len + 2, sa->block_size);
 	pad_len = pad_payload_len + ip_hdr_len - rte_pktmbuf_pkt_len(m);
 
 	RTE_ASSERT(sa->flags == IP4_TUNNEL || sa->flags == IP6_TUNNEL ||
-			sa->flags == TRANSPORT);
+			   sa->flags == TRANSPORT);
 
 	if (likely(sa->flags == IP4_TUNNEL))
 		ip_hdr_len = sizeof(struct ip);
@@ -267,12 +268,12 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 
 	/* Check maximum packet size */
 	if (unlikely(ip_hdr_len + sizeof(struct esp_hdr) + sa->iv_len +
-			pad_payload_len + sa->digest_len > IP_MAXPACKET)) {
+				 pad_payload_len + sa->digest_len > IP_MAXPACKET)) {
 		RTE_LOG(ERR, IPSEC_ESP, "ipsec packet is too big\n");
 		return -EINVAL;
 	}
 
-	padding = (uint8_t *)rte_pktmbuf_append(m, pad_len + sa->digest_len);
+	padding = (uint8_t *) rte_pktmbuf_append(m, pad_len + sa->digest_len);
 	if (unlikely(padding == NULL)) {
 		RTE_LOG(ERR, IPSEC_ESP, "not enough mbuf trailing space\n");
 		return -ENOSPC;
@@ -280,59 +281,59 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 	rte_prefetch0(padding);
 
 	switch (sa->flags) {
-	case IP4_TUNNEL:
-		ip4 = ip4ip_outbound(m, sizeof(struct esp_hdr) + sa->iv_len,
-				&sa->src, &sa->dst);
-		esp = (struct esp_hdr *)(ip4 + 1);
-		break;
-	case IP6_TUNNEL:
-		ip6 = ip6ip_outbound(m, sizeof(struct esp_hdr) + sa->iv_len,
-				&sa->src, &sa->dst);
-		esp = (struct esp_hdr *)(ip6 + 1);
-		break;
-	case TRANSPORT:
-		new_ip = (uint8_t *)rte_pktmbuf_prepend(m,
-				sizeof(struct esp_hdr) + sa->iv_len);
-		memmove(new_ip, ip4, ip_hdr_len);
-		esp = (struct esp_hdr *)(new_ip + ip_hdr_len);
-		if (likely(ip4->ip_v == IPVERSION)) {
-			ip4 = (struct ip *)new_ip;
-			ip4->ip_p = IPPROTO_ESP;
-			ip4->ip_len = htons(rte_pktmbuf_data_len(m));
-		} else {
-			ip6 = (struct ip6_hdr *)new_ip;
-			ip6->ip6_nxt = IPPROTO_ESP;
-			ip6->ip6_plen = htons(rte_pktmbuf_data_len(m));
-		}
+		case IP4_TUNNEL:
+			ip4 = ip4ip_outbound(m, sizeof(struct esp_hdr) + sa->iv_len,
+								 &sa->src, &sa->dst);
+			esp = (struct esp_hdr *) (ip4 + 1);
+			break;
+		case IP6_TUNNEL:
+			ip6 = ip6ip_outbound(m, sizeof(struct esp_hdr) + sa->iv_len,
+								 &sa->src, &sa->dst);
+			esp = (struct esp_hdr *) (ip6 + 1);
+			break;
+		case TRANSPORT:
+			new_ip = (uint8_t *) rte_pktmbuf_prepend(m,
+													 sizeof(struct esp_hdr) + sa->iv_len);
+			memmove(new_ip, ip4, ip_hdr_len);
+			esp = (struct esp_hdr *) (new_ip + ip_hdr_len);
+			if (likely(ip4->ip_v == IPVERSION)) {
+				ip4 = (struct ip *) new_ip;
+				ip4->ip_p = IPPROTO_ESP;
+				ip4->ip_len = htons(rte_pktmbuf_data_len(m));
+			} else {
+				ip6 = (struct ip6_hdr *) new_ip;
+				ip6->ip6_nxt = IPPROTO_ESP;
+				ip6->ip6_plen = htons(rte_pktmbuf_data_len(m));
+			}
 	}
 
 	sa->seq++;
 	esp->spi = rte_cpu_to_be_32(sa->spi);
-	esp->seq = rte_cpu_to_be_32((uint32_t)sa->seq);
+	esp->seq = rte_cpu_to_be_32((uint32_t) sa->seq);
 
-	uint64_t *iv = (uint64_t *)(esp + 1);
+	uint64_t *iv = (uint64_t * )(esp + 1);
 
 	sym_cop = get_sym_cop(cop);
 	sym_cop->m_src = m;
 	switch (sa->cipher_algo) {
-	case RTE_CRYPTO_CIPHER_NULL:
-	case RTE_CRYPTO_CIPHER_AES_CBC:
-		memset(iv, 0, sa->iv_len);
-		sym_cop->cipher.data.offset = ip_hdr_len +
-			sizeof(struct esp_hdr);
-		sym_cop->cipher.data.length = pad_payload_len + sa->iv_len;
-		break;
-	case RTE_CRYPTO_CIPHER_AES_CTR:
-	case RTE_CRYPTO_CIPHER_AES_GCM:
-		*iv = sa->seq;
-		sym_cop->cipher.data.offset = ip_hdr_len +
-			sizeof(struct esp_hdr) + sa->iv_len;
-		sym_cop->cipher.data.length = pad_payload_len;
-		break;
-	default:
-		RTE_LOG(ERR, IPSEC_ESP, "unsupported cipher algorithm %u\n",
-				sa->cipher_algo);
-		return -EINVAL;
+		case RTE_CRYPTO_CIPHER_NULL:
+		case RTE_CRYPTO_CIPHER_AES_CBC:
+			memset(iv, 0, sa->iv_len);
+			sym_cop->cipher.data.offset = ip_hdr_len +
+										  sizeof(struct esp_hdr);
+			sym_cop->cipher.data.length = pad_payload_len + sa->iv_len;
+			break;
+		case RTE_CRYPTO_CIPHER_AES_CTR:
+		case RTE_CRYPTO_CIPHER_AES_GCM:
+			*iv = sa->seq;
+			sym_cop->cipher.data.offset = ip_hdr_len +
+										  sizeof(struct esp_hdr) + sa->iv_len;
+			sym_cop->cipher.data.length = pad_payload_len;
+			break;
+		default:
+			RTE_LOG(ERR, IPSEC_ESP, "unsupported cipher algorithm %u\n",
+					sa->cipher_algo);
+			return -EINVAL;
 	}
 
 	/* Fill pad_len using default sequential scheme */
@@ -345,39 +346,39 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 	icb->salt = sa->salt;
 	icb->iv = sa->seq;
 	icb->cnt = rte_cpu_to_be_32(1);
-	sym_cop->cipher.iv.data = (uint8_t *)icb;
+	sym_cop->cipher.iv.data = (uint8_t *) icb;
 	sym_cop->cipher.iv.phys_addr = rte_pktmbuf_mtophys_offset(m,
-			 (uint8_t *)icb - rte_pktmbuf_mtod(m, uint8_t *));
+															  (uint8_t *) icb - rte_pktmbuf_mtod(m, uint8_t * ));
 	sym_cop->cipher.iv.length = 16;
 
 	uint8_t *aad;
 
 	switch (sa->auth_algo) {
-	case RTE_CRYPTO_AUTH_NULL:
-	case RTE_CRYPTO_AUTH_SHA1_HMAC:
-	case RTE_CRYPTO_AUTH_SHA256_HMAC:
-		sym_cop->auth.data.offset = ip_hdr_len;
-		sym_cop->auth.data.length = sizeof(struct esp_hdr) +
-			sa->iv_len + pad_payload_len;
-		break;
-	case RTE_CRYPTO_AUTH_AES_GCM:
-		aad = get_aad(m);
-		memcpy(aad, esp, 8);
-		sym_cop->auth.aad.data = aad;
-		sym_cop->auth.aad.phys_addr = rte_pktmbuf_mtophys_offset(m,
-				aad - rte_pktmbuf_mtod(m, uint8_t *));
-		sym_cop->auth.aad.length = 8;
-		break;
-	default:
-		RTE_LOG(ERR, IPSEC_ESP, "unsupported auth algorithm %u\n",
-				sa->auth_algo);
-		return -EINVAL;
+		case RTE_CRYPTO_AUTH_NULL:
+		case RTE_CRYPTO_AUTH_SHA1_HMAC:
+		case RTE_CRYPTO_AUTH_SHA256_HMAC:
+			sym_cop->auth.data.offset = ip_hdr_len;
+			sym_cop->auth.data.length = sizeof(struct esp_hdr) +
+										sa->iv_len + pad_payload_len;
+			break;
+		case RTE_CRYPTO_AUTH_AES_GCM:
+			aad = get_aad(m);
+			memcpy(aad, esp, 8);
+			sym_cop->auth.aad.data = aad;
+			sym_cop->auth.aad.phys_addr = rte_pktmbuf_mtophys_offset(m,
+																	 aad - rte_pktmbuf_mtod(m, uint8_t * ));
+			sym_cop->auth.aad.length = 8;
+			break;
+		default:
+			RTE_LOG(ERR, IPSEC_ESP, "unsupported auth algorithm %u\n",
+					sa->auth_algo);
+			return -EINVAL;
 	}
 
-	sym_cop->auth.digest.data = rte_pktmbuf_mtod_offset(m, uint8_t *,
-			rte_pktmbuf_pkt_len(m) - sa->digest_len);
+	sym_cop->auth.digest.data = rte_pktmbuf_mtod_offset(m, uint8_t * ,
+														rte_pktmbuf_pkt_len(m) - sa->digest_len);
 	sym_cop->auth.digest.phys_addr = rte_pktmbuf_mtophys_offset(m,
-			rte_pktmbuf_pkt_len(m) - sa->digest_len);
+																rte_pktmbuf_pkt_len(m) - sa->digest_len);
 	sym_cop->auth.digest.length = sa->digest_len;
 
 	return 0;
@@ -385,9 +386,8 @@ esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,
 
 int
 esp_outbound_post(struct rte_mbuf *m __rte_unused,
-		struct ipsec_sa *sa __rte_unused,
-		struct rte_crypto_op *cop)
-{
+				  struct ipsec_sa *sa __rte_unused,
+				  struct rte_crypto_op *cop) {
 	RTE_ASSERT(m != NULL);
 	RTE_ASSERT(sa != NULL);
 	RTE_ASSERT(cop != NULL);

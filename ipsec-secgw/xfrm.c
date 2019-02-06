@@ -23,10 +23,6 @@
 
 #include "xfrm.h"
 
-struct parse_status {
-	int status;
-	char parse_msg[256];
-};
 
 struct shared_data {
 	uint32_t written;
@@ -67,7 +63,7 @@ static void
 send_xfrm(const char *type, const char **tokens, uint32_t n_tokens, struct parse_status *status) {
 	uint32_t i;
 	while (shared_mem->written == 1) {
-		printf("wait to write xfrm data");
+		//printf("wait to write xfrm data\n");
 		usleep(100);
 	}
 	strcpy(shared_mem->type, type);
@@ -89,7 +85,7 @@ recv_xfrm(void) {
 				printf("%s ", shared_mem->tokens[i]);
 			}
 			printf("\n");
-			//parse_sa_tokens(shared_mem->tokens,shared_mem->n_tokens,&shared_mem->status);
+			parse_sa_tokens(shared_mem->tokens,shared_mem->n_tokens,&shared_mem->status);
 		}
 		shared_mem->written = 0;
 	}
@@ -146,7 +142,6 @@ add_sa(
 	status.status = 0;
 	status.parse_msg[0] = '\0';
 	send_xfrm("sa", tokens, 16, &status);
-	//parse_sa_tokens();
 
 }
 
