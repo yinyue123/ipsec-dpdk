@@ -5,18 +5,38 @@
 /*
     gcc xfrm_listen.c `pkg-config --cflags --libs libnl-3.0 libnl-xfrm-3.0`
 */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include <arpa/inet.h>
 #include <linux/netlink.h>
 #include <linux/xfrm.h>
 #include <netlink/types.h>
 #include <netlink/genl/genl.h>
 #include <netlink/genl/ctrl.h>
-#include <stdio.h>
-#include <string.h>
 #include <netlink/xfrm/sa.h>
 #include <netlink/xfrm/selector.h>
 
 #include "xfrm.h"
+
+struct parse_status {
+	int status;
+	char parse_msg[256];
+};
+
+struct shared_data {
+	uint32_t written;
+	uint32_t n_tokens;
+	char type[10];
+	char tokens[20][100];
+	struct parse_status status;
+};
+
+static struct shared_data *shared_mem;
 
 void
 dump_hex(char *buf, int len);
@@ -44,6 +64,38 @@ dump_hex_string(char *output, char *buf, int len) {
 }
 
 static void
+send_xfrm(const char *type, const char **tokens, uint32_t n_tokens, struct parse_status *status) {
+	uint32_t i;
+	while (shared_mem->written == 1) {
+		printf("wait to write xfrm data");
+		usleep(100);
+	}
+	strcpy(shared_mem->type, type);
+	shared_mem->n_tokens = n_tokens;
+	for (i = 0; i < n_tokens; i++) {
+		strcpy(shared_mem->tokens[i], tokens[i]);
+	}
+	memcpy(&shared_mem->status, status, sizeof(struct parse_status));
+	shared_mem->written = 1;
+}
+
+void
+recv_xfrm(void) {
+	uint32_t i;
+	if (shared_mem->written) {
+		if (strcmp(shared_mem->type, "sa") == 0) {
+			printf("recv_xfrm:sa\n");
+			for (i = 0; i < shared_mem->n_tokens; i++) {
+				printf("%s ", shared_mem->tokens[i]);
+			}
+			printf("\n");
+			//parse_sa_tokens(shared_mem->tokens,shared_mem->n_tokens,&shared_mem->status);
+		}
+		shared_mem->written = 0;
+	}
+}
+
+static void
 add_sa(
 		const char *in_out,
 		const char *spi,
@@ -56,7 +108,7 @@ add_sa(
 		const char *dst
 ) {
 	const char *tokens[16];
-	int i;
+	struct parse_status status;
 /*
 	out--
 	5--
@@ -90,10 +142,10 @@ add_sa(
 	tokens[13] = src;
 	tokens[14] = "dst";
 	tokens[15] = dst;
-	for (i = 0; i < 16; i++) {
-		printf("%s ", tokens[i]);
-	}
-	printf("\n");
+
+	status.status = 0;
+	status.parse_msg[0] = '\0';
+	send_xfrm("sa", tokens, 16, &status);
 	//parse_sa_tokens();
 
 }
@@ -339,8 +391,41 @@ parse_nlmsg(struct nl_msg *nlmsg, void *arg) {
 }
 
 int
-xfrm_main(void) {
+xfrm_init(void) {
 	struct nl_sock *sock;
+	pid_t pid;
+	int shmid;
+
+	// create share memory
+	if ((shmid = shmget(IPC_PRIVATE, sizeof(struct shared_data), 0666)) < 0) {
+		perror("Shmget faild\n");
+		return -1;
+	}
+	printf("create shared memory\n");
+
+	// create child process
+	pid = fork();
+	if (pid < 0) {
+		perror("Fork faild\n");
+	} else if (pid > 0) {
+		// get parent shared memory
+		if ((shared_mem = shmat(shmid, (void *) 0, 0)) == (void *) -1) {
+			perror("parent: shmat error\n");
+			return -1;
+		}
+		printf("parent attach share memory:%p\n", shared_mem);
+		//prctl(PR_SET_PDEATHSIG,SIGHUP);
+		memset(shared_mem, 0, sizeof(struct shared_data));
+		return 0;
+	}
+
+	// get child shared memory
+	if ((shared_mem = shmat(shmid, (void *) 0, 0)) == (void *) -1) {
+		perror("child: shmat error\n");
+		return -1;
+	}
+	printf("child attach share memory:%p\n", shared_mem);
+
 	sock = nl_socket_alloc();
 
 	printf("------------xfrm_main------------\n");
@@ -361,6 +446,6 @@ xfrm_main(void) {
 
 	while (1)
 		nl_recvmsgs_default(sock);
-	return 0;
+	return -1;
 
 }
