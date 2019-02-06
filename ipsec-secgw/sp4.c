@@ -44,7 +44,7 @@
 #include "ipsec.h"
 #include "parser.h"
 
-#define MAX_ACL_RULE_NUM	1024
+#define MAX_ACL_RULE_NUM    1024
 
 /*
  * Rule and trace formats definitions.
@@ -74,45 +74,46 @@ enum {
 };
 
 struct rte_acl_field_def ip4_defs[NUM_FIELDS_IPV4] = {
-	{
-	.type = RTE_ACL_FIELD_TYPE_BITMASK,
-	.size = sizeof(uint8_t),
-	.field_index = PROTO_FIELD_IPV4,
-	.input_index = RTE_ACL_IPV4_PROTO,
-	.offset = 0,
-	},
-	{
-	.type = RTE_ACL_FIELD_TYPE_MASK,
-	.size = sizeof(uint32_t),
-	.field_index = SRC_FIELD_IPV4,
-	.input_index = RTE_ACL_IPV4_SRC,
-	.offset = offsetof(struct ip, ip_src) -	offsetof(struct ip, ip_p)
-	},
-	{
-	.type = RTE_ACL_FIELD_TYPE_MASK,
-	.size = sizeof(uint32_t),
-	.field_index = DST_FIELD_IPV4,
-	.input_index = RTE_ACL_IPV4_DST,
-	.offset = offsetof(struct ip, ip_dst) - offsetof(struct ip, ip_p)
-	},
-	{
-	.type = RTE_ACL_FIELD_TYPE_RANGE,
-	.size = sizeof(uint16_t),
-	.field_index = SRCP_FIELD_IPV4,
-	.input_index = RTE_ACL_IPV4_PORTS,
-	.offset = sizeof(struct ip) - offsetof(struct ip, ip_p)
-	},
-	{
-	.type = RTE_ACL_FIELD_TYPE_RANGE,
-	.size = sizeof(uint16_t),
-	.field_index = DSTP_FIELD_IPV4,
-	.input_index = RTE_ACL_IPV4_PORTS,
-	.offset = sizeof(struct ip) - offsetof(struct ip, ip_p) +
+		{
+				.type = RTE_ACL_FIELD_TYPE_BITMASK,
+				.size = sizeof(uint8_t),
+				.field_index = PROTO_FIELD_IPV4,
+				.input_index = RTE_ACL_IPV4_PROTO,
+				.offset = 0,
+		},
+		{
+				.type = RTE_ACL_FIELD_TYPE_MASK,
+				.size = sizeof(uint32_t),
+				.field_index = SRC_FIELD_IPV4,
+				.input_index = RTE_ACL_IPV4_SRC,
+				.offset = offsetof(struct ip, ip_src) -    offsetof(struct ip, ip_p)
+		},
+		{
+				.type = RTE_ACL_FIELD_TYPE_MASK,
+				.size = sizeof(uint32_t),
+				.field_index = DST_FIELD_IPV4,
+				.input_index = RTE_ACL_IPV4_DST,
+				.offset = offsetof(struct ip, ip_dst) - offsetof(struct ip, ip_p)
+		},
+		{
+				.type = RTE_ACL_FIELD_TYPE_RANGE,
+				.size = sizeof(uint16_t),
+				.field_index = SRCP_FIELD_IPV4,
+				.input_index = RTE_ACL_IPV4_PORTS,
+				.offset = sizeof(struct ip) - offsetof(struct ip, ip_p)
+		},
+		{
+				.type = RTE_ACL_FIELD_TYPE_RANGE,
+				.size = sizeof(uint16_t),
+				.field_index = DSTP_FIELD_IPV4,
+				.input_index = RTE_ACL_IPV4_PORTS,
+				.offset = sizeof(struct ip) - offsetof(struct ip, ip_p) +
 		sizeof(uint16_t)
-	},
+		},
 };
 
-RTE_ACL_RULE_DEF(acl4_rules, RTE_DIM(ip4_defs));
+RTE_ACL_RULE_DEF(acl4_rules, RTE_DIM(ip4_defs)
+);
 
 struct acl4_rules acl4_rules_out[MAX_ACL_RULE_NUM];
 uint32_t nb_acl4_rules_out;
@@ -122,8 +123,7 @@ uint32_t nb_acl4_rules_in;
 
 void
 parse_sp4_tokens(char **tokens, uint32_t n_tokens,
-	struct parse_status *status)
-{
+				 struct parse_status *status) {
 	struct acl4_rules *rule_ipv4 = NULL;
 
 	uint32_t *ri = NULL; /* rule index */
@@ -144,7 +144,7 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 		ri = &nb_acl4_rules_in;
 
 		APP_CHECK(*ri <= MAX_ACL_RULE_NUM - 1, status,
-			"too many sp rules, abort insertion\n");
+				  "too many sp rules, abort insertion\n");
 		if (status->status < 0)
 			return;
 
@@ -154,14 +154,14 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 		ri = &nb_acl4_rules_out;
 
 		APP_CHECK(*ri <= MAX_ACL_RULE_NUM - 1, status,
-			"too many sp rules, abort insertion\n");
+				  "too many sp rules, abort insertion\n");
 		if (status->status < 0)
 			return;
 
 		rule_ipv4 = &acl4_rules_out[*ri];
 	} else {
 		APP_CHECK(0, status, "unrecognized input \"%s\", expect"
-			" \"in\" or \"out\"\n", tokens[ti]);
+				" \"in\" or \"out\"\n", tokens[ti]);
 		return;
 	}
 
@@ -182,13 +182,13 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 			if (status->status < 0)
 				return;
 			APP_CHECK(bypass_p == 0, status, "conflict item "
-				"between \"%s\" and \"%s\"", tokens[ti],
-				"bypass");
+					"between \"%s\" and \"%s\"", tokens[ti],
+					  "bypass");
 			if (status->status < 0)
 				return;
 			APP_CHECK(discard_p == 0, status, "conflict item "
-				"between \"%s\" and \"%s\"", tokens[ti],
-				"discard");
+					"between \"%s\" and \"%s\"", tokens[ti],
+					  "discard");
 			if (status->status < 0)
 				return;
 			INCREMENT_TOKEN_INDEX(ti, n_tokens, status);
@@ -199,7 +199,7 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 				return;
 
 			rule_ipv4->data.userdata =
-				PROTECT(atoi(tokens[ti]));
+					PROTECT(atoi(tokens[ti]));
 
 			protect_p = 1;
 			continue;
@@ -210,13 +210,13 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 			if (status->status < 0)
 				return;
 			APP_CHECK(protect_p == 0, status, "conflict item "
-				"between \"%s\" and \"%s\"", tokens[ti],
-				"protect");
+					"between \"%s\" and \"%s\"", tokens[ti],
+					  "protect");
 			if (status->status < 0)
 				return;
 			APP_CHECK(discard_p == 0, status, "conflict item "
-				"between \"%s\" and \"%s\"", tokens[ti],
-				"discard");
+					"between \"%s\" and \"%s\"", tokens[ti],
+					  "discard");
 			if (status->status < 0)
 				return;
 
@@ -231,13 +231,13 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 			if (status->status < 0)
 				return;
 			APP_CHECK(protect_p == 0, status, "conflict item "
-				"between \"%s\" and \"%s\"", tokens[ti],
-				"protect");
+					"between \"%s\" and \"%s\"", tokens[ti],
+					  "protect");
 			if (status->status < 0)
 				return;
 			APP_CHECK(bypass_p == 0, status, "conflict item "
-				"between \"%s\" and \"%s\"", tokens[ti],
-				"discard");
+					"between \"%s\" and \"%s\"", tokens[ti],
+					  "discard");
 			if (status->status < 0)
 				return;
 
@@ -276,16 +276,16 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 				return;
 
 			APP_CHECK(parse_ipv4_addr(tokens[ti], &ip,
-				&depth) == 0, status, "unrecognized "
-				"input \"%s\", expect valid ipv4 addr",
-				tokens[ti]);
+									  &depth) == 0, status, "unrecognized "
+							  "input \"%s\", expect valid ipv4 addr",
+					  tokens[ti]);
 			if (status->status < 0)
 				return;
 
 			rule_ipv4->field[1].value.u32 =
-				rte_bswap32(ip.s_addr);
+					rte_bswap32(ip.s_addr);
 			rule_ipv4->field[1].mask_range.u32 =
-				depth;
+					depth;
 
 			src_p = 1;
 			continue;
@@ -302,16 +302,16 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 			if (status->status < 0)
 				return;
 			APP_CHECK(parse_ipv4_addr(tokens[ti], &ip,
-				&depth) == 0, status, "unrecognized "
-				"input \"%s\", expect valid ipv4 addr",
-				tokens[ti]);
+									  &depth) == 0, status, "unrecognized "
+							  "input \"%s\", expect valid ipv4 addr",
+					  tokens[ti]);
 			if (status->status < 0)
 				return;
 
 			rule_ipv4->field[2].value.u32 =
-				rte_bswap32(ip.s_addr);
+					rte_bswap32(ip.s_addr);
 			rule_ipv4->field[2].mask_range.u32 =
-				depth;
+					depth;
 
 			dst_p = 1;
 			continue;
@@ -328,21 +328,21 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 				return;
 
 			APP_CHECK(parse_range(tokens[ti], &low, &high)
-				== 0, status, "unrecognized input \"%s\""
-				", expect \"from:to\"", tokens[ti]);
+					  == 0, status, "unrecognized input \"%s\""
+							  ", expect \"from:to\"", tokens[ti]);
 			if (status->status < 0)
 				return;
 			APP_CHECK(low <= 0xff, status, "proto low "
-				"over-limit");
+					"over-limit");
 			if (status->status < 0)
 				return;
 			APP_CHECK(high <= 0xff, status, "proto high "
-				"over-limit");
+					"over-limit");
 			if (status->status < 0)
 				return;
 
-			rule_ipv4->field[0].value.u8 = (uint8_t)low;
-			rule_ipv4->field[0].mask_range.u8 = (uint8_t)high;
+			rule_ipv4->field[0].value.u8 = (uint8_t) low;
+			rule_ipv4->field[0].mask_range.u8 = (uint8_t) high;
 
 			proto_p = 1;
 			continue;
@@ -359,9 +359,9 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 				return;
 
 			APP_CHECK(parse_range(tokens[ti], &port_low,
-				&port_high) == 0, status, "unrecognized "
-				"input \"%s\", expect \"port_from:"
-				"port_to\"", tokens[ti]);
+								  &port_high) == 0, status, "unrecognized "
+							  "input \"%s\", expect \"port_from:"
+							  "port_to\"", tokens[ti]);
 			if (status->status < 0)
 				return;
 
@@ -383,9 +383,9 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 				return;
 
 			APP_CHECK(parse_range(tokens[ti], &port_low,
-				&port_high) == 0, status, "unrecognized "
-				"input \"%s\", expect \"port_from:"
-				"port_to\"", tokens[ti]);
+								  &port_high) == 0, status, "unrecognized "
+							  "input \"%s\", expect \"port_from:"
+							  "port_to\"", tokens[ti]);
 			if (status->status < 0)
 				return;
 
@@ -398,7 +398,7 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 
 		/* unrecognizeable input */
 		APP_CHECK(0, status, "unrecognized input \"%s\"",
-			tokens[ti]);
+				  tokens[ti]);
 		return;
 	}
 
@@ -408,7 +408,7 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 		return;
 
 	APP_CHECK(protect_p | bypass_p | discard_p, status, "missing "
-		"argument \"protect\", \"bypass\", or \"discard\"");
+			"argument \"protect\", \"bypass\", or \"discard\"");
 	if (status->status < 0)
 		return;
 
@@ -416,35 +416,33 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 }
 
 static void
-print_one_ip4_rule(const struct acl4_rules *rule, int32_t extra)
-{
+print_one_ip4_rule(const struct acl4_rules *rule, int32_t extra) {
 	uint8_t a, b, c, d;
 
 	uint32_t_to_char(rule->field[SRC_FIELD_IPV4].value.u32,
-			&a, &b, &c, &d);
+					 &a, &b, &c, &d);
 	printf("%hhu.%hhu.%hhu.%hhu/%u ", a, b, c, d,
-			rule->field[SRC_FIELD_IPV4].mask_range.u32);
+		   rule->field[SRC_FIELD_IPV4].mask_range.u32);
 	uint32_t_to_char(rule->field[DST_FIELD_IPV4].value.u32,
-			&a, &b, &c, &d);
+					 &a, &b, &c, &d);
 	printf("%hhu.%hhu.%hhu.%hhu/%u ", a, b, c, d,
-			rule->field[DST_FIELD_IPV4].mask_range.u32);
+		   rule->field[DST_FIELD_IPV4].mask_range.u32);
 	printf("%hu : %hu %hu : %hu 0x%hhx/0x%hhx ",
-		rule->field[SRCP_FIELD_IPV4].value.u16,
-		rule->field[SRCP_FIELD_IPV4].mask_range.u16,
-		rule->field[DSTP_FIELD_IPV4].value.u16,
-		rule->field[DSTP_FIELD_IPV4].mask_range.u16,
-		rule->field[PROTO_FIELD_IPV4].value.u8,
-		rule->field[PROTO_FIELD_IPV4].mask_range.u8);
+		   rule->field[SRCP_FIELD_IPV4].value.u16,
+		   rule->field[SRCP_FIELD_IPV4].mask_range.u16,
+		   rule->field[DSTP_FIELD_IPV4].value.u16,
+		   rule->field[DSTP_FIELD_IPV4].mask_range.u16,
+		   rule->field[PROTO_FIELD_IPV4].value.u8,
+		   rule->field[PROTO_FIELD_IPV4].mask_range.u8);
 	if (extra)
 		printf("0x%x-0x%x-0x%x ",
-			rule->data.category_mask,
-			rule->data.priority,
-			rule->data.userdata);
+			   rule->data.category_mask,
+			   rule->data.priority,
+			   rule->data.userdata);
 }
 
 static inline void
-dump_ip4_rules(const struct acl4_rules *rule, int32_t num, int32_t extra)
-{
+dump_ip4_rules(const struct acl4_rules *rule, int32_t num, int32_t extra) {
 	int32_t i;
 
 	for (i = 0; i < num; i++, rule++) {
@@ -456,8 +454,7 @@ dump_ip4_rules(const struct acl4_rules *rule, int32_t num, int32_t extra)
 
 static struct rte_acl_ctx *
 acl4_init(const char *name, int32_t socketid, const struct acl4_rules *rules,
-		uint32_t rules_nb)
-{
+		  uint32_t rules_nb) {
 	char s[PATH_MAX];
 	struct rte_acl_param acl_param;
 	struct rte_acl_config acl_build_param;
@@ -482,8 +479,8 @@ acl4_init(const char *name, int32_t socketid, const struct acl4_rules *rules,
 	if (ctx == NULL)
 		rte_exit(EXIT_FAILURE, "Failed to create ACL context\n");
 
-	if (rte_acl_add_rules(ctx, (const struct rte_acl_rule *)rules,
-				rules_nb) < 0)
+	if (rte_acl_add_rules(ctx, (const struct rte_acl_rule *) rules,
+						  rules_nb) < 0)
 		rte_exit(EXIT_FAILURE, "add rules failed\n");
 
 	/* Perform builds */
@@ -502,8 +499,7 @@ acl4_init(const char *name, int32_t socketid, const struct acl4_rules *rules,
 }
 
 void
-sp4_init(struct socket_ctx *ctx, int32_t socket_id)
-{
+sp4_init(struct socket_ctx *ctx, int32_t socket_id) {
 	const char *name;
 
 	if (ctx == NULL)
@@ -519,17 +515,17 @@ sp4_init(struct socket_ctx *ctx, int32_t socket_id)
 
 	if (nb_acl4_rules_in > 0) {
 		name = "sp_ip4_in";
-		ctx->sp_ip4_in = (struct sp_ctx *)acl4_init(name,
-			socket_id, acl4_rules_in, nb_acl4_rules_in);
+		ctx->sp_ip4_in = (struct sp_ctx *) acl4_init(name,
+													 socket_id, acl4_rules_in, nb_acl4_rules_in);
 	} else
 		RTE_LOG(WARNING, IPSEC, "No IPv4 SP Inbound rule "
-			"specified\n");
+				"specified\n");
 
 	if (nb_acl4_rules_out > 0) {
 		name = "sp_ip4_out";
-		ctx->sp_ip4_out = (struct sp_ctx *)acl4_init(name,
-			socket_id, acl4_rules_out, nb_acl4_rules_out);
+		ctx->sp_ip4_out = (struct sp_ctx *) acl4_init(name,
+													  socket_id, acl4_rules_out, nb_acl4_rules_out);
 	} else
 		RTE_LOG(WARNING, IPSEC, "No IPv4 SP Outbound rule "
-			"specified\n");
+				"specified\n");
 }

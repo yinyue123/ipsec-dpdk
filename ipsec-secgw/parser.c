@@ -42,10 +42,10 @@
 #include "ipsec.h"
 #include "parser.h"
 
-#define PARSE_DELIMITER		" \f\n\r\t\v"
+#define PARSE_DELIMITER        " \f\n\r\t\v"
+
 static int
-parse_tokenize_string(char *string, char *tokens[], uint32_t *n_tokens)
-{
+parse_tokenize_string(char *string, char *tokens[], uint32_t *n_tokens) {
 	uint32_t i;
 
 	if ((string == NULL) ||
@@ -81,8 +81,7 @@ parse_tokenize_string(char *string, char *tokens[], uint32_t *n_tokens)
  *      Paul Vixie, 1996.
  */
 static int
-inet_pton4(const char *src, unsigned char *dst)
-{
+inet_pton4(const char *src, unsigned char *dst) {
 	static const char digits[] = "0123456789";
 	int saw_digit, octets, ch;
 	unsigned char tmp[INADDRSZ], *tp;
@@ -95,7 +94,9 @@ inet_pton4(const char *src, unsigned char *dst)
 
 		pch = strchr(digits, ch);
 		if (pch != NULL) {
-			unsigned int new = *tp * 10 + (pch - digits);
+			unsigned
+			int
+			new = *tp * 10 + (pch - digits);
 
 			if (new > 255)
 				return 0;
@@ -104,7 +105,7 @@ inet_pton4(const char *src, unsigned char *dst)
 					return 0;
 				saw_digit = 1;
 			}
-			*tp = (unsigned char)new;
+			*tp = (unsigned char) new;
 		} else if (ch == '.' && saw_digit) {
 			if (octets == 4)
 				return 0;
@@ -134,10 +135,9 @@ inet_pton4(const char *src, unsigned char *dst)
  *      Paul Vixie, 1996.
  */
 static int
-inet_pton6(const char *src, unsigned char *dst)
-{
+inet_pton6(const char *src, unsigned char *dst) {
 	static const char xdigits_l[] = "0123456789abcdef",
-		xdigits_u[] = "0123456789ABCDEF";
+			xdigits_u[] = "0123456789ABCDEF";
 	unsigned char tmp[IN6ADDRSZ], *tp = 0, *endp = 0, *colonp = 0;
 	const char *xdigits = 0, *curtok = 0;
 	int ch = 0, saw_xdigit = 0, count_xdigit = 0;
@@ -193,7 +193,7 @@ inet_pton6(const char *src, unsigned char *dst)
 			continue;
 		}
 		if (ch == '.' && ((tp + INADDRSZ) <= endp) &&
-		    inet_pton4(curtok, tp) > 0) {
+			inet_pton4(curtok, tp) > 0) {
 			tp += INADDRSZ;
 			saw_xdigit = 0;
 			dbloct_count += 2;
@@ -234,8 +234,7 @@ inet_pton6(const char *src, unsigned char *dst)
 }
 
 int
-parse_ipv4_addr(const char *token, struct in_addr *ipv4, uint32_t *mask)
-{
+parse_ipv4_addr(const char *token, struct in_addr *ipv4, uint32_t *mask) {
 	char ip_str[256] = {0};
 	char *pch;
 
@@ -256,15 +255,14 @@ parse_ipv4_addr(const char *token, struct in_addr *ipv4, uint32_t *mask)
 	if (strlen(ip_str) >= INET_ADDRSTRLEN)
 		return -EINVAL;
 
-	if (inet_pton4(ip_str, (unsigned char *)ipv4) != 1)
+	if (inet_pton4(ip_str, (unsigned char *) ipv4) != 1)
 		return -EINVAL;
 
 	return 0;
 }
 
 int
-parse_ipv6_addr(const char *token, struct in6_addr *ipv6, uint32_t *mask)
-{
+parse_ipv6_addr(const char *token, struct in6_addr *ipv6, uint32_t *mask) {
 	char ip_str[256] = {0};
 	char *pch;
 
@@ -285,15 +283,14 @@ parse_ipv6_addr(const char *token, struct in6_addr *ipv6, uint32_t *mask)
 	if (strlen(ip_str) >= INET6_ADDRSTRLEN)
 		return -EINVAL;
 
-	if (inet_pton6(ip_str, (unsigned char *)ipv6) != 1)
+	if (inet_pton6(ip_str, (unsigned char *) ipv6) != 1)
 		return -EINVAL;
 
 	return 0;
 }
 
 int
-parse_range(const char *token, uint16_t *low, uint16_t *high)
-{
+parse_range(const char *token, uint16_t *low, uint16_t *high) {
 	char ch;
 	char num_str[20];
 	uint32_t pos;
@@ -325,8 +322,8 @@ parse_range(const char *token, uint16_t *low, uint16_t *high)
 
 	range_high = atoi(num_str);
 
-	*low = (uint16_t)range_low;
-	*high = (uint16_t)range_high;
+	*low = (uint16_t) range_low;
+	*high = (uint16_t) range_high;
 
 	return 0;
 }
@@ -339,15 +336,14 @@ struct cfg_sp_add_cfg_item {
 
 static void
 cfg_sp_add_cfg_item_parsed(void *parsed_result,
-	__rte_unused struct cmdline *cl, void *data)
-{
+						   __rte_unused struct cmdline *cl, void *data) {
 	struct cfg_sp_add_cfg_item *params = parsed_result;
 	char *tokens[32];
 	uint32_t n_tokens = RTE_DIM(tokens);
-	struct parse_status *status = (struct parse_status *)data;
+	struct parse_status *status = (struct parse_status *) data;
 
 	APP_CHECK((parse_tokenize_string(params->multi_string, tokens,
-		&n_tokens) == 0), status, "too many arguments");
+									 &n_tokens) == 0), status, "too many arguments");
 
 	if (status->status < 0)
 		return;
@@ -362,28 +358,30 @@ cfg_sp_add_cfg_item_parsed(void *parsed_result,
 			return;
 	} else {
 		APP_CHECK(0, status, "unrecognizable input %s\n",
-			tokens[0]);
+				  tokens[0]);
 		return;
 	}
 }
 
 static cmdline_parse_token_string_t cfg_sp_add_sp_str =
-	TOKEN_STRING_INITIALIZER(struct cfg_sp_add_cfg_item,
-		sp_keyword, "sp");
+		TOKEN_STRING_INITIALIZER(
+struct cfg_sp_add_cfg_item,
+sp_keyword, "sp");
 
 static cmdline_parse_token_string_t cfg_sp_add_multi_str =
-	TOKEN_STRING_INITIALIZER(struct cfg_sp_add_cfg_item, multi_string,
-		TOKEN_STRING_MULTI);
+		TOKEN_STRING_INITIALIZER(
+struct cfg_sp_add_cfg_item, multi_string,
+TOKEN_STRING_MULTI);
 
 cmdline_parse_inst_t cfg_sp_add_rule = {
-	.f = cfg_sp_add_cfg_item_parsed,
-	.data = NULL,
-	.help_str = "",
-	.tokens = {
-		(void *) &cfg_sp_add_sp_str,
-		(void *) &cfg_sp_add_multi_str,
-		NULL,
-	},
+		.f = cfg_sp_add_cfg_item_parsed,
+		.data = NULL,
+		.help_str = "",
+		.tokens = {
+				(void *) &cfg_sp_add_sp_str,
+				(void *) &cfg_sp_add_multi_str,
+				NULL,
+		},
 };
 
 /* sa add parse */
@@ -394,36 +392,37 @@ struct cfg_sa_add_cfg_item {
 
 static void
 cfg_sa_add_cfg_item_parsed(void *parsed_result,
-	__rte_unused struct cmdline *cl, void *data)
-{
+						   __rte_unused struct cmdline *cl, void *data) {
 	struct cfg_sa_add_cfg_item *params = parsed_result;
 	char *tokens[32];
 	uint32_t n_tokens = RTE_DIM(tokens);
-	struct parse_status *status = (struct parse_status *)data;
+	struct parse_status *status = (struct parse_status *) data;
 
 	APP_CHECK(parse_tokenize_string(params->multi_string, tokens,
-		&n_tokens) == 0, status, "too many arguments\n");
+									&n_tokens) == 0, status, "too many arguments\n");
 
 	parse_sa_tokens(tokens, n_tokens, status);
 }
 
 static cmdline_parse_token_string_t cfg_sa_add_sa_str =
-	TOKEN_STRING_INITIALIZER(struct cfg_sa_add_cfg_item,
-		sa_keyword, "sa");
+		TOKEN_STRING_INITIALIZER(
+struct cfg_sa_add_cfg_item,
+sa_keyword, "sa");
 
 static cmdline_parse_token_string_t cfg_sa_add_multi_str =
-	TOKEN_STRING_INITIALIZER(struct cfg_sa_add_cfg_item, multi_string,
-		TOKEN_STRING_MULTI);
+		TOKEN_STRING_INITIALIZER(
+struct cfg_sa_add_cfg_item, multi_string,
+TOKEN_STRING_MULTI);
 
 cmdline_parse_inst_t cfg_sa_add_rule = {
-	.f = cfg_sa_add_cfg_item_parsed,
-	.data = NULL,
-	.help_str = "",
-	.tokens = {
-		(void *) &cfg_sa_add_sa_str,
-		(void *) &cfg_sa_add_multi_str,
-		NULL,
-	},
+		.f = cfg_sa_add_cfg_item_parsed,
+		.data = NULL,
+		.help_str = "",
+		.tokens = {
+				(void *) &cfg_sa_add_sa_str,
+				(void *) &cfg_sa_add_multi_str,
+				NULL,
+		},
 };
 
 /* rt add parse */
@@ -434,16 +433,15 @@ struct cfg_rt_add_cfg_item {
 
 static void
 cfg_rt_add_cfg_item_parsed(void *parsed_result,
-	__rte_unused struct cmdline *cl, void *data)
-{
+						   __rte_unused struct cmdline *cl, void *data) {
 	struct cfg_rt_add_cfg_item *params = parsed_result;
 	char *tokens[32];
 	uint32_t n_tokens = RTE_DIM(tokens);
-	struct parse_status *status = (struct parse_status *)data;
+	struct parse_status *status = (struct parse_status *) data;
 
 	APP_CHECK(parse_tokenize_string(
-		params->multi_string, tokens, &n_tokens) == 0,
-		status, "too many arguments\n");
+			params->multi_string, tokens, &n_tokens) == 0,
+			  status, "too many arguments\n");
 	if (status->status < 0)
 		return;
 
@@ -451,35 +449,36 @@ cfg_rt_add_cfg_item_parsed(void *parsed_result,
 }
 
 static cmdline_parse_token_string_t cfg_rt_add_rt_str =
-	TOKEN_STRING_INITIALIZER(struct cfg_rt_add_cfg_item,
-		rt_keyword, "rt");
+		TOKEN_STRING_INITIALIZER(
+struct cfg_rt_add_cfg_item,
+rt_keyword, "rt");
 
 static cmdline_parse_token_string_t cfg_rt_add_multi_str =
-	TOKEN_STRING_INITIALIZER(struct cfg_rt_add_cfg_item, multi_string,
-		TOKEN_STRING_MULTI);
+		TOKEN_STRING_INITIALIZER(
+struct cfg_rt_add_cfg_item, multi_string,
+TOKEN_STRING_MULTI);
 
 cmdline_parse_inst_t cfg_rt_add_rule = {
-	.f = cfg_rt_add_cfg_item_parsed,
-	.data = NULL,
-	.help_str = "",
-	.tokens = {
-		(void *) &cfg_rt_add_rt_str,
-		(void *) &cfg_rt_add_multi_str,
-		NULL,
-	},
+		.f = cfg_rt_add_cfg_item_parsed,
+		.data = NULL,
+		.help_str = "",
+		.tokens = {
+				(void *) &cfg_rt_add_rt_str,
+				(void *) &cfg_rt_add_multi_str,
+				NULL,
+		},
 };
 
 /** set of cfg items */
 cmdline_parse_ctx_t ipsec_ctx[] = {
-	(cmdline_parse_inst_t *)&cfg_sp_add_rule,
-	(cmdline_parse_inst_t *)&cfg_sa_add_rule,
-	(cmdline_parse_inst_t *)&cfg_rt_add_rule,
-	NULL,
+		(cmdline_parse_inst_t * ) & cfg_sp_add_rule,
+		(cmdline_parse_inst_t * ) & cfg_sa_add_rule,
+		(cmdline_parse_inst_t * ) & cfg_rt_add_rule,
+		NULL,
 };
 
 int
-parse_cfg_file(const char *cfg_filename)
-{
+parse_cfg_file(const char *cfg_filename) {
 	struct cmdline *cl = cmdline_stdin_new(ipsec_ctx, "");
 	FILE *f = fopen(cfg_filename, "r");
 	char str[1024] = {0}, *get_s = NULL;
@@ -512,8 +511,8 @@ parse_cfg_file(const char *cfg_filename)
 
 		if (strlen(oneline) > 1022) {
 			rte_panic("%s:%u: error: "
-				"the line contains more characters the parser can handle\n",
-				cfg_filename, line_num);
+							  "the line contains more characters the parser can handle\n",
+					  cfg_filename, line_num);
 			goto error_exit;
 		}
 
@@ -528,10 +527,10 @@ parse_cfg_file(const char *cfg_filename)
 		/* process line concatenator '\' */
 		pos = strchr(oneline, 92);
 		if (pos != NULL) {
-			if (pos != oneline+strlen(oneline) - 2) {
+			if (pos != oneline + strlen(oneline) - 2) {
 				rte_panic("%s:%u: error: "
-					"no character should exist after '\\'\n",
-					cfg_filename, line_num);
+								  "no character should exist after '\\'\n",
+						  cfg_filename, line_num);
 				goto error_exit;
 			}
 
@@ -539,13 +538,13 @@ parse_cfg_file(const char *cfg_filename)
 
 			if (strlen(oneline) + strlen(str) > 1022) {
 				rte_panic("%s:%u: error: "
-					"the concatenated line contains more characters the parser can handle\n",
-					cfg_filename, line_num);
+								  "the concatenated line contains more characters the parser can handle\n",
+						  cfg_filename, line_num);
 				goto error_exit;
 			}
 
 			strncpy(str + strlen(str), oneline,
-				strlen(oneline));
+					strlen(oneline));
 
 			continue;
 		}
@@ -553,23 +552,23 @@ parse_cfg_file(const char *cfg_filename)
 		/* copy the line to str and process */
 		if (strlen(oneline) + strlen(str) > 1022) {
 			rte_panic("%s:%u: error: "
-				"the line contains more characters the parser can handle\n",
-				cfg_filename, line_num);
+							  "the line contains more characters the parser can handle\n",
+					  cfg_filename, line_num);
 			goto error_exit;
 		}
 		strncpy(str + strlen(str), oneline,
-			strlen(oneline));
+				strlen(oneline));
 
 		str[strlen(str)] = '\n';
 		if (cmdline_parse(cl, str) < 0) {
 			rte_panic("%s:%u: error: parsing \"%s\" failed\n",
-				cfg_filename, line_num, str);
+					  cfg_filename, line_num, str);
 			goto error_exit;
 		}
 
 		if (status.status < 0) {
 			rte_panic("%s:%u: error: %s", cfg_filename,
-				line_num, status.parse_msg);
+					  line_num, status.parse_msg);
 			goto error_exit;
 		}
 
@@ -581,7 +580,7 @@ parse_cfg_file(const char *cfg_filename)
 
 	return 0;
 
-error_exit:
+	error_exit:
 	if (cl)
 		cmdline_stdin_exit(cl);
 	if (f)

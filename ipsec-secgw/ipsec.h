@@ -49,13 +49,13 @@
 #define MAX_DIGEST_SIZE 32 /* Bytes -- 256 bits */
 
 #define uint32_t_to_char(ip, a, b, c, d) do {\
-		*a = (uint8_t)(ip >> 24 & 0xff);\
-		*b = (uint8_t)(ip >> 16 & 0xff);\
-		*c = (uint8_t)(ip >> 8 & 0xff);\
-		*d = (uint8_t)(ip & 0xff);\
-	} while (0)
+        *a = (uint8_t)(ip >> 24 & 0xff);\
+        *b = (uint8_t)(ip >> 16 & 0xff);\
+        *c = (uint8_t)(ip >> 8 & 0xff);\
+        *d = (uint8_t)(ip & 0xff);\
+    } while (0)
 
-#define DEFAULT_MAX_CATEGORIES	1
+#define DEFAULT_MAX_CATEGORIES    1
 
 #define IPSEC_SA_MAX_ENTRIES (128) /* must be power of 2, max 2 power 30 */
 #define SPI2IDX(spi) (spi & (IPSEC_SA_MAX_ENTRIES - 1))
@@ -78,7 +78,7 @@ struct rte_mbuf;
 struct ipsec_sa;
 
 typedef int32_t (*ipsec_xform_fn)(struct rte_mbuf *m, struct ipsec_sa *sa,
-		struct rte_crypto_op *cop);
+								  struct rte_crypto_op *cop);
 
 struct ip_addr {
 	union {
@@ -90,7 +90,7 @@ struct ip_addr {
 	} ip;
 };
 
-#define MAX_KEY_SIZE		32
+#define MAX_KEY_SIZE        32
 
 struct ipsec_sa {
 	uint32_t spi;
@@ -129,7 +129,8 @@ struct cdev_qp {
 	uint16_t qp;
 	uint16_t in_flight;
 	uint16_t len;
-	struct rte_crypto_op *buf[MAX_PKT_BURST] __rte_aligned(sizeof(void *));
+	struct rte_crypto_op *buf[MAX_PKT_BURST]
+	__rte_aligned(sizeof(void *));
 };
 
 struct ipsec_ctx {
@@ -168,43 +169,38 @@ struct cnt_blk {
 
 uint16_t
 ipsec_inbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],
-		uint16_t nb_pkts, uint16_t len);
+			  uint16_t nb_pkts, uint16_t len);
 
 uint16_t
 ipsec_outbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],
-		uint32_t sa_idx[], uint16_t nb_pkts, uint16_t len);
+			   uint32_t sa_idx[], uint16_t nb_pkts, uint16_t len);
 
 static inline uint16_t
-ipsec_metadata_size(void)
-{
+ipsec_metadata_size(void) {
 	return sizeof(struct ipsec_mbuf_metadata);
 }
 
 static inline struct ipsec_mbuf_metadata *
-get_priv(struct rte_mbuf *m)
-{
+get_priv(struct rte_mbuf *m) {
 	return RTE_PTR_ADD(m, sizeof(struct rte_mbuf));
 }
 
 static inline void *
-get_cnt_blk(struct rte_mbuf *m)
-{
+get_cnt_blk(struct rte_mbuf *m) {
 	struct ipsec_mbuf_metadata *priv = get_priv(m);
 
 	return &priv->buf[0];
 }
 
 static inline void *
-get_aad(struct rte_mbuf *m)
-{
+get_aad(struct rte_mbuf *m) {
 	struct ipsec_mbuf_metadata *priv = get_priv(m);
 
 	return &priv->buf[16];
 }
 
 static inline void *
-get_sym_cop(struct rte_crypto_op *cop)
-{
+get_sym_cop(struct rte_crypto_op *cop) {
 	return (cop + 1);
 }
 
@@ -213,11 +209,11 @@ inbound_sa_check(struct sa_ctx *sa_ctx, struct rte_mbuf *m, uint32_t sa_idx);
 
 void
 inbound_sa_lookup(struct sa_ctx *sa_ctx, struct rte_mbuf *pkts[],
-		struct ipsec_sa *sa[], uint16_t nb_pkts);
+				  struct ipsec_sa *sa[], uint16_t nb_pkts);
 
 void
 outbound_sa_lookup(struct sa_ctx *sa_ctx, uint32_t sa_idx[],
-		struct ipsec_sa *sa[], uint16_t nb_pkts);
+				   struct ipsec_sa *sa[], uint16_t nb_pkts);
 
 void
 sp4_init(struct socket_ctx *ctx, int32_t socket_id);

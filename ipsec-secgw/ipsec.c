@@ -45,30 +45,29 @@
 #include "esp.h"
 
 static inline int
-create_session(struct ipsec_ctx *ipsec_ctx __rte_unused, struct ipsec_sa *sa)
-{
+create_session(struct ipsec_ctx *ipsec_ctx __rte_unused, struct ipsec_sa *sa) {
 	unsigned long cdev_id_qp = 0;
 	int32_t ret;
-	struct cdev_key key = { 0 };
+	struct cdev_key key = {0};
 
-	key.lcore_id = (uint8_t)rte_lcore_id();
+	key.lcore_id = (uint8_t) rte_lcore_id();
 
-	key.cipher_algo = (uint8_t)sa->cipher_algo;
-	key.auth_algo = (uint8_t)sa->auth_algo;
+	key.cipher_algo = (uint8_t) sa->cipher_algo;
+	key.auth_algo = (uint8_t) sa->auth_algo;
 
 	ret = rte_hash_lookup_data(ipsec_ctx->cdev_map, &key,
-			(void **)&cdev_id_qp);
+							   (void **) &cdev_id_qp);
 	if (ret < 0) {
 		RTE_LOG(ERR, IPSEC, "No cryptodev: core %u, cipher_algo %u, "
-				"auth_algo %u\n", key.lcore_id, key.cipher_algo,
+						"auth_algo %u\n", key.lcore_id, key.cipher_algo,
 				key.auth_algo);
 		return -1;
 	}
 
 	RTE_LOG_DP(DEBUG, IPSEC, "Create session for SA spi %u on cryptodev "
-			"%u qp %u\n", sa->spi,
-			ipsec_ctx->tbl[cdev_id_qp].id,
-			ipsec_ctx->tbl[cdev_id_qp].qp);
+					   "%u qp %u\n", sa->spi,
+			   ipsec_ctx->tbl[cdev_id_qp].id,
+			   ipsec_ctx->tbl[cdev_id_qp].qp);
 
 	sa->crypto_session = rte_cryptodev_sym_session_create(
 			ipsec_ctx->tbl[cdev_id_qp].id, sa->xforms);
@@ -79,20 +78,19 @@ create_session(struct ipsec_ctx *ipsec_ctx __rte_unused, struct ipsec_sa *sa)
 }
 
 static inline void
-enqueue_cop(struct cdev_qp *cqp, struct rte_crypto_op *cop)
-{
+enqueue_cop(struct cdev_qp *cqp, struct rte_crypto_op *cop) {
 	int32_t ret, i;
 
 	cqp->buf[cqp->len++] = cop;
 
 	if (cqp->len == MAX_PKT_BURST) {
 		ret = rte_cryptodev_enqueue_burst(cqp->id, cqp->qp,
-				cqp->buf, cqp->len);
+										  cqp->buf, cqp->len);
 		if (ret < cqp->len) {
 			RTE_LOG_DP(DEBUG, IPSEC, "Cryptodev %u queue %u:"
-					" enqueued %u crypto ops out of %u\n",
-					 cqp->id, cqp->qp,
-					 ret, cqp->len);
+							   " enqueued %u crypto ops out of %u\n",
+					   cqp->id, cqp->qp,
+					   ret, cqp->len);
 			for (i = ret; i < cqp->len; i++)
 				rte_pktmbuf_free(cqp->buf[i]->sym->m_src);
 		}
@@ -103,9 +101,8 @@ enqueue_cop(struct cdev_qp *cqp, struct rte_crypto_op *cop)
 
 static inline void
 ipsec_enqueue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
-		struct rte_mbuf *pkts[], struct ipsec_sa *sas[],
-		uint16_t nb_pkts)
-{
+			  struct rte_mbuf *pkts[], struct ipsec_sa *sas[],
+			  uint16_t nb_pkts) {
 	int32_t ret = 0, i;
 	struct ipsec_mbuf_metadata *priv;
 	struct ipsec_sa *sa;
@@ -130,13 +127,13 @@ ipsec_enqueue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 		priv->cop.sym = &priv->sym_cop;
 
 		if ((unlikely(sa->crypto_session == NULL)) &&
-				create_session(ipsec_ctx, sa)) {
+			create_session(ipsec_ctx, sa)) {
 			rte_pktmbuf_free(pkts[i]);
 			continue;
 		}
 
 		rte_crypto_op_attach_sym_session(&priv->cop,
-				sa->crypto_session);
+										 sa->crypto_session);
 
 		ret = xform_func(pkts[i], sa, &priv->cop);
 		if (unlikely(ret)) {
@@ -151,8 +148,7 @@ ipsec_enqueue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 
 static inline int
 ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
-		struct rte_mbuf *pkts[], uint16_t max_pkts)
-{
+			  struct rte_mbuf *pkts[], uint16_t max_pkts) {
 	int32_t nb_pkts = 0, ret = 0, i, j, nb_cops;
 	struct ipsec_mbuf_metadata *priv;
 	struct rte_crypto_op *cops[max_pkts];
@@ -170,7 +166,7 @@ ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 			continue;
 
 		nb_cops = rte_cryptodev_dequeue_burst(cqp->id, cqp->qp,
-				cops, max_pkts - nb_pkts);
+											  cops, max_pkts - nb_pkts);
 
 		cqp->in_flight -= nb_cops;
 
@@ -197,8 +193,7 @@ ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 
 uint16_t
 ipsec_inbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],
-		uint16_t nb_pkts, uint16_t len)
-{
+			  uint16_t nb_pkts, uint16_t len) {
 	struct ipsec_sa *sas[nb_pkts];
 
 	inbound_sa_lookup(ctx->sa_ctx, pkts, sas, nb_pkts);
@@ -210,8 +205,7 @@ ipsec_inbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],
 
 uint16_t
 ipsec_outbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],
-		uint32_t sa_idx[], uint16_t nb_pkts, uint16_t len)
-{
+			   uint32_t sa_idx[], uint16_t nb_pkts, uint16_t len) {
 	struct ipsec_sa *sas[nb_pkts];
 
 	outbound_sa_lookup(ctx->sa_ctx, sa_idx, sas, nb_pkts);
