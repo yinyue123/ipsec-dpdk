@@ -15,22 +15,12 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/mydpdkdns/.idea/mydpdkdns.iml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/mydpdkdns/.idea/vcs.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/mydpdkdns/.idea/workspace.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ipsec-secgw/core.11862" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mydpdkdns" afterPath="$PROJECT_DIR$/mydpdkdns" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xfrm-listen" afterPath="$PROJECT_DIR$/xfrm-listen" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xfrm-listen/a.out" afterPath="$PROJECT_DIR$/xfrm-listen/a.out" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/esp.c" afterPath="$PROJECT_DIR$/ipsec-secgw/esp.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/esp.h" afterPath="$PROJECT_DIR$/ipsec-secgw/esp.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/ipip.h" afterPath="$PROJECT_DIR$/ipsec-secgw/ipip.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/ipsec.c" afterPath="$PROJECT_DIR$/ipsec-secgw/ipsec.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/ipsec.h" afterPath="$PROJECT_DIR$/ipsec-secgw/ipsec.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/parser.c" afterPath="$PROJECT_DIR$/ipsec-secgw/parser.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/parser.h" afterPath="$PROJECT_DIR$/ipsec-secgw/parser.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/rt.c" afterPath="$PROJECT_DIR$/ipsec-secgw/rt.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/sa.c" afterPath="$PROJECT_DIR$/ipsec-secgw/sa.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/sp4.c" afterPath="$PROJECT_DIR$/ipsec-secgw/sp4.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/sp6.c" afterPath="$PROJECT_DIR$/ipsec-secgw/sp6.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/xfrm.c" afterPath="$PROJECT_DIR$/ipsec-secgw/xfrm.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipsec-secgw/xfrm.h" afterPath="$PROJECT_DIR$/ipsec-secgw/xfrm.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mydpdkdns/tools/monitor.sh" afterPath="$PROJECT_DIR$/mydpdkdns/tools/monitor.sh" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mydpdkdns/tools/preparedpdk.sh" afterPath="$PROJECT_DIR$/mydpdkdns/tools/preparedpdk.sh" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mydpdkdns/tools/start.sh" afterPath="$PROJECT_DIR$/mydpdkdns/tools/start.sh" />
@@ -60,10 +50,10 @@
       <file leaf-file-name="ipsec-secgw.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec-secgw.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="12521">
+            <state relative-caret-position="13425">
               <caret line="895" column="0" selection-start-line="895" selection-start-column="0" selection-end-line="895" selection-end-column="0" />
               <folding>
-                <element signature="e#3761#4090#0" expanded="true" />
+                <element signature="e#3761#4090#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -72,18 +62,8 @@
       <file leaf-file-name="ipsec.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1154">
+            <state relative-caret-position="1710">
               <caret line="114" column="26" selection-start-line="114" selection-start-column="26" selection-end-line="114" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="parser.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ipsec-secgw/parser.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1334">
-              <caret line="42" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="590" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -92,28 +72,18 @@
       <file leaf-file-name="kni.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/kni.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3376">
+            <state relative-caret-position="646">
               <caret line="323" column="31" selection-start-line="323" selection-start-column="31" selection-end-line="323" selection-end-column="31" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="kni.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ipsec-secgw/kni.h">
+      <file leaf-file-name="xfrm.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ipsec-secgw/xfrm.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="parser.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ipsec-secgw/parser.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1080">
-              <caret line="30" column="3" selection-start-line="30" selection-start-column="3" selection-end-line="30" selection-end-column="3" />
+            <state relative-caret-position="165">
+              <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -122,7 +92,7 @@
       <file leaf-file-name="ipsec.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="76">
+            <state relative-caret-position="2730">
               <caret line="182" column="30" selection-start-line="182" selection-start-column="30" selection-end-line="182" selection-end-column="30" />
               <folding />
             </state>
@@ -132,7 +102,7 @@
       <file leaf-file-name="ipip.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipip.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
+            <state relative-caret-position="720">
               <caret line="48" column="19" selection-start-line="48" selection-start-column="19" selection-end-line="48" selection-end-column="19" />
               <folding />
             </state>
@@ -142,18 +112,38 @@
       <file leaf-file-name="esp.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/esp.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
+            <state relative-caret-position="585">
               <caret line="39" column="17" selection-start-line="39" selection-start-column="17" selection-end-line="39" selection-end-column="17" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="esp.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="esp.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/esp.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="401" selection-end-column="0" />
+            <state relative-caret-position="-3553">
+              <caret line="33" column="19" selection-start-line="33" selection-start-column="19" selection-end-line="33" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sa.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ipsec-secgw/sa.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="435">
+              <caret line="202" column="22" selection-start-line="202" selection-start-column="22" selection-end-line="202" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="xfrm.c" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ipsec-secgw/xfrm.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="150">
+              <caret line="64" column="15" selection-start-line="64" selection-start-column="15" selection-end-line="64" selection-end-column="15" />
               <folding />
             </state>
           </provider>
@@ -180,8 +170,6 @@
         <option value="$PROJECT_DIR$/xfrm-listen/xfrm_listen.c" />
         <option value="$PROJECT_DIR$/ipsec-secgw/Makefile" />
         <option value="$PROJECT_DIR$/ipsec-secgw/xfrm.h" />
-        <option value="$PROJECT_DIR$/ipsec-secgw/xfrm.c" />
-        <option value="$PROJECT_DIR$/ipsec-secgw/sa.c" />
         <option value="$PROJECT_DIR$/ipsec-secgw/sp6.c" />
         <option value="$PROJECT_DIR$/ipsec-secgw/sp4.c" />
         <option value="$PROJECT_DIR$/ipsec-secgw/rt.c" />
@@ -193,6 +181,8 @@
         <option value="$PROJECT_DIR$/ipsec-secgw/ipip.h" />
         <option value="$PROJECT_DIR$/ipsec-secgw/esp.h" />
         <option value="$PROJECT_DIR$/ipsec-secgw/esp.c" />
+        <option value="$PROJECT_DIR$/ipsec-secgw/sa.c" />
+        <option value="$PROJECT_DIR$/ipsec-secgw/xfrm.c" />
       </list>
     </option>
   </component>
@@ -509,18 +499,19 @@
       <workItem from="1549020960257" duration="1469000" />
       <workItem from="1549098359699" duration="2882000" />
       <workItem from="1549161133382" duration="18138000" />
-      <workItem from="1549429499174" duration="9312000" />
+      <workItem from="1549429499174" duration="9487000" />
+      <workItem from="1549537065521" duration="1845000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="139672000" />
+    <option name="totallyTimeSpent" value="141692000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1278" height="773" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13615024" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13615024" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328125" sideWeight="0.496875" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31676137" sideWeight="0.50625" order="10" side_tool="true" content_ui="tabs" />
@@ -786,7 +777,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="42" column="63" selection-start-line="42" selection-start-column="63" selection-end-line="42" selection-end-column="63" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -794,23 +784,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1780">
           <caret line="161" column="29" selection-start-line="161" selection-start-column="4" selection-end-line="161" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ipsec-secgw/xfrm.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ipsec-secgw/xfrm.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1082">
-          <caret line="65" column="10" selection-start-line="65" selection-start-column="10" selection-end-line="65" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -818,7 +791,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-8279">
           <caret line="54" column="13" selection-start-line="54" selection-start-column="13" selection-end-line="54" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -826,23 +798,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="471">
           <caret line="474" column="49" selection-start-line="474" selection-start-column="49" selection-end-line="474" selection-end-column="49" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ipsec-secgw/sa.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="778" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="791" selection-end-column="0" />
-          <folding>
-            <marker date="1549443650000" expanded="true" signature="5091:12231" ph="{...}" />
-            <marker date="1549443650000" expanded="true" signature="14405:16553" ph="{...}" />
-            <marker date="1549443650000" expanded="true" signature="16672:16729" ph="{...}" />
-            <marker date="1549443650000" expanded="true" signature="16846:16903" ph="{...}" />
-            <marker date="1549443650000" expanded="true" signature="18357:19346" ph="{...}" />
-            <marker date="1549443650000" expanded="true" signature="19466:19568" ph="{...}" />
-            <marker date="1549443650000" expanded="true" signature="19684:19766" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -850,15 +805,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="296">
           <caret line="132" column="0" selection-start-line="132" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
-          <folding>
-            <marker date="1549443926000" expanded="true" signature="2298:4281" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/parser.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1080">
+        <state relative-caret-position="450">
           <caret line="30" column="3" selection-start-line="30" selection-start-column="3" selection-end-line="30" selection-end-column="3" />
           <folding />
         </state>
@@ -866,7 +818,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/parser.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1334">
+        <state relative-caret-position="630">
           <caret line="42" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="590" selection-end-column="0" />
           <folding />
         </state>
@@ -880,27 +832,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ipsec-secgw/kni.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3376">
-          <caret line="323" column="31" selection-start-line="323" selection-start-column="31" selection-end-line="323" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec-secgw.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12521">
+        <state relative-caret-position="13425">
           <caret line="895" column="0" selection-start-line="895" selection-start-column="0" selection-end-line="895" selection-end-column="0" />
           <folding>
-            <element signature="e#3761#4090#0" expanded="true" />
+            <element signature="e#3761#4090#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1154">
+        <state relative-caret-position="1710">
           <caret line="114" column="26" selection-start-line="114" selection-start-column="26" selection-end-line="114" selection-end-column="26" />
           <folding />
         </state>
@@ -908,7 +852,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
+        <state relative-caret-position="2730">
           <caret line="182" column="30" selection-start-line="182" selection-start-column="30" selection-end-line="182" selection-end-column="30" />
           <folding />
         </state>
@@ -916,7 +860,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipip.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
+        <state relative-caret-position="720">
           <caret line="48" column="19" selection-start-line="48" selection-start-column="19" selection-end-line="48" selection-end-column="19" />
           <folding />
         </state>
@@ -924,7 +868,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/esp.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
+        <state relative-caret-position="585">
           <caret line="39" column="17" selection-start-line="39" selection-start-column="17" selection-end-line="39" selection-end-column="17" />
           <folding />
         </state>
@@ -932,8 +876,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/esp.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="401" selection-end-column="0" />
+        <state relative-caret-position="-3553">
+          <caret line="33" column="19" selection-start-line="33" selection-start-column="19" selection-end-line="33" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ipsec-secgw/kni.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="646">
+          <caret line="323" column="31" selection-start-line="323" selection-start-column="31" selection-end-line="323" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ipsec-secgw/xfrm.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ipsec-secgw/sa.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="202" column="22" selection-start-line="202" selection-start-column="22" selection-end-line="202" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ipsec-secgw/xfrm.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="64" column="15" selection-start-line="64" selection-start-column="15" selection-end-line="64" selection-end-column="15" />
           <folding />
         </state>
       </provider>
