@@ -28,7 +28,8 @@ struct shared_data {
 	uint32_t written;
 	uint32_t n_tokens;
 	char type[10];
-	char tokens[20][100];
+	char *tokens[20];
+	char tokens_save[20][100];
 	struct parse_status status;
 };
 
@@ -71,7 +72,9 @@ send_xfrm(const char *type, const char **tokens, uint32_t n_tokens, struct parse
 	for (i = 0; i < n_tokens; i++) {
 		strcpy(shared_mem->tokens[i], tokens[i]);
 	}
-	memcpy(&shared_mem->status, status, sizeof(struct parse_status));
+	shared_mem->status.status = status->status;
+	strcpy(shared_mem->status.parse_msg, status->parse_msg);
+	//memcpy(&shared_mem->status, status, sizeof(struct parse_status));
 	shared_mem->written = 1;
 }
 
@@ -85,7 +88,7 @@ recv_xfrm(void) {
 				printf("%s ", shared_mem->tokens[i]);
 			}
 			printf("\n");
-			parse_sa_tokens(shared_mem->tokens,shared_mem->n_tokens,&shared_mem->status);
+			parse_sa_tokens(shared_mem->tokens, shared_mem->n_tokens, &shared_mem->status);
 		}
 		shared_mem->written = 0;
 	}
@@ -390,6 +393,7 @@ xfrm_init(void) {
 	struct nl_sock *sock;
 	pid_t pid;
 	int shmid;
+	int i;
 
 	// create share memory
 	if ((shmid = shmget(IPC_PRIVATE, sizeof(struct shared_data), 0666)) < 0) {
@@ -411,6 +415,9 @@ xfrm_init(void) {
 		printf("parent attach share memory:%p\n", shared_mem);
 		//prctl(PR_SET_PDEATHSIG,SIGHUP);
 		memset(shared_mem, 0, sizeof(struct shared_data));
+		for (i = 0; i < 20; i++) {
+			shared_mem->tokens[i] = shared_mem->tokens_save[i];
+		}
 		return 0;
 	}
 
