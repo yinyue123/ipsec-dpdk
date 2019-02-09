@@ -770,6 +770,7 @@ main_loop(__attribute__((unused)) void *dummy) {
 
 		if (unlikely(diff_tsc > drain_tsc)) {
 			drain_buffers(qconf);
+			recv_xfrm();
 			prev_tsc = cur_tsc;
 		}
 
@@ -786,8 +787,6 @@ main_loop(__attribute__((unused)) void *dummy) {
 			if (KNI_PORT(portid)) {
 				forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
 			}
-
-			recv_xfrm();
 		}
 	}
 }
