@@ -73,7 +73,7 @@ check_kni_data(struct rte_mbuf *pkt) {
 	ip_hdr = rte_pktmbuf_mtod_offset(pkt,
 	struct ipv4_hdr *, sizeof(struct ether_hdr));
 	if (ip_hdr->next_proto_id == IPPROTO_ESP) {
-		//printf("return 0");
+		printf("recv esp package");
 		return 0;
 	}
 	//printf("return 1");
