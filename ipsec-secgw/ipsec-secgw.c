@@ -1433,6 +1433,49 @@ pool_init(struct socket_ctx *ctx, int32_t socket_id, uint32_t nb_mbuf) {
 		printf("Allocated mbuf pool on socket %d\n", socket_id);
 }
 
+static void hash(void) {
+	struct rte_hash *hash;
+	struct rte_hash_parameters params = {
+			.entries = 1024,
+			.key_len = sizeof(uint32_t),
+			.hash_func = rte_jhash,
+			.hash_func_init_val = 0,
+	};
+
+	int ret;
+
+
+	hash = rte_hash_create(&params);
+	if (!hash) {
+		rte_exit(EXIT_FAILURE, "rte_hash_create failed\n");
+	}
+	{
+		uint32_t key;
+		int d;
+
+		key = 1;
+		d = 1;
+		rte_hash_add_key_data(hash, &key, (void *) (long) d);
+
+		key = 2;
+		d = 2;
+		rte_hash_add_key_data(hash, &key, (void *) (long) d);
+	}
+	uint32_t key;
+	int d;
+	key = 2;
+	ret = rte_hash_lookup_data(hash, &key, (void **) &d);
+	printf("ret:%d %d %d %d\n",ret,ENOENT,EINVAL,d);
+	if (ret < 0) {
+		if (ret == ENOENT)
+			printf("key not found");
+		else if (ret == EINVAL)
+			printf("invalid param");
+	} else {
+		printf("get value:%d\n", d);
+	}
+}
+
 int32_t
 main(int32_t argc, char **argv) {
 	int32_t ret;
@@ -1450,6 +1493,9 @@ main(int32_t argc, char **argv) {
 	ret = parse_args(argc, argv);
 	if (ret < 0)
 		rte_exit(EXIT_FAILURE, "Invalid parameters\n");
+
+	hash();
+	return 0;
 
 	if (xfrm_init() < 0) {
 		return 1;
