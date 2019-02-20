@@ -204,6 +204,12 @@ get_sym_cop(struct rte_crypto_op *cop) {
 	return (cop + 1);
 }
 
+//inline void
+//sa_check_add_rules(struct socket_ctx *ctx);
+
+inline void
+sa_check_add_rules(struct sa_ctx *lcore_sa_in, struct sa_ctx *lcore_sa_out);
+
 int
 inbound_sa_check(struct sa_ctx *sa_ctx, struct rte_mbuf *m, uint32_t sa_idx);
 

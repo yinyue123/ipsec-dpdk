@@ -94,6 +94,26 @@ recv_xfrm(void) {
 	}
 }
 
+//void
+//recv_xfrm(void) {
+//	uint32_t i;
+//	char* temp_tokens[20];
+//	if (shared_mem->written) {
+//		if (strcmp(shared_mem->type, "sa") == 0) {
+//			printf("recv_xfrm:sa\n");
+//			for (i = 0; i < shared_mem->n_tokens; i++) {
+//				printf("%s ", shared_mem->tokens[i]);
+//				temp_tokens[i]=(char *)malloc(sizeof(char)*(strlen(shared_mem->tokens[i])+1));
+//				strcpy(temp_tokens[i],shared_mem->tokens[i]);
+//			}
+//			printf("\n");
+//			parse_sa_tokens(temp_tokens, shared_mem->n_tokens, &shared_mem->status);
+//			//parse_sa_tokens(shared_mem->tokens, shared_mem->n_tokens, &shared_mem->status);
+//		}
+//		shared_mem->written = 0;
+//	}
+//}
+
 static void
 add_sa(
 		const char *in_out,
@@ -180,14 +200,16 @@ deal_sa(
 	const char *s_mode;
 	const char *s_src;
 	const char *s_dst;
-	const char *localIp = "192.168.10.120";
+	//const char *localIp = "192.168.10.120";
+	const char *localIp = "192.168.100.1";
 
 	// check esp package
 	if (proto != 50)
 		return;
 
 	// s_in_out
-	if (strcmp(saddr, localIp) == 0)
+	//if (strcmp(saddr, localIp) == 0)
+	if (strcmp(daddr, localIp) == 0)
 		s_in_out = "in";
 	else
 		s_in_out = "out";

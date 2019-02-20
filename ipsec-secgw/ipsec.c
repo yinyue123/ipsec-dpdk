@@ -70,7 +70,7 @@ create_session(struct ipsec_ctx *ipsec_ctx __rte_unused, struct ipsec_sa *sa) {
 			   ipsec_ctx->tbl[cdev_id_qp].qp);
 
 	sa->crypto_session = rte_cryptodev_sym_session_create(
-			ipsec_ctx->tbl[cdev_id_qp].id, sa->xforms);
+			ipsec_ctx->tbl[cdev_id_qp].id, sa->xforms);//断点
 
 	sa->cdev_id_qp = cdev_id_qp;
 
@@ -144,6 +144,7 @@ ipsec_enqueue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 		RTE_ASSERT(sa->cdev_id_qp < ipsec_ctx->nb_qps);
 		enqueue_cop(&ipsec_ctx->tbl[sa->cdev_id_qp], &priv->cop);
 	}
+	printf("ipsec_enqueue nb_pkts:%d\t\n",nb_pkts);
 }
 
 static inline int
@@ -186,6 +187,7 @@ ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 				pkts[nb_pkts++] = pkt;
 		}
 	}
+	printf("ipsec_dequeue nb_pkts:%d\tnb_cops:%d\tipsec_ctx->nb_qps:%d\n",nb_pkts,nb_cops,ipsec_ctx->nb_qps);
 
 	/* return packets */
 	return nb_pkts;

@@ -131,9 +131,11 @@ const struct supported_auth_algo auth_algos[] = {
 
 struct ipsec_sa sa_out[IPSEC_SA_MAX_ENTRIES];
 uint32_t nb_sa_out;
+uint32_t nb_sa_out_start;
 
 struct ipsec_sa sa_in[IPSEC_SA_MAX_ENTRIES];
 uint32_t nb_sa_in;
+uint32_t nb_sa_in_start;
 
 static const struct supported_cipher_algo *
 find_match_cipher_algo(const char *cipher_keyword) {
@@ -587,12 +589,16 @@ sa_create(const char *name, int32_t socket_id) {
 
 static int
 sa_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],
-			 uint32_t nb_entries, uint32_t inbound) {
+			 uint32_t *nb_start, uint32_t nb_entries, uint32_t inbound) {
+//			 , uint32_t nb_entries, uint32_t inbound) {
 	struct ipsec_sa *sa;
 	uint32_t i, idx;
 
-	for (i = 0; i < nb_entries; i++) {
+	//for (i = 0; i < nb_entries; i++) {
+	for (i = *nb_start; i < nb_entries; i++) {
+		(*nb_start)++;
 		idx = SPI2IDX(entries[i].spi);
+		printf("sa_add_rules idx:%u spi:%u\n", idx, entries[i].spi);
 		sa = &sa_ctx->sa[idx];
 		if (sa->spi != 0) {
 			printf("Index %u already in use by SPI %u\n",
@@ -600,6 +606,7 @@ sa_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],
 			return -EINVAL;
 		}
 		*sa = entries[i];
+		//printf("sa->spi:%d address:%p\n",sa->spi,*sa);//断点
 		sa->seq = 0;
 
 		switch (sa->flags) {
@@ -666,18 +673,35 @@ sa_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],
 static inline int
 sa_out_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],
 				 uint32_t nb_entries) {
-	return sa_add_rules(sa_ctx, entries, nb_entries, 0);
+//	return sa_add_rules(sa_ctx, entries, nb_entries, 0);
+	return sa_add_rules(sa_ctx, entries, &nb_sa_out_start, nb_entries, 0);
 }
 
 static inline int
 sa_in_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],
 				uint32_t nb_entries) {
-	return sa_add_rules(sa_ctx, entries, nb_entries, 1);
+//	return sa_add_rules(sa_ctx, entries, nb_entries, 1);
+	return sa_add_rules(sa_ctx, entries, &nb_sa_in_start, nb_entries, 1);
+}
+
+//inline void
+//sa_check_add_rules(struct socket_ctx *ctx) {
+//	sa_in_add_rules(ctx->sa_in, sa_in, nb_sa_in);
+//	sa_out_add_rules(ctx->sa_out, sa_out, nb_sa_out);
+//}
+
+inline void
+sa_check_add_rules(struct sa_ctx *lcore_sa_in,struct sa_ctx *lcore_sa_out) {
+	sa_in_add_rules(lcore_sa_in, sa_in, nb_sa_in);
+	sa_out_add_rules(lcore_sa_out, sa_out, nb_sa_out);
 }
 
 void
 sa_init(struct socket_ctx *ctx, int32_t socket_id) {
 	const char *name;
+
+	nb_sa_in_start = 0;
+	nb_sa_out_start = 0;
 
 	if (ctx == NULL)
 		rte_exit(EXIT_FAILURE, "NULL context.\n");
@@ -747,6 +771,13 @@ single_inbound_lookup(struct ipsec_sa *sadb, struct rte_mbuf *pkt,
 		return;
 
 	sa = &sadb[SPI2IDX(rte_be_to_cpu_32(esp->spi))];
+//	printf("sadb:%p\n",sadb);
+	printf("esp idx:%u spi:%u\n", SPI2IDX(rte_be_to_cpu_32(esp->spi)), esp->spi);
+//	printf("esp esp idx:%u sa spi:%u address:%p\n", rte_be_to_cpu_32(esp->spi), sa->spi,sa);
+//	int i;
+//	for(i=0;i<IPSEC_SA_MAX_ENTRIES;i++){
+//		printf("sa spi %d:%u\n",i,sadb[i].spi);
+//	}
 	if (rte_be_to_cpu_32(esp->spi) != sa->spi)
 		return;
 

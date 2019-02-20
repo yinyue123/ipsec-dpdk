@@ -48,6 +48,7 @@
 //#include <signal.h>
 //#include <sys/prctl.h>
 //#include <sys/time.h>
+#include <arpa/inet.h>
 
 #include <rte_common.h>
 #include <rte_byteorder.h>
@@ -249,16 +250,6 @@ struct ipsec_traffic {
 	struct traffic_type kni;
 };
 
-//double tick(void)
-//{
-//	struct timeval t;
-//	gettimeofday(&t, 0);
-//	return t.tv_sec + 1E-6 * t.tv_usec;
-//}
-
-//double t=0;
-//printf("process_pkts in %.3f secs \n", tick() - t);
-//t = tick();
 
 static inline void
 prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid) {
@@ -427,6 +418,11 @@ inbound_sp_sa(struct sp_ctx *sp, struct sa_ctx *sa, struct traffic_type *ip,
 
 	j = 0;
 	for (i = 0; i < ip->num; i++) {
+
+		//输出IP
+//		unsigned char *strIp = (char *)(*(ip->data[i]));
+//		printf("inbound_sp_sa send to: %d.%d.%d.%d\n", strIp[0], strIp[1], strIp[2], strIp[3]);
+
 		m = ip->pkts[i];
 		res = ip->res[i];
 		if (res & BYPASS) {
@@ -454,17 +450,25 @@ process_pkts_inbound(struct ipsec_ctx *ipsec_ctx,
 	struct rte_mbuf *m;
 	uint16_t idx, nb_pkts_in, i, n_ip4, n_ip6;
 
+	printf("process_pkts_inbound traffic->ipsec.num:%d\n", traffic->ipsec.num);
+
 	nb_pkts_in = ipsec_inbound(ipsec_ctx, traffic->ipsec.pkts,
 							   traffic->ipsec.num, MAX_PKT_BURST);
 
 	n_ip4 = traffic->ip4.num;
 	n_ip6 = traffic->ip6.num;
 
+	printf("process_pkts_inbound nb_pkts_in:%d\n", nb_pkts_in);
 	/* SP/ACL Inbound check ipsec and ip4 */
 	for (i = 0; i < nb_pkts_in; i++) {
 		m = traffic->ipsec.pkts[i];
 		struct ip *ip = rte_pktmbuf_mtod(m,
 		struct ip *);
+
+		//输出ip(inet_ntoa有陷阱)
+		printf("src: %s\t", inet_ntoa(ip->ip_src));
+		printf("dst: %s\n", inet_ntoa(ip->ip_dst));
+
 		if (ip->ip_v == IPVERSION) {
 			idx = traffic->ip4.num++;
 			traffic->ip4.pkts[idx] = m;
@@ -624,6 +628,7 @@ route4_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {
 	uint32_t dst_ip[MAX_PKT_BURST * 2];
 	uint16_t i, offset;
 
+//	printf("route4_pkts nb_pkts:%d\n",nb_pkts);
 	if (nb_pkts == 0)
 		return;
 
@@ -633,6 +638,10 @@ route4_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {
 		dst_ip[i] = *rte_pktmbuf_mtod_offset(pkts[i],
 											 uint32_t * , offset);
 		dst_ip[i] = rte_be_to_cpu_32(dst_ip[i]);
+
+//		//输出IP
+//		unsigned char *strIp = (char *)dst_ip[i];
+//		printf("route4_pkts send to: %d.%d.%d.%d\n", strIp[0], strIp[1], strIp[2], strIp[3]);
 	}
 
 	rte_lpm_lookup_bulk((struct rte_lpm *) rt_ctx, dst_ip, hop, nb_pkts);
@@ -643,6 +652,7 @@ route4_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {
 			continue;
 		}
 		send_single_packet(pkts[i], hop[i] & 0xff);
+		printf("send to port:%d\n", hop[i] & 0xff);
 	}
 }
 
@@ -675,6 +685,17 @@ route6_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {
 	}
 }
 
+//double tick(void)
+//{
+//	struct timeval t;
+//	gettimeofday(&t, 0);
+//	return t.tv_sec + 1E-6 * t.tv_usec;
+//}
+//
+//double t=0;
+//printf("process_pkts in %.3f secs \n", tick() - t);
+//t = tick();
+
 static inline void
 process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 			 uint8_t nb_pkts, uint8_t portid) {
@@ -687,11 +708,13 @@ process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 	}
 
 	if (unlikely(single_sa)) {
+		printf("single_sa %s\n", UNPROTECTED_PORT(portid) ? "in" : "out");
 		if (UNPROTECTED_PORT(portid))
 			process_pkts_inbound_nosp(&qconf->inbound, &traffic);
 		else
 			process_pkts_outbound_nosp(&qconf->outbound, &traffic);
 	} else {
+		printf("not single_sa %s\n", UNPROTECTED_PORT(portid) ? "in" : "out");
 		if (UNPROTECTED_PORT(portid))
 			process_pkts_inbound(&qconf->inbound, &traffic);
 		else
@@ -747,6 +770,8 @@ main_loop(__attribute__((unused)) void *dummy) {
 	qconf->outbound.sa_ctx = socket_ctx[socket_id].sa_out;
 	qconf->outbound.cdev_map = cdev_map_out;
 
+	printf("main_loop qconf->inbound.sa_ctx:%p\n", qconf->inbound.sa_ctx);
+
 	if (qconf->nb_rx_queue == 0) {
 		RTE_LOG(INFO, IPSEC, "lcore %u has nothing to do\n", lcore_id);
 		return 0;
@@ -771,6 +796,8 @@ main_loop(__attribute__((unused)) void *dummy) {
 		if (unlikely(diff_tsc > drain_tsc)) {
 			drain_buffers(qconf);
 			recv_xfrm();
+			//sa_check_add_rules(&socket_ctx[socket_id]);
+			sa_check_add_rules(qconf->inbound.sa_ctx, qconf->outbound.sa_ctx);
 			prev_tsc = cur_tsc;
 		}
 
@@ -1465,7 +1492,7 @@ static void hash(void) {
 	int d;
 	key = 2;
 	ret = rte_hash_lookup_data(hash, &key, (void **) &d);
-	printf("ret:%d %d %d %d\n",ret,ENOENT,EINVAL,d);
+	printf("ret:%d %d %d %d\n", ret, ENOENT, EINVAL, d);
 	if (ret < 0) {
 		if (ret == ENOENT)
 			printf("key not found");
@@ -1482,6 +1509,8 @@ main(int32_t argc, char **argv) {
 	uint32_t lcore_id, nb_ports;
 	uint8_t portid, socket_id;
 
+	//rte_eal_vdev_init("crypto_aesni_mb");
+
 	/* init EAL */
 	ret = rte_eal_init(argc, argv);
 	if (ret < 0)
@@ -1494,8 +1523,8 @@ main(int32_t argc, char **argv) {
 	if (ret < 0)
 		rte_exit(EXIT_FAILURE, "Invalid parameters\n");
 
-	hash();
-	return 0;
+//	hash();
+//	return 0;
 
 	if (xfrm_init() < 0) {
 		return 1;
@@ -1531,6 +1560,8 @@ main(int32_t argc, char **argv) {
 			continue;
 
 		sa_init(&socket_ctx[socket_id], socket_id);
+
+		printf("main socket_ctx[socket_id].sa_in:%p\n", socket_ctx[socket_id].sa_in);
 
 		sp4_init(&socket_ctx[socket_id], socket_id);
 
