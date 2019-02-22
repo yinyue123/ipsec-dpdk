@@ -155,9 +155,16 @@ struct ethaddr_info {
 	uint64_t src, dst;
 };
 
+//struct ethaddr_info ethaddr_tbl[RTE_MAX_ETHPORTS] = {
+//		{0, ETHADDR(0x00, 0x16, 0x3e, 0x7e, 0x94, 0x9a)},
+//		{0, ETHADDR(0x00, 0x16, 0x3e, 0x22, 0xa1, 0xd9)},
+//		{0, ETHADDR(0x00, 0x16, 0x3e, 0x08, 0x69, 0x26)},
+//		{0, ETHADDR(0x00, 0x16, 0x3e, 0x49, 0x9e, 0xdd)}
+//};
+
 struct ethaddr_info ethaddr_tbl[RTE_MAX_ETHPORTS] = {
 		{0, ETHADDR(0x00, 0x16, 0x3e, 0x7e, 0x94, 0x9a)},
-		{0, ETHADDR(0x00, 0x16, 0x3e, 0x22, 0xa1, 0xd9)},
+		{0, ETHADDR(0x68, 0xed, 0xa4, 0x06, 0x39, 0x4d)},
 		{0, ETHADDR(0x00, 0x16, 0x3e, 0x08, 0x69, 0x26)},
 		{0, ETHADDR(0x00, 0x16, 0x3e, 0x49, 0x9e, 0xdd)}
 };
@@ -401,6 +408,7 @@ send_single_packet(struct rte_mbuf *m, uint8_t port) {
 	}
 
 	qconf->tx_mbufs[port].len = len;
+	printf("lcore_id:%d\tlen:%d\tqconf:%p\n",lcore_id,len,qconf);
 	return 0;
 }
 
@@ -507,11 +515,13 @@ outbound_sp(struct sp_ctx *sp, struct traffic_type *ip,
 
 	j = 0;
 	for (i = 0; i < ip->num; i++) {
+		//printf("src:%s\t",inet_ntoa);
 		m = ip->pkts[i];
 		sa_idx = ip->res[i] & PROTECT_MASK;
 		if ((ip->res[i] == 0) || (ip->res[i] & DISCARD))
 			rte_pktmbuf_free(m);
 		else if (sa_idx != 0) {
+			printf("sa_idx:%d\n",sa_idx);
 			ipsec->res[ipsec->num] = sa_idx;
 			ipsec->pkts[ipsec->num++] = m;
 		} else /* BYPASS */
@@ -525,6 +535,8 @@ process_pkts_outbound(struct ipsec_ctx *ipsec_ctx,
 					  struct ipsec_traffic *traffic) {
 	struct rte_mbuf *m;
 	uint16_t idx, nb_pkts_out, i;
+
+	printf("process_pkts_outbound traffic->ip4.num:%d ipsec.num%d\n",traffic->ip4.num,traffic->ipsec.num);
 
 	/* Drop any IPsec traffic from protected ports */
 	for (i = 0; i < traffic->ipsec.num; i++)
@@ -701,26 +713,32 @@ process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 			 uint8_t nb_pkts, uint8_t portid) {
 	struct ipsec_traffic traffic;
 
+	printf("\n");
+	printf("1 prepare_traffic\n");
 	prepare_traffic(pkts, &traffic, nb_pkts, portid);
 	/*forward to kni check*/
 	if (KNI_PORT(portid)) {
+		printf("2 send_to_kni\n");
 		send_to_kni(portid, traffic.kni.pkts, traffic.kni.num);
 	}
 
 	if (unlikely(single_sa)) {
-		printf("single_sa %s\n", UNPROTECTED_PORT(portid) ? "in" : "out");
+		printf("3 process_pkts\n");
+		printf("process_pkts_%sbound_nosp\n", UNPROTECTED_PORT(portid) ? "in" : "out");
 		if (UNPROTECTED_PORT(portid))
 			process_pkts_inbound_nosp(&qconf->inbound, &traffic);
 		else
 			process_pkts_outbound_nosp(&qconf->outbound, &traffic);
 	} else {
-		printf("not single_sa %s\n", UNPROTECTED_PORT(portid) ? "in" : "out");
+		printf("3 process_pkts\n");
+		printf("process_pkts_%sbound\n", UNPROTECTED_PORT(portid) ? "in" : "out");
 		if (UNPROTECTED_PORT(portid))
 			process_pkts_inbound(&qconf->inbound, &traffic);
 		else
 			process_pkts_outbound(&qconf->outbound, &traffic);
 	}
 
+	printf("4 route_pkts\n");
 	route4_pkts(qconf->rt4_ctx, traffic.ip4.pkts, traffic.ip4.num);
 	route6_pkts(qconf->rt6_ctx, traffic.ip6.pkts, traffic.ip6.num);
 }
@@ -734,6 +752,7 @@ drain_buffers(struct lcore_conf *qconf) {
 		buf = &qconf->tx_mbufs[portid];
 		if (buf->len == 0)
 			continue;
+		printf("drain_buffers pkts:%d\n",buf->len);
 		send_burst(qconf, buf->len, portid);
 		buf->len = 0;
 	}
@@ -769,6 +788,8 @@ main_loop(__attribute__((unused)) void *dummy) {
 	qconf->outbound.sp6_ctx = socket_ctx[socket_id].sp_ip6_out;
 	qconf->outbound.sa_ctx = socket_ctx[socket_id].sa_out;
 	qconf->outbound.cdev_map = cdev_map_out;
+
+	printf("mother:\tlcore_id:%d\tqconf:%p\n",lcore_id,qconf);
 
 	printf("main_loop qconf->inbound.sa_ctx:%p\n", qconf->inbound.sa_ctx);
 

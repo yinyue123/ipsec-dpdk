@@ -83,20 +83,21 @@ enqueue_cop(struct cdev_qp *cqp, struct rte_crypto_op *cop) {
 
 	cqp->buf[cqp->len++] = cop;
 
-	if (cqp->len == MAX_PKT_BURST) {
-		ret = rte_cryptodev_enqueue_burst(cqp->id, cqp->qp,
-										  cqp->buf, cqp->len);
-		if (ret < cqp->len) {
-			RTE_LOG_DP(DEBUG, IPSEC, "Cryptodev %u queue %u:"
-							   " enqueued %u crypto ops out of %u\n",
-					   cqp->id, cqp->qp,
-					   ret, cqp->len);
-			for (i = ret; i < cqp->len; i++)
-				rte_pktmbuf_free(cqp->buf[i]->sym->m_src);
-		}
-		cqp->in_flight += ret;
-		cqp->len = 0;
+//	if (cqp->len == MAX_PKT_BURST) {
+	ret = rte_cryptodev_enqueue_burst(cqp->id, cqp->qp,
+									  cqp->buf, cqp->len);
+	printf("%d rte_cryptodev_enqueue_burst(%d,%d,%d,%d)\n", ret, cqp->id, cqp->qp, cqp->buf, cqp->len);
+	if (ret < cqp->len) {
+		RTE_LOG_DP(DEBUG, IPSEC, "Cryptodev %u queue %u:"
+						   " enqueued %u crypto ops out of %u\n",
+				   cqp->id, cqp->qp,
+				   ret, cqp->len);
+		for (i = ret; i < cqp->len; i++)
+			rte_pktmbuf_free(cqp->buf[i]->sym->m_src);
 	}
+	cqp->in_flight += ret;
+	cqp->len = 0;
+//	}
 }
 
 static inline void
@@ -144,7 +145,7 @@ ipsec_enqueue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 		RTE_ASSERT(sa->cdev_id_qp < ipsec_ctx->nb_qps);
 		enqueue_cop(&ipsec_ctx->tbl[sa->cdev_id_qp], &priv->cop);
 	}
-	printf("ipsec_enqueue nb_pkts:%d\t\n",nb_pkts);
+	printf("ipsec_enqueue nb_pkts:%d\t\n", nb_pkts);
 }
 
 static inline int
@@ -170,6 +171,8 @@ ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 											  cops, max_pkts - nb_pkts);
 
 		cqp->in_flight -= nb_cops;
+		printf("%d rte_cryptodev_dequeue_burst(%d,%d,%d,%d) cqp->in_flight:%d", nb_cops, cqp->id, cops,
+			   max_pkts - nb_pkts, cqp->in_flight);
 
 		for (j = 0; j < nb_cops; j++) {
 			pkt = cops[j]->sym->m_src;
@@ -187,7 +190,7 @@ ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 				pkts[nb_pkts++] = pkt;
 		}
 	}
-	printf("ipsec_dequeue nb_pkts:%d\tnb_cops:%d\tipsec_ctx->nb_qps:%d\n",nb_pkts,nb_cops,ipsec_ctx->nb_qps);
+	printf("ipsec_dequeue nb_pkts:%d\tnb_cops:%d\tipsec_ctx->nb_qps:%d\n", nb_pkts, nb_cops, ipsec_ctx->nb_qps);
 
 	/* return packets */
 	return nb_pkts;

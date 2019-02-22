@@ -212,13 +212,13 @@ parse_sa_tokens(char **tokens, uint32_t n_tokens,
 	uint32_t src_p = 0;
 	uint32_t dst_p = 0;
 	uint32_t mode_p = 0;
-	uint32_t i;
-	for (i = 0; i < n_tokens; i++) {
-		printf("%s ", tokens[i]);
-	}
-	printf("\n");
-	printf("status->status:%d\n", status->status);
-	printf("status->parse_msg:%s\n", status->parse_msg);
+//	uint32_t i;
+//	for (i = 0; i < n_tokens; i++) {
+//		printf("%s ", tokens[i]);
+//	}
+//	printf("\n");
+//	printf("status->status:%d\n", status->status);
+//	printf("status->parse_msg:%s\n", status->parse_msg);
 
 	if (strcmp(tokens[0], "in") == 0) {
 		ri = &nb_sa_in;
