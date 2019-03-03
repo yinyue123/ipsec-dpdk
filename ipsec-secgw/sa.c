@@ -691,7 +691,7 @@ sa_in_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],
 //}
 
 inline void
-sa_check_add_rules(struct sa_ctx *lcore_sa_in,struct sa_ctx *lcore_sa_out) {
+sa_check_add_rules(struct sa_ctx *lcore_sa_in, struct sa_ctx *lcore_sa_out) {
 	sa_in_add_rules(lcore_sa_in, sa_in, nb_sa_in);
 	sa_out_add_rules(lcore_sa_out, sa_out, nb_sa_out);
 }
@@ -714,28 +714,29 @@ sa_init(struct socket_ctx *ctx, int32_t socket_id) {
 		rte_exit(EXIT_FAILURE, "Outbound SA DB for socket %u already "
 				"initialized\n", socket_id);
 
+//	if (nb_sa_in > 0) {
+	name = "sa_in";
+	ctx->sa_in = sa_create(name, socket_id);
+	if (ctx->sa_in == NULL)
+		rte_exit(EXIT_FAILURE, "Error [%d] creating SA "
+						 "context %s in socket %d\n", rte_errno,
+				 name, socket_id);
 	if (nb_sa_in > 0) {
-		name = "sa_in";
-		ctx->sa_in = sa_create(name, socket_id);
-		if (ctx->sa_in == NULL)
-			rte_exit(EXIT_FAILURE, "Error [%d] creating SA "
-							 "context %s in socket %d\n", rte_errno,
-					 name, socket_id);
-
 		sa_in_add_rules(ctx->sa_in, sa_in, nb_sa_in);
 	} else
+//	if (nb_sa_in == 0)
 		RTE_LOG(WARNING, IPSEC, "No SA Inbound rule specified\n");
 
+//	if (nb_sa_out > 0) {
+	name = "sa_out";
+	ctx->sa_out = sa_create(name, socket_id);
+	if (ctx->sa_out == NULL)
+		rte_exit(EXIT_FAILURE, "Error [%d] creating SA "
+						 "context %s in socket %d\n", rte_errno,
+				 name, socket_id);
 	if (nb_sa_out > 0) {
-		name = "sa_out";
-		ctx->sa_out = sa_create(name, socket_id);
-		if (ctx->sa_out == NULL)
-			rte_exit(EXIT_FAILURE, "Error [%d] creating SA "
-							 "context %s in socket %d\n", rte_errno,
-					 name, socket_id);
-
 		sa_out_add_rules(ctx->sa_out, sa_out, nb_sa_out);
-	} else
+	} else if (nb_sa_out == 0)
 		RTE_LOG(WARNING, IPSEC, "No SA Outbound rule "
 				"specified\n");
 }
@@ -745,7 +746,7 @@ inbound_sa_check(struct sa_ctx *sa_ctx, struct rte_mbuf *m, uint32_t sa_idx) {
 	struct ipsec_mbuf_metadata *priv;
 
 	priv = RTE_PTR_ADD(m, sizeof(struct rte_mbuf));
-
+	printf("sa_ctx->sa[sa_idx].spi:%u\tpriv->sa->spi:%u\n",sa_ctx->sa[sa_idx].spi,priv->sa->spi);
 	return (sa_ctx->sa[sa_idx].spi == priv->sa->spi);
 }
 

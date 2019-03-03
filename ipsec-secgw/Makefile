@@ -41,7 +41,8 @@ include $(RTE_SDK)/mk/rte.vars.mk
 APP = ipsec-secgw
 
 CFLAGS += `pkg-config --cflags --libs libnl-3.0 libnl-xfrm-3.0`
-CFLAGS += -O3 -gdwarf-2
+#CFLAGS += -O3 -gdwarf-2
+CFLAGS += -O0 -gdwarf-2
 CFLAGS += $(WERROR_FLAGS)
 ifeq ($(CONFIG_RTE_TOOLCHAIN_ICC),y)
 CFLAGS_sa.o += -diag-disable=vec

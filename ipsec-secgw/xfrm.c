@@ -35,6 +35,8 @@ struct shared_data {
 	struct parse_status status;
 };
 
+uint32_t spi_in, spi_out;
+
 static struct shared_data *shared_mem;
 
 void
@@ -67,7 +69,7 @@ send_xfrm(const char *type, const char **tokens, uint32_t n_tokens, struct parse
 	uint32_t i;
 	while (shared_mem->written == 1) {
 		//printf("wait to write xfrm data\n");
-		usleep(100);
+		usleep(10);
 	}
 	strcpy(shared_mem->type, type);
 	shared_mem->n_tokens = n_tokens;
@@ -86,12 +88,16 @@ recv_xfrm(void) {
 	if (shared_mem->written) {
 		if (strcmp(shared_mem->type, "sa") == 0) {
 			printf("recv_xfrm:sa\n");
-			for (i = 0; i < shared_mem->n_tokens; i++) {
-				printf("%s ", shared_mem->tokens[i]);
-			}
-			printf("\n");
 			parse_sa_tokens(shared_mem->tokens, shared_mem->n_tokens, &shared_mem->status);
 		}
+		if (strcmp(shared_mem->type, "sp") == 0) {
+			printf("recv_xfrm:sp\n");
+			parse_sp4_tokens(shared_mem->tokens, shared_mem->n_tokens, &shared_mem->status);
+		}
+		for (i = 0; i < shared_mem->n_tokens; i++) {
+			printf("%s ", shared_mem->tokens[i]);
+		}
+		printf("\n");
 		shared_mem->written = 0;
 	}
 }
@@ -211,10 +217,13 @@ deal_sa(
 
 	// s_in_out
 	//if (strcmp(saddr, localIp) == 0)
-	if (strcmp(daddr, localIp) == 0)
+	if (strcmp(daddr, localIp) == 0) {
+		spi_in = spi;
 		s_in_out = "in";
-	else
+	} else {
+		spi_out = spi;
 		s_in_out = "out";
+	}
 
 	// s_spi
 	sprintf(s_spi, "%u", spi);
@@ -362,6 +371,84 @@ parse_sa(struct nlmsghdr *nlh) {
 }
 
 static void
+add_sp(
+		const char *ip_ver,
+		const char *dir,
+		const char *action,
+		const char *priority,
+		const char *src_ip,
+		const char *dst_ip,
+		const char *proto,
+		const char *sport,
+		const char *dport
+) {
+//		sp ipv4 out esp protect 5 dst 10.31.2.0/24 sport 0:65535 dport 0:65535
+	const char *tokens[13];
+	struct parse_status status;
+
+	(void) proto;
+
+	tokens[0] = ip_ver;
+	tokens[1] = dir;
+	tokens[2] = "esp";
+	tokens[3] = action;
+	tokens[4] = priority;
+	tokens[5] = "src";
+	tokens[6] = src_ip;
+	tokens[7] = "dst";
+	tokens[8] = dst_ip;
+	tokens[9] = "sport";
+	tokens[10] = sport;
+	tokens[11] = "dport";
+	tokens[12] = dport;
+
+	status.status = 0;
+	status.parse_msg[0] = '\0';
+	send_xfrm("sp", tokens, 13, &status);
+}
+
+static void
+deal_sp(
+		int dir,
+		int action,
+		int priority,
+		char *saddr,
+		int prefixlen_s,
+		char *daddr,
+		int prefixlen_d,
+		int proto,
+		int sport,
+		int sport_mask,
+		int dport,
+		int dport_mask
+) {
+	const char *ip_ver = "ipv4";
+	const char *s_dir = dir ? (dir == 1 ? "out" : "fwd") : "in";
+	const char *s_action = action ? "protect" : "discard";
+//	char s_priority[20];
+	char s_spi[20];
+	char s_src_ip[20];
+	char s_dst_ip[20];
+	char s_proto[20];
+	const char *s_sport = "0:65535";
+	const char *s_dport = "0:65535";
+//	sprintf(s_priority, "%d", priority);
+	sprintf(s_spi, "%u", dir ? (dir == 1 ? spi_out : 0) : spi_in);
+	sprintf(s_src_ip, "%s/%d", saddr, prefixlen_s);
+	sprintf(s_dst_ip, "%s/%d", daddr, prefixlen_d);
+	sprintf(s_proto, "%d", proto);
+	(void) proto;
+	(void) sport;
+	(void) sport_mask;
+	(void) dport;
+	(void) dport_mask;
+	(void) priority;
+
+	add_sp(ip_ver, s_dir, s_action, s_spi, s_src_ip, s_dst_ip, s_proto, s_sport, s_dport);
+
+};
+
+static void
 parse_sp(struct nlmsghdr *nlh) {
 	struct xfrmnl_sp *sp = xfrmnl_sp_alloc();
 	xfrmnl_sp_parse(nlh, &sp);
@@ -395,13 +482,18 @@ parse_sp(struct nlmsghdr *nlh) {
 
 	printf("---------------     SP     ---------------\n");
 	printf(" src : %s/%d\tdst : %s/%d\n", saddr, prefixlen_s, daddr, prefixlen_d);
-	printf("sport : %d/%d\tdport : %d/%d\n", sport, sport_mask, dport, dport_mask);
+	printf(" sport : %d/%d\tdport : %d/%d\n", sport, sport_mask, dport, dport_mask);
 	printf(" dir : %s\tpriority : %d\n", dir ? (dir == 1 ? "out" : "fwd") : "in", priority);
-	printf("ptype : %d\tindex : %d\taction : %d\n", userpolicy, index, action);
+	printf(" ptype : %d\tindex : %d\taction : %d\n", userpolicy, index, action);
 	printf(" family : %d\tproto : %d\n", family, proto);
-	printf("ifindex : %d\tuserid : %d\n", ifindex, userid);
+	printf(" ifindex : %d\tuserid : %d\n", ifindex, userid);
 	printf("------------------------------------------\n");
 
+	if (nlh->nlmsg_type == XFRM_MSG_NEWPOLICY && dir != 2) {
+		deal_sp(dir, action, priority, saddr, prefixlen_s, daddr, prefixlen_d, proto, sport, sport_mask, dport,
+				dport_mask);
+	}
+	xfrmnl_sp_put(sp);
 	/*
 	   libnl/include/netlink/xfrm/sp.h
 	 */

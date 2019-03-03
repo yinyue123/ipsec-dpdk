@@ -86,7 +86,7 @@ enqueue_cop(struct cdev_qp *cqp, struct rte_crypto_op *cop) {
 //	if (cqp->len == MAX_PKT_BURST) {
 	ret = rte_cryptodev_enqueue_burst(cqp->id, cqp->qp,
 									  cqp->buf, cqp->len);
-	printf("%d rte_cryptodev_enqueue_burst(%d,%d,%d,%d)\n", ret, cqp->id, cqp->qp, cqp->buf, cqp->len);
+	printf("%d rte_cryptodev_enqueue_burst(%d,%d,%p,%d)\n", ret, cqp->id, cqp->qp, cqp->buf, cqp->len);
 	if (ret < cqp->len) {
 		RTE_LOG_DP(DEBUG, IPSEC, "Cryptodev %u queue %u:"
 						   " enqueued %u crypto ops out of %u\n",
@@ -151,7 +151,7 @@ ipsec_enqueue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 static inline int
 ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 			  struct rte_mbuf *pkts[], uint16_t max_pkts) {
-	int32_t nb_pkts = 0, ret = 0, i, j, nb_cops;
+	int32_t nb_pkts = 0, ret = 0, i, j, nb_cops = 0;
 	struct ipsec_mbuf_metadata *priv;
 	struct rte_crypto_op *cops[max_pkts];
 	struct ipsec_sa *sa;
@@ -171,7 +171,7 @@ ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,
 											  cops, max_pkts - nb_pkts);
 
 		cqp->in_flight -= nb_cops;
-		printf("%d rte_cryptodev_dequeue_burst(%d,%d,%d,%d) cqp->in_flight:%d", nb_cops, cqp->id, cops,
+		printf("%d rte_cryptodev_dequeue_burst(%d,%d,%p,%d) cqp->in_flight:%d", nb_cops, cqp->id, cqp->qp, cops,
 			   max_pkts - nb_pkts, cqp->in_flight);
 
 		for (j = 0; j < nb_cops; j++) {

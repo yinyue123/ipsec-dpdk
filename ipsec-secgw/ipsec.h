@@ -210,6 +210,12 @@ get_sym_cop(struct rte_crypto_op *cop) {
 inline void
 sa_check_add_rules(struct sa_ctx *lcore_sa_in, struct sa_ctx *lcore_sa_out);
 
+//void
+//sp4_check_add_rules(struct sp_ctx **lcore_sp4_in, struct sp_ctx **lcore_sp4_out);
+
+void
+sp4_check_add_rules(struct sp_ctx *lcore_sp4_in, struct sp_ctx *lcore_sp4_out);
+
 int
 inbound_sa_check(struct sa_ctx *sa_ctx, struct rte_mbuf *m, uint32_t sa_idx);
 
