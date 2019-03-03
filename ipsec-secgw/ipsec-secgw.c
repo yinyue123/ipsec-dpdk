@@ -49,6 +49,7 @@
 //#include <sys/prctl.h>
 //#include <sys/time.h>
 #include <arpa/inet.h>
+#include <stddef.h>
 
 #include <rte_common.h>
 #include <rte_byteorder.h>
@@ -408,7 +409,7 @@ send_single_packet(struct rte_mbuf *m, uint8_t port) {
 	}
 
 	qconf->tx_mbufs[port].len = len;
-	printf("lcore_id:%d\tlen:%d\tqconf:%p\n",lcore_id,len,qconf);
+	printf("lcore_id:%d\tlen:%d\tqconf:%p\n", lcore_id, len, qconf);
 	return 0;
 }
 
@@ -433,17 +434,35 @@ inbound_sp_sa(struct sp_ctx *sp, struct sa_ctx *sa, struct traffic_type *ip,
 
 		m = ip->pkts[i];
 		res = ip->res[i];
+		printf("proto:%d\t", (uint8_t)(*(ip->data[i])));
+		struct in_addr src, dst;
+		src.s_addr = *(const uint32_t *) (ip->data[i] + offsetof(
+		struct ip, ip_src) -offsetof(
+		struct ip, ip_p));
+		dst.s_addr = *(const uint32_t *) (ip->data[i] + offsetof(
+		struct ip, ip_dst) -offsetof(
+		struct ip, ip_p));
+		printf("src:%s\t", inet_ntoa(src));
+		printf("dst:%s\t", inet_ntoa(dst));
+		printf("sport:%d\t", (*(const uint16_t *) (ip->data[i] + sizeof(struct ip) - offsetof(
+		struct ip, ip_p))));
+		printf("dport:%d\n", (*(const uint16_t *) (ip->data[i] + sizeof(struct ip) - offsetof(
+		struct ip, ip_p) +sizeof(uint16_t))));
 		if (res & BYPASS) {
+			printf("BYPASS\n");
 			ip->pkts[j++] = m;
 			continue;
 		}
 		if (res & DISCARD || i < lim) {
+			printf("DISCARD\n");
 			rte_pktmbuf_free(m);
 			continue;
 		}
 		/* Only check SPI match for processed IPSec packets */
 		sa_idx = ip->res[i] & PROTECT_MASK;
+		printf("sa_idx:%d\tres:%d\n", sa_idx, res);
 		if (sa_idx == 0 || !inbound_sa_check(sa, m, sa_idx)) {
+			printf("Free package\n");
 			rte_pktmbuf_free(m);
 			continue;
 		}
@@ -521,7 +540,7 @@ outbound_sp(struct sp_ctx *sp, struct traffic_type *ip,
 		if ((ip->res[i] == 0) || (ip->res[i] & DISCARD))
 			rte_pktmbuf_free(m);
 		else if (sa_idx != 0) {
-			printf("sa_idx:%d\n",sa_idx);
+			printf("sa_idx:%d\n", sa_idx);
 			ipsec->res[ipsec->num] = sa_idx;
 			ipsec->pkts[ipsec->num++] = m;
 		} else /* BYPASS */
@@ -536,7 +555,7 @@ process_pkts_outbound(struct ipsec_ctx *ipsec_ctx,
 	struct rte_mbuf *m;
 	uint16_t idx, nb_pkts_out, i;
 
-	printf("process_pkts_outbound traffic->ip4.num:%d ipsec.num%d\n",traffic->ip4.num,traffic->ipsec.num);
+	printf("process_pkts_outbound traffic->ip4.num:%d ipsec.num%d\n", traffic->ip4.num, traffic->ipsec.num);
 
 	/* Drop any IPsec traffic from protected ports */
 	for (i = 0; i < traffic->ipsec.num; i++)
@@ -752,7 +771,7 @@ drain_buffers(struct lcore_conf *qconf) {
 		buf = &qconf->tx_mbufs[portid];
 		if (buf->len == 0)
 			continue;
-		printf("drain_buffers pkts:%d\n",buf->len);
+		printf("drain_buffers pkts:%d\n", buf->len);
 		send_burst(qconf, buf->len, portid);
 		buf->len = 0;
 	}
@@ -789,7 +808,7 @@ main_loop(__attribute__((unused)) void *dummy) {
 	qconf->outbound.sa_ctx = socket_ctx[socket_id].sa_out;
 	qconf->outbound.cdev_map = cdev_map_out;
 
-	printf("mother:\tlcore_id:%d\tqconf:%p\n",lcore_id,qconf);
+	printf("mother:\tlcore_id:%d\tqconf:%p\n", lcore_id, qconf);
 
 	printf("main_loop qconf->inbound.sa_ctx:%p\n", qconf->inbound.sa_ctx);
 
@@ -819,6 +838,8 @@ main_loop(__attribute__((unused)) void *dummy) {
 			recv_xfrm();
 			//sa_check_add_rules(&socket_ctx[socket_id]);
 			sa_check_add_rules(qconf->inbound.sa_ctx, qconf->outbound.sa_ctx);
+//			sp4_check_add_rules(&(qconf->inbound.sp4_ctx), &(qconf->outbound.sp4_ctx));
+			sp4_check_add_rules(qconf->inbound.sp4_ctx, qconf->outbound.sp4_ctx);
 			prev_tsc = cur_tsc;
 		}
 

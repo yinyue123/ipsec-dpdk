@@ -83,7 +83,7 @@ check_kni_data(struct rte_mbuf *pkt) {
 void
 send_to_kni(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx) {
 	unsigned num;
-	//printf("send_to_kni\n");
+	printf("send_to_kni\n");
 	num = rte_kni_tx_burst(kni_port_params_array[port_id]->kni, pkts, nb_rx);
 	rte_kni_handle_request(kni_port_params_array[port_id]->kni);
 	if (unlikely(num < nb_rx)) {
@@ -98,7 +98,7 @@ forward_from_kni_to_eth(uint16_t tx_queue_id, uint8_t port_id) {
 	struct rte_mbuf *pkts_burst[PKT_BURST_SZ];
 	num = rte_kni_rx_burst(kni_port_params_array[port_id]->kni, pkts_burst, PKT_BURST_SZ);
 	if (likely(num)) {
-		//printf("forward_from_kni_to_eth\n");
+		printf("forward_from_kni_to_eth\n");
 		nb_tx = rte_eth_tx_burst(port_id, tx_queue_id, pkts_burst, num);
 		if (unlikely(nb_tx < num))
 			kni_burst_free_mbufs(&pkts_burst[nb_tx], num - nb_tx);

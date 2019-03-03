@@ -38,6 +38,8 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 
+//#include <arpa/inet.h>
+
 #include <rte_acl.h>
 #include <rte_ip.h>
 
@@ -117,9 +119,11 @@ RTE_ACL_RULE_DEF(acl4_rules, RTE_DIM(ip4_defs)
 
 struct acl4_rules acl4_rules_out[MAX_ACL_RULE_NUM];
 uint32_t nb_acl4_rules_out;
+uint32_t nb_acl4_rules_out_start;
 
 struct acl4_rules acl4_rules_in[MAX_ACL_RULE_NUM];
 uint32_t nb_acl4_rules_in;
+uint32_t nb_acl4_rules_in_start;
 
 void
 parse_sp4_tokens(char **tokens, uint32_t n_tokens,
@@ -200,6 +204,8 @@ parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 
 			rule_ipv4->data.userdata =
 					PROTECT(atoi(tokens[ti]));
+			printf("tokens[%d]:%s %u %u\n",ti,tokens[ti],atoi(tokens[ti]),SPI2IDX(atoi(tokens[ti])));
+			printf("userdata:%d\n",PROTECT(atoi(tokens[ti])));
 
 			protect_p = 1;
 			continue;
@@ -499,8 +505,90 @@ acl4_init(const char *name, int32_t socketid, const struct acl4_rules *rules,
 }
 
 void
+sp4_check_add_rules(struct sp_ctx *lcore_sp4_in, struct sp_ctx *lcore_sp4_out) {
+	struct rte_acl_config acl_build_param;
+	if (nb_acl4_rules_in_start != nb_acl4_rules_in) {
+		rte_acl_dump((struct rte_acl_ctx *) lcore_sp4_in);
+		printf("-------------lcore_sp4_in:%p\n", lcore_sp4_in);
+		if (rte_acl_add_rules((struct rte_acl_ctx *) lcore_sp4_in,
+							  (const struct rte_acl_rule *) &acl4_rules_in[nb_acl4_rules_in_start],
+							  nb_acl4_rules_in - nb_acl4_rules_in_start) < 0)
+			rte_exit(EXIT_FAILURE, "add rules failed\n");
+
+		/* Perform builds */
+		memset(&acl_build_param, 0, sizeof(acl_build_param));
+
+		acl_build_param.num_categories = DEFAULT_MAX_CATEGORIES;
+		acl_build_param.num_fields = RTE_DIM(ip4_defs);
+		memcpy(&acl_build_param.defs, ip4_defs, sizeof(ip4_defs));
+
+		if (rte_acl_build((struct rte_acl_ctx *) lcore_sp4_in, &acl_build_param) != 0)
+			rte_exit(EXIT_FAILURE, "Failed to build ACL trie\n");
+
+		rte_acl_dump((struct rte_acl_ctx *) lcore_sp4_in);
+
+		printf("add ip4 rules:\n");
+		dump_ip4_rules(&acl4_rules_in[nb_acl4_rules_in_start], nb_acl4_rules_in - nb_acl4_rules_in_start, 1);
+
+		nb_acl4_rules_in_start = nb_acl4_rules_in;
+	} else if (nb_acl4_rules_out_start != nb_acl4_rules_out) {
+		rte_acl_dump((struct rte_acl_ctx *) lcore_sp4_out);
+		printf("-------------lcore_sp4_out:%p\n", lcore_sp4_out);
+		if (rte_acl_add_rules((struct rte_acl_ctx *) lcore_sp4_out,
+							  (const struct rte_acl_rule *) &acl4_rules_out[nb_acl4_rules_out_start],
+							  nb_acl4_rules_out - nb_acl4_rules_out_start) < 0)
+			rte_exit(EXIT_FAILURE, "add rules failed\n");
+
+		/* Perform builds */
+		memset(&acl_build_param, 0, sizeof(acl_build_param));
+
+		acl_build_param.num_categories = DEFAULT_MAX_CATEGORIES;
+		acl_build_param.num_fields = RTE_DIM(ip4_defs);
+		memcpy(&acl_build_param.defs, ip4_defs, sizeof(ip4_defs));
+
+		if (rte_acl_build((struct rte_acl_ctx *) lcore_sp4_out, &acl_build_param) != 0)
+			rte_exit(EXIT_FAILURE, "Failed to build ACL trie\n");
+
+		rte_acl_dump((struct rte_acl_ctx *) lcore_sp4_out);
+
+		printf("add ip4 rules:\n");
+		dump_ip4_rules(&acl4_rules_out[nb_acl4_rules_out_start], nb_acl4_rules_out - nb_acl4_rules_out_start, 1);
+
+		nb_acl4_rules_out_start = nb_acl4_rules_out;
+	}
+}
+
+//void
+//sp4_check_add_rules(struct sp_ctx **lcore_sp4_in, struct sp_ctx **lcore_sp4_out) {
+//	const char *name;
+//	uint32_t lcore_id;
+//	int32_t socket_id;
+//	if (nb_acl4_rules_in_start != nb_acl4_rules_in) {
+//		rte_acl_dump((struct rte_acl_ctx *) *lcore_sp4_in);
+//		rte_acl_free((struct rte_acl_ctx *) *lcore_sp4_in);
+//		name = "sp_ip4_in";
+//		lcore_id = rte_lcore_id();
+//		socket_id = rte_lcore_to_socket_id(lcore_id);
+//		*lcore_sp4_in = (struct sp_ctx *) acl4_init(name, socket_id, acl4_rules_in, nb_acl4_rules_in);
+//		rte_acl_dump((struct rte_acl_ctx *) *lcore_sp4_in);
+//		nb_acl4_rules_in_start = nb_acl4_rules_in;
+//	} else if (nb_acl4_rules_out_start != nb_acl4_rules_out) {
+//		rte_acl_dump((struct rte_acl_ctx *) *lcore_sp4_out);
+//		rte_acl_free((struct rte_acl_ctx *) *lcore_sp4_out);
+//		name = "sp_ip4_out";
+//		lcore_id = rte_lcore_id();
+//		socket_id = rte_lcore_to_socket_id(lcore_id);
+//		*lcore_sp4_out = (struct sp_ctx *) acl4_init(name, socket_id, acl4_rules_out, nb_acl4_rules_out);
+//		rte_acl_dump((struct rte_acl_ctx *) *lcore_sp4_out);
+//		nb_acl4_rules_out_start = nb_acl4_rules_out;
+//	}
+//}
+
+void
 sp4_init(struct socket_ctx *ctx, int32_t socket_id) {
 	const char *name;
+	nb_acl4_rules_in_start = 0;
+	nb_acl4_rules_out_start = 0;
 
 	if (ctx == NULL)
 		rte_exit(EXIT_FAILURE, "NULL context.\n");
@@ -517,7 +605,9 @@ sp4_init(struct socket_ctx *ctx, int32_t socket_id) {
 		name = "sp_ip4_in";
 		ctx->sp_ip4_in = (struct sp_ctx *) acl4_init(name,
 													 socket_id, acl4_rules_in, nb_acl4_rules_in);
+		printf("-------------ctx->sp_ip4_in:%p\n", ctx->sp_ip4_in);
 	} else
+//	if (nb_acl4_rules_in = 0)
 		RTE_LOG(WARNING, IPSEC, "No IPv4 SP Inbound rule "
 				"specified\n");
 
@@ -525,7 +615,12 @@ sp4_init(struct socket_ctx *ctx, int32_t socket_id) {
 		name = "sp_ip4_out";
 		ctx->sp_ip4_out = (struct sp_ctx *) acl4_init(name,
 													  socket_id, acl4_rules_out, nb_acl4_rules_out);
+		printf("-------------ctx->sp_ip4_out:%p\n", ctx->sp_ip4_out);
 	} else
+//		if (nb_acl4_rules_in = 0)
 		RTE_LOG(WARNING, IPSEC, "No IPv4 SP Outbound rule "
 				"specified\n");
+
+	nb_acl4_rules_out_start = nb_acl4_rules_out;
+	nb_acl4_rules_in_start = nb_acl4_rules_in;
 }
