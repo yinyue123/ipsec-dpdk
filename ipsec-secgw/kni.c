@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+#include <rte_udp.h>
+#include <rte_common.h>
 #include <rte_log.h>
 #include <rte_malloc.h>
 #include <rte_mbuf.h>
@@ -70,11 +72,21 @@ kni_burst_free_mbufs(struct rte_mbuf **pkts, unsigned num) {
 int
 check_kni_data(struct rte_mbuf *pkt) {
 	struct ipv4_hdr *ip_hdr;
+	struct udp_hdr *udp_hdr;
+	uint16_t dport;
+
 	ip_hdr = rte_pktmbuf_mtod_offset(pkt,
 	struct ipv4_hdr *, sizeof(struct ether_hdr));
 	if (ip_hdr->next_proto_id == IPPROTO_ESP) {
 		//printf("recv esp package");
 		return 0;
+	} else if (ip_hdr->next_proto_id == IPPROTO_UDP) {
+		udp_hdr = (struct udp_hdr *) ((unsigned char *) ip_hdr +
+									  sizeof(struct ipv4_hdr));
+		dport = rte_be_to_cpu_16(udp_hdr->dst_port);
+		if (dport == 500) {
+			parse_pkt_arp(pkt);
+		}
 	}
 	//printf("return 1");
 	return 1;
