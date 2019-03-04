@@ -112,7 +112,7 @@
 
 #define UNPROTECTED_PORT(port) (unprotected_port_mask & (1 << portid))
 
-#define KNI_PORT(port) (kni_port_mask & (1 << portid))
+#define KNI_PORT(portid) (kni_port_mask & (1 << portid))
 
 /*
  * Configurable number of RX/TX ring descriptors
@@ -122,39 +122,6 @@
 static uint16_t nb_rxd = IPSEC_SECGW_RX_DESC_DEFAULT;
 static uint16_t nb_txd = IPSEC_SECGW_TX_DESC_DEFAULT;
 
-#if RTE_BYTE_ORDER != RTE_LITTLE_ENDIAN
-#define __BYTES_TO_UINT64(a, b, c, d, e, f, g, h) \
-	(((uint64_t)((a) & 0xff) << 56) | \
-	((uint64_t)((b) & 0xff) << 48) | \
-	((uint64_t)((c) & 0xff) << 40) | \
-	((uint64_t)((d) & 0xff) << 32) | \
-	((uint64_t)((e) & 0xff) << 24) | \
-	((uint64_t)((f) & 0xff) << 16) | \
-	((uint64_t)((g) & 0xff) << 8)  | \
-	((uint64_t)(h) & 0xff))
-#else
-#define __BYTES_TO_UINT64(a, b, c, d, e, f, g, h) \
-    (((uint64_t)((h) & 0xff) << 56) | \
-    ((uint64_t)((g) & 0xff) << 48) | \
-    ((uint64_t)((f) & 0xff) << 40) | \
-    ((uint64_t)((e) & 0xff) << 32) | \
-    ((uint64_t)((d) & 0xff) << 24) | \
-    ((uint64_t)((c) & 0xff) << 16) | \
-    ((uint64_t)((b) & 0xff) << 8) | \
-    ((uint64_t)(a) & 0xff))
-#endif
-#define ETHADDR(a, b, c, d, e, f) (__BYTES_TO_UINT64(a, b, c, d, e, f, 0, 0))
-
-#define ETHADDR_TO_UINT64(addr) __BYTES_TO_UINT64( \
-        addr.addr_bytes[0], addr.addr_bytes[1], \
-        addr.addr_bytes[2], addr.addr_bytes[3], \
-        addr.addr_bytes[4], addr.addr_bytes[5], \
-        0, 0)
-
-/* port/source ethernet addr and destination ethernet addr */
-struct ethaddr_info {
-	uint64_t src, dst;
-};
 
 //struct ethaddr_info ethaddr_tbl[RTE_MAX_ETHPORTS] = {
 //		{0, ETHADDR(0x00, 0x16, 0x3e, 0x7e, 0x94, 0x9a)},
@@ -269,10 +236,12 @@ prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid
 	struct ether_hdr *);
 	/*forward to kni check*/
 	if (KNI_PORT(portid)) {
+//		if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
 		if (check_kni_data(pkt)) {
 			t->kni.pkts[(t->kni.num)++] = pkt;
 			return;
 		}
+//		}
 	}
 
 	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
@@ -346,10 +315,14 @@ prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
 		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv6);
 	}
 
-	memcpy(&ethhdr->s_addr, &ethaddr_tbl[port].src,
-		   sizeof(struct ether_addr));
-	memcpy(&ethhdr->d_addr, &ethaddr_tbl[port].dst,
-		   sizeof(struct ether_addr));
+	if (KNI_PORT(port))
+		get_mac_by_ip(ethhdr, ethaddr_tbl, port, ip);
+	else {
+		memcpy(&ethhdr->s_addr, &ethaddr_tbl[port].src,
+			   sizeof(struct ether_addr));
+		memcpy(&ethhdr->d_addr, &ethaddr_tbl[port].dst,
+			   sizeof(struct ether_addr));
+	}
 }
 
 static inline void
@@ -1502,48 +1475,48 @@ pool_init(struct socket_ctx *ctx, int32_t socket_id, uint32_t nb_mbuf) {
 		printf("Allocated mbuf pool on socket %d\n", socket_id);
 }
 
-static void hash(void) {
-	struct rte_hash *hash;
-	struct rte_hash_parameters params = {
-			.entries = 1024,
-			.key_len = sizeof(uint32_t),
-			.hash_func = rte_jhash,
-			.hash_func_init_val = 0,
-	};
-
-	int ret;
-
-
-	hash = rte_hash_create(&params);
-	if (!hash) {
-		rte_exit(EXIT_FAILURE, "rte_hash_create failed\n");
-	}
-	{
-		uint32_t key;
-		int d;
-
-		key = 1;
-		d = 1;
-		rte_hash_add_key_data(hash, &key, (void *) (long) d);
-
-		key = 2;
-		d = 2;
-		rte_hash_add_key_data(hash, &key, (void *) (long) d);
-	}
-	uint32_t key;
-	int d;
-	key = 2;
-	ret = rte_hash_lookup_data(hash, &key, (void **) &d);
-	printf("ret:%d %d %d %d\n", ret, ENOENT, EINVAL, d);
-	if (ret < 0) {
-		if (ret == ENOENT)
-			printf("key not found");
-		else if (ret == EINVAL)
-			printf("invalid param");
-	} else {
-		printf("get value:%d\n", d);
-	}
-}
+//static void hash(void) {
+//	struct rte_hash *hash;
+//	struct rte_hash_parameters params = {
+//			.entries = 1024,
+//			.key_len = sizeof(uint32_t),
+//			.hash_func = rte_jhash,
+//			.hash_func_init_val = 0,
+//	};
+//
+//	int ret;
+//
+//
+//	hash = rte_hash_create(&params);
+//	if (!hash) {
+//		rte_exit(EXIT_FAILURE, "rte_hash_create failed\n");
+//	}
+//	{
+//		uint32_t key;
+//		int d;
+//
+//		key = 1;
+//		d = 1;
+//		rte_hash_add_key_data(hash, &key, (void *) (long) d);
+//
+//		key = 2;
+//		d = 2;
+//		rte_hash_add_key_data(hash, &key, (void *) (long) d);
+//	}
+//	uint32_t key;
+//	int d;
+//	key = 2;
+//	ret = rte_hash_lookup_data(hash, &key, (void **) &d);
+//	printf("ret:%d %d %d %d\n", ret, ENOENT, EINVAL, d);
+//	if (ret < 0) {
+//		if (ret == ENOENT)
+//			printf("key not found");
+//		else if (ret == EINVAL)
+//			printf("invalid param");
+//	} else {
+//		printf("get value:%d\n", d);
+//	}
+//}
 
 int32_t
 main(int32_t argc, char **argv) {

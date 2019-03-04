@@ -36,6 +36,7 @@ struct shared_data {
 };
 
 uint32_t spi_in, spi_out;
+static char localIp[16];
 
 static struct shared_data *shared_mem;
 
@@ -176,6 +177,18 @@ add_sa(
 
 }
 
+void
+xfrm_add_addr(uint32_t addr) {
+	struct in_addr addr_addr;
+	addr_addr.s_addr = addr;
+	if (strcmp(localIp, inet_ntoa(addr_addr))) {
+		printf("localIp changed:\n");
+		printf("origin localIp:%s", localIp);
+		strcpy(localIp, inet_ntoa(addr_addr));
+		printf("new localIp:%s", localIp);
+	}
+}
+
 static void
 deal_sa(
 		char *saddr,
@@ -208,8 +221,6 @@ deal_sa(
 	const char *s_mode;
 	const char *s_src;
 	const char *s_dst;
-	//const char *localIp = "192.168.10.120";
-	const char *localIp = "192.168.100.1";
 
 	// check esp package
 	if (proto != 50)
