@@ -295,6 +295,7 @@ static inline void
 prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
 	struct ip *ip;
 	struct ether_hdr *ethhdr;
+	struct ethaddr_info ethaddr_kni;
 
 	ip = rte_pktmbuf_mtod(pkt,
 	struct ip *);
@@ -316,7 +317,7 @@ prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
 	}
 
 	if (KNI_PORT(port))
-		get_mac_by_ip(ethhdr, ethaddr_tbl, port, ip);
+		get_mac_by_ip(ethhdr, ethaddr_kni, ip);
 	else {
 		memcpy(&ethhdr->s_addr, &ethaddr_tbl[port].src,
 			   sizeof(struct ether_addr));

@@ -27,6 +27,8 @@
 
 
 struct shared_data {
+	char localIp[16];
+
 	uint32_t written;
 	uint32_t n_tokens;
 	char type[10];
@@ -36,7 +38,7 @@ struct shared_data {
 };
 
 uint32_t spi_in, spi_out;
-static char localIp[16];
+//static char localIp[16];
 
 static struct shared_data *shared_mem;
 
@@ -181,11 +183,13 @@ void
 xfrm_add_addr(uint32_t addr) {
 	struct in_addr addr_addr;
 	addr_addr.s_addr = addr;
-	if (strcmp(localIp, inet_ntoa(addr_addr))) {
+	if (strcmp(shared_mem->localIp, inet_ntoa(addr_addr))) {
+		printf("---------------   KNI IP   ---------------\n");
 		printf("localIp changed:\n");
-		printf("origin localIp:%s", localIp);
-		strcpy(localIp, inet_ntoa(addr_addr));
-		printf("new localIp:%s", localIp);
+		printf("origin localIp:\t%s\n", shared_mem->localIp);
+		strcpy(shared_mem->localIp, inet_ntoa(addr_addr));
+		printf("new localIp:\t%s\n", shared_mem->localIp);
+		printf("------------------------------------------\n");
 	}
 }
 
@@ -228,7 +232,8 @@ deal_sa(
 
 	// s_in_out
 	//if (strcmp(saddr, localIp) == 0)
-	if (strcmp(daddr, localIp) == 0) {
+	printf("+++++++++ daddr:%s\tlocalIp:%s\n", daddr, shared_mem->localIp);
+	if (strcmp(daddr, shared_mem->localIp) == 0) {
 		spi_in = spi;
 		s_in_out = "in";
 	} else {
