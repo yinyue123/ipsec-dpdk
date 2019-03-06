@@ -34,15 +34,21 @@ struct arp_table table[IP_MASK] = {
 static void
 add_ip_mac(uint32_t ip, uint64_t mac) {
 	struct in_addr ip_addr;
-	if (table[IP2IDX(ip)].ip == ip && table[IP2IDX(ip)].mac != mac) {
+	if (table[IP2IDX(ip)].mac != mac) {
 		printf("ip_mac_table update:\n");
-		printf("ip:%s\torigin mac:%lx\tnew mac:%lx\n",
+		printf("idx:%d\n", IP2IDX(ip));
+		ip_addr.s_addr = table[IP2IDX(ip)].ip;
+		printf("origin\tip:%s\tmac:%lx\n",
 			   inet_ntoa(ip_addr),
-			   table[IP2IDX(ip)].mac, // >> 4,
-			   mac //>> 4
+			   table[IP2IDX(ip)].mac
 		);
 		table[IP2IDX(ip)].ip = ip;
 		table[IP2IDX(ip)].mac = mac;
+		ip_addr.s_addr = ip;
+		printf("new\tip:%s\tmac:%lx\n",
+			   inet_ntoa(ip_addr),
+			   mac
+		);
 	}
 }
 
