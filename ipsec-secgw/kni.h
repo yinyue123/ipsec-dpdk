@@ -62,6 +62,6 @@ void
 parse_pkt_arp(struct rte_mbuf *pkt);
 
 void
-get_mac_by_ip(struct ether_hdr *eth, struct ethaddr_info *def, uint8_t port, struct ip *ip);
+get_mac_by_ip(struct ether_hdr *eth, struct ethaddr_info def, struct ip *ip);
 
 #endif /* __KNI_H__ */
