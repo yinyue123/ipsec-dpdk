@@ -1,7 +1,3 @@
-//
-// Created by 殷悦 on 22/03/2019.
-//
-
 /*-
  *   BSD LICENSE
  *
@@ -69,7 +65,6 @@
 #include <rte_debug.h>
 #include <rte_ether.h>
 #include <rte_ethdev.h>
-#include <rte_ring.h>
 #include <rte_log.h>
 #include <rte_mempool.h>
 #include <rte_mbuf.h>
