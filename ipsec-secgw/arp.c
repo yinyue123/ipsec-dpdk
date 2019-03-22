@@ -35,6 +35,7 @@ static void
 add_ip_mac(uint32_t ip, uint64_t mac) {
 	struct in_addr ip_addr;
 	if (table[IP2IDX(ip)].mac != mac) {
+		printf("---------------   ADD IP   ---------------\n");
 		printf("ip_mac_table update:\n");
 		printf("idx:%d\n", IP2IDX(ip));
 		ip_addr.s_addr = table[IP2IDX(ip)].ip;
@@ -49,6 +50,7 @@ add_ip_mac(uint32_t ip, uint64_t mac) {
 			   inet_ntoa(ip_addr),
 			   mac
 		);
+		printf("------------------------------------------\n");
 	}
 }
 
@@ -97,9 +99,13 @@ parse_pkt_arp(struct rte_mbuf *pkt) {
 void
 get_mac_by_ip(struct ether_hdr *eth, struct ethaddr_info def, struct ip *ip) {
 	char s_addr[ETHER_ADDR_FMT_SIZE], d_addr[ETHER_ADDR_FMT_SIZE];
+	struct in_addr temp;
+	temp.s_addr=table[IP2IDX(ip->ip_src.s_addr)].ip;
+	printf("IP2IDX(ip->ip_src.s_addr):%d\n", IP2IDX(ip->ip_src.s_addr));
+	printf("table[IP2IDX(ip->ip_src.s_addr)].ip:%s\n", inet_ntoa(temp));
 
 	//deal src mac address
-	if (table[IP2IDX(ip->ip_src.s_addr)].ip != ip->ip_src.s_addr)
+	if (table[IP2IDX(ip->ip_src.s_addr)].ip == ip->ip_src.s_addr)
 		memcpy(&eth->s_addr, &table[IP2IDX(ip->ip_src.s_addr)], sizeof(struct ether_addr));
 	else
 		memcpy(&eth->s_addr, &def.src, sizeof(struct ether_addr));
@@ -107,8 +113,12 @@ get_mac_by_ip(struct ether_hdr *eth, struct ethaddr_info def, struct ip *ip) {
 	ether_format_addr(s_addr, ETHER_ADDR_FMT_SIZE, &eth->s_addr);
 	printf("kni send\tsrc ip:%s\tmac:%s\n", inet_ntoa(ip->ip_src), s_addr);
 
+	temp.s_addr=table[IP2IDX(ip->ip_dst.s_addr)].ip;
+	printf("IP2IDX(ip->ip_dst.s_addr):%d\n", IP2IDX(ip->ip_dst.s_addr));
+	printf("table[IP2IDX(ip->ip_dst.s_addr)].ip:%s\n", inet_ntoa(temp));
+
 	//deal dst mac address
-	if (table[IP2IDX(ip->ip_dst.s_addr)].ip != ip->ip_dst.s_addr)
+	if (table[IP2IDX(ip->ip_dst.s_addr)].ip == ip->ip_dst.s_addr)
 		memcpy(&eth->d_addr, &table[IP2IDX(ip->ip_dst.s_addr)], sizeof(struct ether_addr));
 	else
 		memcpy(&eth->d_addr, &def.dst, sizeof(struct ether_addr));
