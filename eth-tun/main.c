@@ -122,7 +122,7 @@ static const struct rte_eth_conf port_conf = {
 };
 
 /* Mempool for mbufs */
-static struct rte_mempool * pktmbuf_pool = NULL;
+static struct rte_mempool *pktmbuf_pool = NULL;
 
 /* Mask of enabled ports */
 static uint32_t ports_mask = 0;
@@ -148,17 +148,23 @@ static struct stats lcore_stats[RTE_MAX_LCORE];
 
 /* Print out statistics on packets handled */
 static void
-print_stats(void)
-{
+print_stats(void) {
 	unsigned i;
 
 	printf("\n**Exception-Path example application statistics**\n"
 				   "=======  ======  ============  ============  ===============\n"
 				   " Lcore    Port            RX            TX    Dropped on TX\n"
 				   "-------  ------  ------------  ------------  ---------------\n");
-	RTE_LCORE_FOREACH(i) {
-		printf("%6u %7u %13"PRIu64" %13"PRIu64" %16"PRIu64"\n",
-				i, (unsigned)port_ids[i],
+	RTE_LCORE_FOREACH(i)
+	{
+		printf("%6u %7u %13"
+		PRIu64
+		" %13"
+		PRIu64
+		" %16"
+		PRIu64
+		"\n",
+				i, (unsigned) port_ids[i],
 				lcore_stats[i].rx, lcore_stats[i].tx,
 				lcore_stats[i].dropped);
 	}
@@ -167,8 +173,7 @@ print_stats(void)
 
 /* Custom handling of signals to handle stats */
 static void
-signal_handler(int signum)
-{
+signal_handler(int signum) {
 	/* When we receive a USR1 signal, print stats */
 	if (signum == SIGUSR1) {
 		print_stats();
@@ -182,12 +187,46 @@ signal_handler(int signum)
 	}
 }
 
+///*
+// * Create a tap network interface, or use existing one with same name.
+// * If name[0]='\0' then a name is automatically assigned and returned in name.
+// */
+//static int tap_create(char *name)
+//{
+//	struct ifreq ifr;
+//	int fd, ret;
+//
+//	fd = open("/dev/net/tun", O_RDWR);
+//	if (fd < 0)
+//		return fd;
+//
+//	memset(&ifr, 0, sizeof(ifr));
+//
+//	/* TAP device without packet information */
+//	ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+//
+//	if (name && *name)
+//		snprintf(ifr.ifr_name, IFNAMSIZ, "%s", name);
+//
+//	ret = ioctl(fd, TUNSETIFF, (void *) &ifr);
+//	if (ret < 0) {
+//		close(fd);
+//		return ret;
+//	}
+//
+//	if (name)
+//		snprintf(name, IFNAMSIZ, "%s", ifr.ifr_name);
+//
+//	return fd;
+//}
+
+int tun_fd;
+
 /*
  * Create a tap network interface, or use existing one with same name.
  * If name[0]='\0' then a name is automatically assigned and returned in name.
  */
-static int tap_create(char *name)
-{
+static int tun_create(char *name) {
 	struct ifreq ifr;
 	int fd, ret;
 
@@ -197,8 +236,8 @@ static int tap_create(char *name)
 
 	memset(&ifr, 0, sizeof(ifr));
 
-	/* TAP device without packet information */
-	ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+	/* TUN device without packet information */
+	ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
 
 	if (name && *name)
 		snprintf(ifr.ifr_name, IFNAMSIZ, "%s", name);
@@ -215,24 +254,115 @@ static int tap_create(char *name)
 	return fd;
 }
 
+///* Main processing loop */
+//static int
+//main_loop_back(__attribute__((unused)) void *arg)
+//{
+//	const unsigned lcore_id = rte_lcore_id();
+//	char tap_name[IFNAMSIZ];
+//	int tap_fd;
+//
+//	if ((1ULL << lcore_id) & input_cores_mask) {
+//		/* Create new tap interface */
+//		snprintf(tap_name, IFNAMSIZ, "tap_dpdk_%.2u", lcore_id);
+//		tap_fd = tap_create(tap_name);
+//		if (tap_fd < 0)
+//			FATAL_ERROR("Could not create tap interface \"%s\" (%d)",
+//						tap_name, tap_fd);
+//
+//		PRINT_INFO("Lcore %u is reading from port %u and writing to %s",
+//				   lcore_id, (unsigned)port_ids[lcore_id], tap_name);
+//		fflush(stdout);
+//		/* Loop forever reading from NIC and writing to tap */
+//		for (;;) {
+//			struct rte_mbuf *pkts_burst[PKT_BURST_SZ];
+//			unsigned i;
+//			const unsigned nb_rx =
+//					rte_eth_rx_burst(port_ids[lcore_id], 0,
+//									 pkts_burst, PKT_BURST_SZ);
+//			lcore_stats[lcore_id].rx += nb_rx;
+//			for (i = 0; likely(i < nb_rx); i++) {
+//				struct rte_mbuf *m = pkts_burst[i];
+//				/* Ignore return val from write() */
+//				int ret = write(tap_fd,
+//								rte_pktmbuf_mtod(m, void*),
+//								rte_pktmbuf_data_len(m));
+//				rte_pktmbuf_free(m);
+//				if (unlikely(ret < 0))
+//					lcore_stats[lcore_id].dropped++;
+//				else
+//					lcore_stats[lcore_id].tx++;
+//			}
+//		}
+//	}
+//	else if ((1ULL << lcore_id) & output_cores_mask) {
+//		/* Create new tap interface */
+//		snprintf(tap_name, IFNAMSIZ, "tap_dpdk_%.2u", lcore_id);
+//		tap_fd = tap_create(tap_name);
+//		if (tap_fd < 0)
+//			FATAL_ERROR("Could not create tap interface \"%s\" (%d)",
+//						tap_name, tap_fd);
+//
+//		PRINT_INFO("Lcore %u is reading from %s and writing to port %u",
+//				   lcore_id, tap_name, (unsigned)port_ids[lcore_id]);
+//		fflush(stdout);
+//		/* Loop forever reading from tap and writing to NIC */
+//		for (;;) {
+//			int ret;
+//			struct rte_mbuf *m = rte_pktmbuf_alloc(pktmbuf_pool);
+//			if (m == NULL)
+//				continue;
+//
+//			ret = read(tap_fd, rte_pktmbuf_mtod(m, void *),
+//					   MAX_PACKET_SZ);
+//			lcore_stats[lcore_id].rx++;
+//			if (unlikely(ret < 0)) {
+//				FATAL_ERROR("Reading from %s interface failed",
+//							tap_name);
+//			}
+//			m->nb_segs = 1;
+//			m->next = NULL;
+//			m->pkt_len = (uint16_t)ret;
+//			m->data_len = (uint16_t)ret;
+//			ret = rte_eth_tx_burst(port_ids[lcore_id], 0, &m, 1);
+//			if (unlikely(ret < 1)) {
+//				rte_pktmbuf_free(m);
+//				lcore_stats[lcore_id].dropped++;
+//			}
+//			else {
+//				lcore_stats[lcore_id].tx++;
+//			}
+//		}
+//	}
+//	else {
+//		PRINT_INFO("Lcore %u has nothing to do", lcore_id);
+//		return 0;
+//	}
+//	/*
+//	 * Tap file is closed automatically when program exits. Putting close()
+//	 * here will cause the compiler to give an error about unreachable code.
+//	 */
+//}
+
+/* port/source ethernet addr and destination ethernet addr */
+struct ethaddr_info {
+	uint64_t src, dst;
+};
+
+#define ETHADDR(a, b, c, d, e, f) (__BYTES_TO_UINT64(a, b, c, d, e, f, 0, 0))
+
+struct ethaddr_info ethaddr_tbl = {
+		ETHADDR(0x01, 0x00, 0x00, 0x00, 0x00, 0x00),
+		ETHADDR(0x02, 0x00, 0x00, 0x00, 0x00, 0x00)
+};
+
 /* Main processing loop */
 static int
-main_loop(__attribute__((unused)) void *arg)
-{
+main_loop(__attribute__((unused)) void *arg) {
 	const unsigned lcore_id = rte_lcore_id();
-	char tap_name[IFNAMSIZ];
-	int tap_fd;
-
 	if ((1ULL << lcore_id) & input_cores_mask) {
-		/* Create new tap interface */
-		snprintf(tap_name, IFNAMSIZ, "tap_dpdk_%.2u", lcore_id);
-		tap_fd = tap_create(tap_name);
-		if (tap_fd < 0)
-			FATAL_ERROR("Could not create tap interface \"%s\" (%d)",
-						tap_name, tap_fd);
-
 		PRINT_INFO("Lcore %u is reading from port %u and writing to %s",
-				   lcore_id, (unsigned)port_ids[lcore_id], tap_name);
+				   lcore_id, (unsigned) port_ids[lcore_id], tap_name);
 		fflush(stdout);
 		/* Loop forever reading from NIC and writing to tap */
 		for (;;) {
@@ -245,8 +375,9 @@ main_loop(__attribute__((unused)) void *arg)
 			for (i = 0; likely(i < nb_rx); i++) {
 				struct rte_mbuf *m = pkts_burst[i];
 				/* Ignore return val from write() */
-				int ret = write(tap_fd,
-								rte_pktmbuf_mtod(m, void*),
+				rte_pktmbuf_adj(m, ETHER_HDR_LEN);
+				int ret = write(tun_fd,
+								rte_pktmbuf_mtod(m, void * ),
 								rte_pktmbuf_data_len(m));
 				rte_pktmbuf_free(m);
 				if (unlikely(ret < 0))
@@ -255,17 +386,9 @@ main_loop(__attribute__((unused)) void *arg)
 					lcore_stats[lcore_id].tx++;
 			}
 		}
-	}
-	else if ((1ULL << lcore_id) & output_cores_mask) {
-		/* Create new tap interface */
-		snprintf(tap_name, IFNAMSIZ, "tap_dpdk_%.2u", lcore_id);
-		tap_fd = tap_create(tap_name);
-		if (tap_fd < 0)
-			FATAL_ERROR("Could not create tap interface \"%s\" (%d)",
-						tap_name, tap_fd);
-
+	} else if ((1ULL << lcore_id) & output_cores_mask) {
 		PRINT_INFO("Lcore %u is reading from %s and writing to port %u",
-				   lcore_id, tap_name, (unsigned)port_ids[lcore_id]);
+				   lcore_id, tap_name, (unsigned) port_ids[lcore_id]);
 		fflush(stdout);
 		/* Loop forever reading from tap and writing to NIC */
 		for (;;) {
@@ -274,8 +397,16 @@ main_loop(__attribute__((unused)) void *arg)
 			if (m == NULL)
 				continue;
 
-			ret = read(tap_fd, rte_pktmbuf_mtod(m, void *),
+			ret = read(tun_fd, rte_pktmbuf_mtod(m, void * ),
 					   MAX_PACKET_SZ);
+
+			struct ether_hdr *ethhdr;
+			ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
+			ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv4);
+			memcpy(&ethhdr->s_addr, &ethaddr_tbl.src,
+				   sizeof(struct ether_addr));
+			memcpy(&ethhdr->d_addr, &ethaddr_tbl.dst,
+				   sizeof(struct ether_addr));
 			lcore_stats[lcore_id].rx++;
 			if (unlikely(ret < 0)) {
 				FATAL_ERROR("Reading from %s interface failed",
@@ -283,19 +414,17 @@ main_loop(__attribute__((unused)) void *arg)
 			}
 			m->nb_segs = 1;
 			m->next = NULL;
-			m->pkt_len = (uint16_t)ret;
-			m->data_len = (uint16_t)ret;
+			m->pkt_len = (uint16_t) ret;
+			m->data_len = (uint16_t) ret;
 			ret = rte_eth_tx_burst(port_ids[lcore_id], 0, &m, 1);
 			if (unlikely(ret < 1)) {
 				rte_pktmbuf_free(m);
 				lcore_stats[lcore_id].dropped++;
-			}
-			else {
+			} else {
 				lcore_stats[lcore_id].tx++;
 			}
 		}
-	}
-	else {
+	} else {
 		PRINT_INFO("Lcore %u has nothing to do", lcore_id);
 		return 0;
 	}
@@ -307,8 +436,7 @@ main_loop(__attribute__((unused)) void *arg)
 
 /* Display usage instructions */
 static void
-print_usage(const char *prgname)
-{
+print_usage(const char *prgname) {
 	PRINT_INFO("\nUsage: %s [EAL options] -- -p PORTMASK -i IN_CORES -o OUT_CORES\n"
 					   "    -p PORTMASK: hex bitmask of ports to use\n"
 					   "    -i IN_CORES: hex bitmask of cores which read from NIC\n"
@@ -318,8 +446,7 @@ print_usage(const char *prgname)
 
 /* Convert string to unsigned number. 0 is returned if error occurs */
 static uint64_t
-parse_unsigned(const char *portmask)
-{
+parse_unsigned(const char *portmask) {
 	char *end = NULL;
 	uint64_t num;
 
@@ -327,19 +454,19 @@ parse_unsigned(const char *portmask)
 	if ((portmask[0] == '\0') || (end == NULL) || (*end != '\0'))
 		return 0;
 
-	return (uint64_t)num;
+	return (uint64_t) num;
 }
 
 /* Record affinities between ports and lcores in global port_ids[] array */
 static void
-setup_port_lcore_affinities(void)
-{
+setup_port_lcore_affinities(void) {
 	unsigned long i;
 	uint8_t tx_port = 0;
 	uint8_t rx_port = 0;
 
 	/* Setup port_ids[] array, and check masks were ok */
-	RTE_LCORE_FOREACH(i) {
+	RTE_LCORE_FOREACH(i)
+	{
 		if (input_cores_mask & (1ULL << i)) {
 			/* Skip ports that are not enabled */
 			while ((ports_mask & (1 << rx_port)) == 0) {
@@ -374,8 +501,7 @@ setup_port_lcore_affinities(void)
 
 /* Parse the arguments given in the command line of the application */
 static void
-parse_args(int argc, char **argv)
-{
+parse_args(int argc, char **argv) {
 	int opt;
 	const char *prgname = argv[0];
 
@@ -419,42 +545,40 @@ parse_args(int argc, char **argv)
 
 /* Initialise a single port on an Ethernet device */
 static void
-init_port(uint8_t port)
-{
+init_port(uint8_t port) {
 	int ret;
 
 	/* Initialise device and RX/TX queues */
-	PRINT_INFO("Initialising port %u ...", (unsigned)port);
+	PRINT_INFO("Initialising port %u ...", (unsigned) port);
 	fflush(stdout);
 	ret = rte_eth_dev_configure(port, 1, 1, &port_conf);
 	if (ret < 0)
 		FATAL_ERROR("Could not configure port%u (%d)",
-					(unsigned)port, ret);
+					(unsigned) port, ret);
 
 	ret = rte_eth_rx_queue_setup(port, 0, NB_RXD, rte_eth_dev_socket_id(port),
 								 NULL,
 								 pktmbuf_pool);
 	if (ret < 0)
 		FATAL_ERROR("Could not setup up RX queue for port%u (%d)",
-					(unsigned)port, ret);
+					(unsigned) port, ret);
 
 	ret = rte_eth_tx_queue_setup(port, 0, NB_TXD, rte_eth_dev_socket_id(port),
 								 NULL);
 	if (ret < 0)
 		FATAL_ERROR("Could not setup up TX queue for port%u (%d)",
-					(unsigned)port, ret);
+					(unsigned) port, ret);
 
 	ret = rte_eth_dev_start(port);
 	if (ret < 0)
-		FATAL_ERROR("Could not start port%u (%d)", (unsigned)port, ret);
+		FATAL_ERROR("Could not start port%u (%d)", (unsigned) port, ret);
 
 	rte_eth_promiscuous_enable(port);
 }
 
 /* Check the link status of all ports in up to 9s, and print them finally */
 static void
-check_all_ports_link_status(uint8_t port_num, uint32_t port_mask)
-{
+check_all_ports_link_status(uint8_t port_num, uint32_t port_mask) {
 #define CHECK_INTERVAL 100 /* 100ms */
 #define MAX_CHECK_TIME 90 /* 9s (90 * 100ms) in total */
 	uint8_t portid, count, all_ports_up, print_flag = 0;
@@ -473,13 +597,13 @@ check_all_ports_link_status(uint8_t port_num, uint32_t port_mask)
 			if (print_flag == 1) {
 				if (link.link_status)
 					printf("Port %d Link Up - speed %u "
-								   "Mbps - %s\n", (uint8_t)portid,
-						   (unsigned)link.link_speed,
+								   "Mbps - %s\n", (uint8_t) portid,
+						   (unsigned) link.link_speed,
 						   (link.link_duplex == ETH_LINK_FULL_DUPLEX) ?
 						   ("full-duplex") : ("half-duplex\n"));
 				else
 					printf("Port %d Link Down\n",
-						   (uint8_t)portid);
+						   (uint8_t) portid);
 				continue;
 			}
 			/* clear all_ports_up flag if any link down */
@@ -508,10 +632,9 @@ check_all_ports_link_status(uint8_t port_num, uint32_t port_mask)
 
 /* Initialise ports/queues etc. and start main loop on each core */
 int
-main(int argc, char** argv)
-{
+main(int argc, char **argv) {
 	int ret;
-	unsigned i,high_port;
+	unsigned i, high_port;
 	uint8_t nb_sys_ports, port;
 
 	/* Associate signal_hanlder function with USR signals */
@@ -543,8 +666,7 @@ main(int argc, char** argv)
 	/* Find highest port set in portmask */
 	for (high_port = (sizeof(ports_mask) * 8) - 1;
 		 (high_port != 0) && !(ports_mask & (1 << high_port));
-		 high_port--)
-		; /* empty body */
+		 high_port--); /* empty body */
 	if (high_port > nb_sys_ports)
 		FATAL_ERROR("Port mask requires more ports than available");
 
@@ -558,9 +680,14 @@ main(int argc, char** argv)
 	}
 	check_all_ports_link_status(nb_sys_ports, ports_mask);
 
+	char tun_name[IFNAMSIZ];
+	snprintf(tun_name, IFNAMSIZ, "tun");
+	tun_fd = tun_create(tun_name);
+
 	/* Launch per-lcore function on every lcore */
 	rte_eal_mp_remote_launch(main_loop, NULL, CALL_MASTER);
-	RTE_LCORE_FOREACH_SLAVE(i) {
+	RTE_LCORE_FOREACH_SLAVE(i)
+	{
 		if (rte_eal_wait_lcore(i) < 0)
 			return -1;
 	}
