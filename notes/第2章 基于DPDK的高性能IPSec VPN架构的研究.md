@@ -9,6 +9,17 @@
 		加密认证算法：建立连接时需要确定加密和认证的算法，加密常用AES、3DES等算法，认证常用SHA-1和MD5算法。
 		SA协议：用于在不同设备间算法协商和秘钥匙交换的概念。
 		2.2.2 ESP(封装安全载荷)与AH(验证头)
+		ESP主要提供数据加密和完整性校验
+		ESP协议：
+		加密前数据包：	IP HDR|Data
+		加密后数据包：	New IP HDR|Auth(ESP HDR|Enc(IP HDR|Data)|ESP Trailer|ESP Auth)
+		隧道和传输模式：
+		传输模式：
+			IP HDR|Auth(ESP HDR|Enc(Data)|ESP Trailer|ESP Auth)
+			仅对IP头部以上的数据进行加密，不对IP头进行加密，主要用于基于IPSec的点对点通用路由协议
+		隧道模式：
+			New IP Header|Auth(ESP HDR|Enc(IP HDR|Data)|ESP Trailer|ESP Auth)
+			首先加密原有数据包，然后加入新头部
 
 		2.2.3 IKE(Internet密钥交换)
 		IKE由三部分组成：
@@ -50,14 +61,21 @@
 			第二步：协商安全连接的参数，两设备间形成安全连接。
 			接下来就可以使用该安全连接来传输数据。
 
-			阶段一：建立ISAKMPSA
+			阶段一ISAKMP SA提供了后续协商的安全，阶段二IPSec SA协商在第一阶段加密保护下进行，IPSec SA为后续传输数据加密。
+
+			阶段一：进行ISAKMP SA协商
 				1.协商对等体间认证的方式（共享密钥或数字证书）
 				2.协商加密使用的算法（DES或3DES等）
 				3.协商认证使用的算法（MD5或SHA）
 				4.协商Diffie-Hellman密钥组
 				5.协商协商模式（主模式或野蛮模式）
 				6.协商SA生存期
-			阶段二：
+			阶段二：进行IPSec SA协商
+				1.协商双方封装技术（ESP或AH）
+				2.协商加密算法
+				3.协商HMAC方式（MD5或SHA）
+				4.协商传输模式（传输模式或隧道模式）
+				5.协商SA生存期
 
 	2.3 XFRM 框架
 	2.4 DPDK 平台介绍
