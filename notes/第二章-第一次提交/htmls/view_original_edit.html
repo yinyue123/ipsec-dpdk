@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>修改文档</title>
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+</head>
+<body>
+<div class="bg-grey PLR40">
+
+    <div class="paper-txt P30 PB0">
+        <div class="alert alert-success" role="alert">此为您在“详细报告”中修改后临时保存的内容，编辑过的内容会变绿色</div>
+        <p class="text-idt25" data-id="1">2.1 VPN 原理概述</p><p class="text-idt25" data-id="2">2.2 IPSec 综述</p><p class="text-idt25" data-id="3">2.2.1 IPSec 处理</p><p class="text-idt25" data-id="4">由于IP协议设计之初没有安全保护，数据在传输中有可能被监听或篡改，存在安全隐患。而IPSec是一套完整的加密系统，IPSec有协议提供每个IP数据包的认证，完整性校验（保证传输中未被篡改），机密性（数据包加密）</p><p class="text-idt25" data-id="5">IPSec技术主要有AH，ESP，IKE，ISAKMP/Oakley和算法组成。</p><p class="text-idt25" data-id="6">AH协议：有完整性校验功能，但不能加密数据。</p><p class="text-idt25" data-id="7">ESP协议：有完整性校验功能和加密功能。</p><p class="text-idt25" data-id="8">IKE协议：主用于秘钥管理，完成设备间会话秘钥协商和交换。</p><p class="text-idt25" data-id="9">加密认证算法：建立连接时需要确定加密和认证的算法，加密常用AES、3DES等算法，认证常用SHA-1和MD5算法。</p><p class="text-idt25" data-id="10">SA协议：用于在不同设备间算法协商和秘钥匙交换的概念。</p><p class="text-idt25" data-id="11">2.2.2 ESP(封装安全载荷)与AH(验证头)</p><p class="text-idt25" data-id="12">ESP主要提供数据加密和完整性校验</p><p class="text-idt25" data-id="13">ESP协议：</p><p class="text-idt25" data-id="14">加密前数据包：IP HDR Data</p><p class="text-idt25" data-id="15">加密后数据包：New IP HDR Auth(ESP HDR Enc(IP HDR Data) ESP Trailer ESP Auth)</p><p class="text-idt25" data-id="16">隧道和传输模式：</p><p class="text-idt25" data-id="17">传输模式：</p><p class="text-idt25" data-id="18">IP HDR Auth(ESP HDR Enc(Data) ESP Trailer ESP Auth)</p><p class="text-idt25" data-id="19">仅对IP头部以上的数据进行加密，不对IP头进行加密，主要用于基于IPSec的点对点通用路由协议</p><p class="text-idt25" data-id="20">隧道模式：</p><p class="text-idt25" data-id="21">New IP Header Auth(ESP HDR Enc(IP HDR Data) ESP Trailer ESP Auth)</p><p class="text-idt25" data-id="22">首先加密原有数据包，然后加入新头部</p><p class="text-idt25" data-id="23">2.2.3 IKE(Internet密钥交换)</p><p class="text-idt25" data-id="24">IKE由三部分组成：</p><p class="text-idt25" data-id="25">ISAKMP：使用了UDP的500端口，定义了信息交换的体系结构</p><p class="text-idt25" data-id="26">SKEME：实现公钥加密认证体制</p><p class="text-idt25" data-id="27">Oakley：提供了IPSec对等体间达成相同加密密钥的基本模式机制。</p><p class="text-idt25" data-id="28">SA(SecurityAssocation，安全联盟)：用于协商实体通信建立的一种协约，协定了IPSec协议、密钥、转码方式、密钥有效期等。IPSec会构建一个SA数据库（SADB）用来维护IPSec协议保障数据安全。</p><p class="text-idt25" data-id="29">SA是单向的：两设备通过 ESP进行通信，则设备则需要 SA（ IN）和 SA（ OUT）， SA（ OUT）用作处理发出的数据包， SA（ IN）用作处理接受的数据包， SA（ IN）和对方的 SA（ OUT）使用相同的加密参数（密钥等）。</p><p class="text-idt25" data-id="30">SA还区分协议，若AH和ESP同时生效，AH和ESP会产生不同的SA。</p><p class="text-idt25" data-id="31">SA有两种：</p><p class="text-idt25" data-id="32">IKE（ISAKMP） SA：用于协商IKE数据流加密及对等体认证的算法（对密钥加密和peer认证），只能有一个。</p><p class="text-idt25" data-id="33">IPSec SA：用于协商对等体之间的IP数据流进行的加密算法，可以有多个。</p><p class="text-idt25" data-id="34">IKE交换模式（主模式）</p><p class="text-idt25" data-id="35">Peer1Peer2</p><p class="text-idt25" data-id="36">SA交换（用于确认对方使用的算法）</p><p class="text-idt25" data-id="37">发送本地IKE策略---发起方发送策略--]</p><p class="text-idt25" data-id="38">接受对端确认的策略[--接收方确认策略---查找匹配的策略</p><p class="text-idt25" data-id="39">密钥交换（产生密钥）</p><p class="text-idt25" data-id="40">---发起方的密钥生成信息--]密钥生成</p><p class="text-idt25" data-id="41">密钥生成[--接收方的密钥生成信息---</p><p class="text-idt25" data-id="42">ID交换及验证（验证对方身份）</p><p class="text-idt25" data-id="43">---发起方身份和验证数据--]身份验证和交换过程验证</p><p class="text-idt25" data-id="44">身份验证和交换过程验证[--接收方身份和验证数据---</p><p class="text-idt25" data-id="45">IKE的交换模式（野蛮模式）</p><p class="text-idt25" data-id="46">Peer1Peer2</p><p class="text-idt25" data-id="47">SA交换，密钥生成(确认对方使用的算法，产生密钥)</p><p class="text-idt25" data-id="48">发送本地IKE策略，密钥生成信息</p><p class="text-idt25" data-id="49">---发起方策略，密钥生成信息--]</p><p class="text-idt25" data-id="50">查找匹配的策略，密钥生成</p><p class="text-idt25" data-id="51">[--接收方的密钥生成信息，身份和验证数据---</p><p class="text-idt25" data-id="52">接收对端确认的策略，密钥生成</p><p class="text-idt25" data-id="53">ID交换及验证（验证对方身份）</p><p class="text-idt25" data-id="54">--发起方身份和验证数据--]</p><p class="text-idt25" data-id="55">身份验证和交换过程验证</p><p class="text-idt25" data-id="56">点对点IPSec VPN协商过程有两个阶段，两设备间建立安全的传输连接需要先协商使用的加密算法、密钥、封装技术。</p><p class="text-idt25" data-id="57">第一步：两设备间建立安全的管理连接，用作保护加密第二阶段协商过程。</p><p class="text-idt25" data-id="58">第二步：协商安全连接的参数，两设备间形成安全连接。</p><p class="text-idt25" data-id="59">接下来就可以使用该安全连接来传输数据。</p><p class="text-idt25" data-id="60">阶段一ISAKMP SA提供了后续协商的安全，阶段二IPSec SA协商在第一阶段加密保护下进行，IPSec SA为后续传输数据加密。</p><p class="text-idt25" data-id="61">阶段一：进行ISAKMP SA协商</p><p class="text-idt25" data-id="62">1.协商对等体间认证的方式（共享密钥或数字证书）</p><p class="text-idt25" data-id="63">2.协商加密使用的算法（DES或3DES等）</p><p class="text-idt25" data-id="64">3.协商认证使用的算法（MD5或SHA）</p><p class="text-idt25" data-id="65">4.协商Diffie-Hellman密钥组</p><p class="text-idt25" data-id="66">5.协商协商模式（主模式或野蛮模式）</p><p class="text-idt25" data-id="67">6.协商SA生存期</p><p class="text-idt25" data-id="68">阶段二：进行IPSec SA协商</p><p class="text-idt25" data-id="69">1.协商双方封装技术（ESP或AH）</p><p class="text-idt25" data-id="70">2.协商加密算法</p><p class="text-idt25" data-id="71">3.协商HMAC方式（MD5或SHA）</p><p class="text-idt25" data-id="72">4.协商传输模式（传输模式或隧道模式）</p><p class="text-idt25" data-id="73">5.协商SA生存期</p><p class="text-idt25" data-id="74">2.3 XFRM 框架</p><p class="text-idt25" data-id="75">XFRM是Linux引入的一种基于策略的高扩展性网络安全架构。在Linux2.6内核中包含了PF_KEY，2.4内核需要打补丁实现。根据RFC2367的定义，内核PF_KEY实现了安全联盟(SA)和安全策略(SP)的数据库以及用户空间接口。不同系统的SA和SP实现管理不同，在Linux内核中则通过xfrm库来实现。</p><p class="text-idt25" data-id="76">IPSec的SP：</p><p class="text-idt25" data-id="77"> SPD用来存放 IPSec哪些流量需要走 IPSec的规则表，表中包含目的 IP，源 IP，执行协议( AH或 ESP或 AH和 ESP并存)，源端口，目的端口，工作模式(传输模式或隧道模式)。当主机有数据通过VPN发出的时候，数据包会根据SPD规则进行匹配，只有匹配到，数据包才会通过AH或ESP处理。</p><p class="text-idt25" data-id="78">IPSec的SA：</p><p class="text-idt25" data-id="79"> SAD用来存安全信息， SAD数据库中包含的信息有 SPI值，目的端 IP， AH或 ESP， AH验证算法， AH验证加密密钥， ESP验证算法， ESP验证加密密钥， ESP加密算法， ESP加密密钥，隧道或传输模式。SPI索引值是双方用于索引数据库，手动指定或随机生成的一个值。</p><p class="text-idt25" data-id="80">2.4 DPDK 平台介绍</p><p class="text-idt25" data-id="81">2.4.1 DPDK简介</p><p class="text-idt25" data-id="82">DPDK(Data planedevelopment kit)是一个用于处理和加速网络数据包的软件库，相比于传统的Linux操作系统协议栈，DPDK有五个特点：</p><p class="text-idt25" data-id="83">1.轮询模式处理数据包：轮训检查是否有数据到达，避免了因为中断导致上下文切换的开销，提升了收发报文的效率。虽然该方式会导致CPU一直处于满负荷运行，但却很适合处理不间断大量数据包。当然在特定情况下仍然支持中断。</p><p class="text-idt25" data-id="84">2.用户态驱动：传统协议栈在内核态实现，用户态和内核态交换数据需要内存拷贝和系统调用，不必要的消耗很大。使用DPDK可以实现用户态驱动，避免了内存拷贝和系统调用。但用户需自行实现协议栈对数据进行处理和解析。</p><p class="text-idt25" data-id="85">3.独占与亲和性：为避免不同核间线程的频繁切换，可以指定某个核心的特定任务，保证cache的更高命中率</p><p class="text-idt25" data-id="86">4.降低访问存开销：传统协议栈未充分利用cache和内存，使用Hugepage可以降低TLB miss，使用内存多通道交错访问提高内存访问有效带宽</p><p class="text-idt25" data-id="87">5.软件调优：数据预取利用了程序的时间和空间局部性原理，软件预先取， cache行对齐及和 burst批量处理多元数据，可以一次将8个、16个甚至32个报文一次处理，这样可以降低访存次数，提高收发包效率。</p><p class="text-idt25" data-id="88">2.4.2 DPDK加密加速技术</p><p class="text-idt25" data-id="89">2.4.3 用户态协议栈</p><p class="text-idt25" data-id="90">2.5 基于DPDK的高性能IPSec VPN架构设计</p><p class="text-idt25" data-id="91">2.6 本章小节</p>        <div class="paper-footer">
+            <p>检测报告由<a href="http://www.paperpass.com/" target="_black">PaperPass</a>文献相似度检测系统生成</p>
+            <p>Copyright © 2007-2019 PaperPass</p>
+        </div>
+    </div>
+
+</div>
+</body>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/Lib.js"></script>
+<script type="text/javascript">
+    Report.report_id = '5cba81fe347e7hpgr';
+</script>
+<script type="text/javascript">
+    (function(System,$){
+        var cache = new System.Cache(System.report_id,localStorage);
+        $(function(){
+            $.each(cache.get(),function(){
+                $('[data-id='+this.id+']').addClass('g-font-color green').html(this.text);
+            });
+
+        });
+    })(Report,jQuery);
+
+</script>
+</html>

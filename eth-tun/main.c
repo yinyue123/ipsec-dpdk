@@ -349,6 +349,28 @@ struct ethaddr_info {
 	uint64_t src, dst;
 };
 
+#if RTE_BYTE_ORDER != RTE_LITTLE_ENDIAN
+#define __BYTES_TO_UINT64(a, b, c, d, e, f, g, h) \
+	(((uint64_t)((a) & 0xff) << 56) | \
+	((uint64_t)((b) & 0xff) << 48) | \
+	((uint64_t)((c) & 0xff) << 40) | \
+	((uint64_t)((d) & 0xff) << 32) | \
+	((uint64_t)((e) & 0xff) << 24) | \
+	((uint64_t)((f) & 0xff) << 16) | \
+	((uint64_t)((g) & 0xff) << 8)  | \
+	((uint64_t)(h) & 0xff))
+#else
+#define __BYTES_TO_UINT64(a, b, c, d, e, f, g, h) \
+    (((uint64_t)((h) & 0xff) << 56) | \
+    ((uint64_t)((g) & 0xff) << 48) | \
+    ((uint64_t)((f) & 0xff) << 40) | \
+    ((uint64_t)((e) & 0xff) << 32) | \
+    ((uint64_t)((d) & 0xff) << 24) | \
+    ((uint64_t)((c) & 0xff) << 16) | \
+    ((uint64_t)((b) & 0xff) << 8) | \
+    ((uint64_t)(a) & 0xff))
+#endif
+
 #define ETHADDR(a, b, c, d, e, f) (__BYTES_TO_UINT64(a, b, c, d, e, f, 0, 0))
 
 struct ethaddr_info ethaddr_tbl = {
@@ -362,7 +384,7 @@ main_loop(__attribute__((unused)) void *arg) {
 	const unsigned lcore_id = rte_lcore_id();
 	if ((1ULL << lcore_id) & input_cores_mask) {
 		PRINT_INFO("Lcore %u is reading from port %u and writing to %s",
-				   lcore_id, (unsigned) port_ids[lcore_id], tap_name);
+				   lcore_id, (unsigned) port_ids[lcore_id], "tun");
 		fflush(stdout);
 		/* Loop forever reading from NIC and writing to tap */
 		for (;;) {
@@ -376,6 +398,7 @@ main_loop(__attribute__((unused)) void *arg) {
 				struct rte_mbuf *m = pkts_burst[i];
 				/* Ignore return val from write() */
 				rte_pktmbuf_adj(m, ETHER_HDR_LEN);
+				printf("eth recv data\n");
 				int ret = write(tun_fd,
 								rte_pktmbuf_mtod(m, void * ),
 								rte_pktmbuf_data_len(m));
@@ -388,7 +411,7 @@ main_loop(__attribute__((unused)) void *arg) {
 		}
 	} else if ((1ULL << lcore_id) & output_cores_mask) {
 		PRINT_INFO("Lcore %u is reading from %s and writing to port %u",
-				   lcore_id, tap_name, (unsigned) port_ids[lcore_id]);
+				   lcore_id, "tun", (unsigned) port_ids[lcore_id]);
 		fflush(stdout);
 		/* Loop forever reading from tap and writing to NIC */
 		for (;;) {
@@ -400,8 +423,10 @@ main_loop(__attribute__((unused)) void *arg) {
 			ret = read(tun_fd, rte_pktmbuf_mtod(m, void * ),
 					   MAX_PACKET_SZ);
 
+			printf("tun recv data\n");
+
 			struct ether_hdr *ethhdr;
-			ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
+			ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(m, ETHER_HDR_LEN);
 			ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv4);
 			memcpy(&ethhdr->s_addr, &ethaddr_tbl.src,
 				   sizeof(struct ether_addr));
@@ -410,7 +435,7 @@ main_loop(__attribute__((unused)) void *arg) {
 			lcore_stats[lcore_id].rx++;
 			if (unlikely(ret < 0)) {
 				FATAL_ERROR("Reading from %s interface failed",
-							tap_name);
+							"tun");
 			}
 			m->nb_segs = 1;
 			m->next = NULL;

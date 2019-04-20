@@ -77,6 +77,7 @@
 #include <rte_jhash.h>
 #include <rte_cryptodev.h>
 
+#include "tun.h"
 #include "kni.h"
 #include "xfrm.h"
 #include "ipsec.h"
@@ -114,6 +115,8 @@
 
 #define KNI_PORT(portid) (kni_port_mask & (1 << portid))
 
+#define TUN_PORT(portid) (tun_port_mask & (1 << portid))
+
 /*
  * Configurable number of RX/TX ring descriptors
  */
@@ -142,6 +145,8 @@ struct ethaddr_info ethaddr_tbl[RTE_MAX_ETHPORTS] = {
 static uint32_t enabled_port_mask;
 static uint32_t unprotected_port_mask;
 static uint32_t kni_port_mask;
+static uint32_t tun_port_mask;
+static int tun_fd;
 static struct rte_mempool *kni_mempool[RTE_MAX_ETHPORTS];
 static int32_t promiscuous_on = 1;
 static int32_t numa_on = 1; /**< NUMA is enabled by default. */
@@ -300,6 +305,11 @@ prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
 
 	ip = rte_pktmbuf_mtod(pkt,
 	struct ip *);
+
+	if (TUN_PORT(port)) {
+		tun_write(pkt);
+//		return;
+	}
 
 	ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
 
@@ -828,6 +838,10 @@ main_loop(__attribute__((unused)) void *dummy) {
 			if (nb_rx > 0)
 				process_pkts(qconf, pkts, nb_rx, portid);
 
+			if(TUN_PORT(portid)){
+				tun_read(pkts);
+			}
+
 			if (KNI_PORT(portid)) {
 				forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
 			}
@@ -919,6 +933,7 @@ print_usage(const char *prgname) {
 				   "  -P : enable promiscuous mode\n"
 				   "  -u PORTMASK: hexadecimal bitmask of unprotected ports\n"
 				   "  -k PORTMASK: hexadecimal bitmask of kni port\n"
+				   "  -t PORTMASK: hexadecimal bitmask of tun port\n"
 				   "  --"OPTION_CONFIG": (port,queue,lcore): "
 				   "rx queues configuration\n"
 				   "  --single-sa SAIDX: use single SA index for outbound, "
@@ -1054,7 +1069,7 @@ parse_args(int32_t argc, char **argv) {
 
 	argvopt = argv;
 
-	while ((opt = getopt_long(argc, argvopt, "p:Pu:k:f:",
+	while ((opt = getopt_long(argc, argvopt, "p:Ptu:k:f:",
 							  lgopts, &option_index)) != EOF) {
 
 		switch (opt) {
@@ -1081,11 +1096,18 @@ parse_args(int32_t argc, char **argv) {
 			case 'k':
 				kni_port_mask = parse_portmask(optarg);
 				if (kni_port_mask == 0) {
-					printf("invalid unprotected portmask\n");
+					printf("invalid kni portmask\n");
 					print_usage(prgname);
 					return -1;
 				}
 				break;
+			case 't':
+				tun_port_mask = parse_portmask(optarg);
+				if (tun_port_mask == 0) {
+					printf("invalid tun portmask\n");
+					print_usage(prgname);
+					return -1;
+				}
 			case 'f':
 				if (f_present == 1) {
 					printf("\"-f\" option present more than "
@@ -1596,6 +1618,10 @@ main(int32_t argc, char **argv) {
 
 		port_init(portid);
 	}
+
+	char tun_name[IFNAMSIZ];
+	snprintf(tun_name, IFNAMSIZ, "tun");
+	tun_fd = tun_create(tun_name);
 
 	kni_main(kni_mempool, &port_conf, kni_port_mask);//init_all
 
