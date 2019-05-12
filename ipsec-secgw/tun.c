@@ -2,6 +2,7 @@
 // Created by 殷悦 on 24/03/2019.
 //
 
+#include <rte_mbuf.h>
 #include "tun.h"
 
 /* Max size of a single packet */
@@ -35,7 +36,7 @@ int tun_create(char *name) {
 	return fd;
 }
 
-struct rte_mbuf* tun_read() {
+struct rte_mbuf* tun_read(int tun_fd) {
 	struct rte_mbuf *m = rte_pktmbuf_alloc(pktmbuf_pool);
 	if (m == NULL)
 		return tun_read();
@@ -58,7 +59,7 @@ struct rte_mbuf* tun_read() {
 	return m;
 }
 
-int tun_write(rte_mbuf *m){
+int tun_write(int tun_fd,rte_mbuf *m){
 	int ret = write(tun_fd,
 					rte_pktmbuf_mtod(m, void * ),
 					rte_pktmbuf_data_len(m));
