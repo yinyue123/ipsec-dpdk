@@ -307,7 +307,7 @@ prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
 	struct ip *);
 
 	if (TUN_PORT(port)) {
-		tun_write(pkt);
+		tun_write(tun_fd,pkt);
 //		return;
 	}
 
@@ -839,7 +839,7 @@ main_loop(__attribute__((unused)) void *dummy) {
 				process_pkts(qconf, pkts, nb_rx, portid);
 
 			if(TUN_PORT(portid)){
-				tun_read(pkts);
+				pkts=tun_read(tun_fd);
 			}
 
 			if (KNI_PORT(portid)) {
