@@ -13,8 +13,8 @@ grep '/mnt/huge' /proc/mounts
 
 ip link set enp3s0 down
 ip link set enp6s0 down
-ip link set enp7s0 down
-ip link set enp8s0 down
+#ip link set enp7s0 down
+#ip link set enp8s0 down
 
-$RTE_SDK/usertools/dpdk-devbind.py -b igb_uio 03:00.0 06:00.0 07:00.0 08:00.0
-#$RTE_SDK/usertools/dpdk-devbind.py -b igb_uio 03:00.0 06:00.0
+#$RTE_SDK/usertools/dpdk-devbind.py -b igb_uio 03:00.0 06:00.0 07:00.0 08:00.0
+$RTE_SDK/usertools/dpdk-devbind.py -b igb_uio 03:00.0 06:00.0
