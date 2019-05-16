@@ -11,35 +11,20 @@ struct tuple {
 	uint8_t proto;
 };
 
-struct dnat_key {
-	uint32_t aim_ip;
-	uint16_t aim_port;
-	uint16_t out_port;
-	uint8_t proto;
-};
-
 struct nat_table {
-	struct dnat_key dnat_key;
-	struct tuple snat_key;
-	uint32_t in_ip;
-//	uint32_t aim_ip;	//not use
-	uint16_t in_port;
-	uint16_t out_port;
-//	uint16_t aim_port;	//not use
-//	uint8_t proto;		//not use
+	struct tuple dnat;
+	struct tuple snat;
 	UT_hash_handle shh;
 	UT_hash_handle dhh;
 };
 
-struct nat_ip {
+struct nat {
 	uint32_t in_ip;
 	uint32_t in_netmask;
 	uint32_t out_ip;
+	struct nat_table *stab;
+	struct nat_table *dtab;
 };
-
-struct nat_ip nat_ip;
-struct nat_table *snat_table = NULL;
-struct nat_table *dnat_table = NULL;
 
 char *addr(uint32_t ip) {
 	struct in_addr temp;
@@ -47,14 +32,15 @@ char *addr(uint32_t ip) {
 	return inet_ntoa(temp);
 }
 
-void init(uint32_t in_ip, uint32_t in_netmask, uint32_t out_ip) {
-	nat_ip.in_ip = in_ip;
-	nat_ip.in_netmask = in_netmask;
-	nat_ip.out_ip = out_ip;
+void init(struct nat *ctx, uint32_t in_ip, uint32_t in_netmask, uint32_t out_ip) {
+	memset(ctx, 0, sizeof(struct nat));
+	ctx->in_ip = in_ip;
+	ctx->in_netmask = in_netmask;
+	ctx->out_ip = out_ip;
 	printf("====== init =====\n");
-	printf("in_ip:%s(%#x)\t", addr(nat_ip.in_ip));
-	printf("in_netmask:%s(%#x)\t", addr(nat_ip.in_netmask));
-	printf("out_ip:%s(%#x)\n", addr(nat_ip.out_ip));
+	printf("in_ip:%s(%#x)\t", addr(ctx->in_ip));
+	printf("in_netmask:%s(%#x)\t", addr(ctx->in_netmask));
+	printf("out_ip:%s(%#x)\n", addr(ctx->out_ip));
 	printf("=================\n\n");
 }
 
@@ -64,89 +50,72 @@ uint16_t malloc_port(struct tuple *packet) {
 	return packet->src_port;
 }
 
-void snat(struct tuple *packet) {
-	struct nat_table *s_obj;
+void snat(struct nat *ctx, struct tuple *packet) {
+	struct nat_table *obj;
 
-	HASH_FIND(shh, snat_table, packet, sizeof(struct tuple), s_obj);
-	if (!s_obj) {
+	HASH_FIND(shh, ctx->stab, packet, sizeof(struct tuple), obj);
+	if (!obj) {
 		printf("new connection\n");
-		s_obj = (struct nat_table *) malloc(sizeof(struct nat_table));
-		memset(s_obj, 0, sizeof(struct nat_table));
+		obj = (struct nat_table *) malloc(sizeof(struct nat_table));
+		memset(obj, 0, sizeof(struct nat_table));
 
-//		s_obj->aim_ip = packet->dst_ip;
-//		s_obj->aim_port = packet->dst_port;
-		s_obj->in_ip = packet->src_ip;
-		s_obj->in_port = packet->src_port;
-		s_obj->out_port = malloc_port(packet);
-//		s_obj->proto = packet->proto;
+		memcpy(&(obj->snat), packet, sizeof(struct tuple));
+		obj->dnat.dst_ip = ctx->out_ip;
+		obj->dnat.dst_port = malloc_port(packet);
+		obj->dnat.src_ip = packet->dst_ip;
+		obj->dnat.src_port = packet->dst_port;
+		obj->dnat.proto = packet->proto;
 
-		s_obj->snat_key.proto = packet->proto;
-		s_obj->snat_key.src_ip = packet->src_ip;
-		s_obj->snat_key.dst_ip = packet->dst_ip;
-		s_obj->snat_key.src_port = packet->src_port;
-		s_obj->snat_key.dst_port = packet->dst_port;
-
-		s_obj->dnat_key.aim_ip = packet->dst_ip;
-		s_obj->dnat_key.out_port = s_obj->out_port;
-		s_obj->dnat_key.aim_port = packet->dst_port;
-		s_obj->dnat_key.proto = packet->proto;
-
-		HASH_ADD(shh, snat_table, snat_key, sizeof(struct tuple), s_obj);
-		HASH_ADD(dhh, dnat_table, dnat_key, sizeof(struct dnat_key), s_obj);
+		HASH_ADD(shh, ctx->stab, snat, sizeof(struct tuple), obj);
+		HASH_ADD(dhh, ctx->dtab, dnat, sizeof(struct tuple), obj);
 	}
-	packet->src_ip = nat_ip.out_ip;
-	packet->src_port = s_obj->out_port;
+	packet->src_ip = ctx->out_ip;
+	packet->src_port = obj->dnat.dst_port;
 }
 
-void dnat(struct tuple *packet) {
-	struct nat_table *d_obj;
-	struct dnat_key key;
-	memset(&key, 0, sizeof(struct dnat_key));
-	key.proto = packet->proto;
-	key.aim_ip = packet->src_ip;
-	key.aim_port = packet->src_port;
-	key.out_port = packet->dst_port;
+void dnat(struct nat *ctx, struct tuple *packet) {
+	struct nat_table *obj;
 
-	HASH_FIND(dhh, dnat_table, &key, sizeof(struct dnat_key), d_obj);
-	if(!d_obj){
+	HASH_FIND(dhh, ctx->dtab, packet, sizeof(struct tuple), obj);
+	if (!obj) {
 		printf("unsupport packet\n");
-		return ;
+		return;
 	}
 
-	packet->dst_ip=d_obj->in_ip;
-	packet->dst_port=d_obj->in_port;
+	packet->dst_ip = obj->snat.src_ip;
+	packet->dst_port = obj->snat.src_port;
 }
 
 void forward(struct tuple *packet) {
 	return;
 }
 
-void deal(struct tuple packet) {
+void deal(struct nat *ctx, struct tuple *packet) {
 	printf("=================\n");
 	printf("src_ip:%s(%#x)\tsrc_port:%d\tpro:%d\t",
-		   addr(packet.src_ip), packet.src_ip, ntohs(packet.src_port), packet.proto);
+		   addr(packet->src_ip), packet->src_ip, ntohs(packet->src_port), packet->proto);
 	printf("dst_ip:%s(%#x)\tdst_port:%d\n",
-		   addr(packet.dst_ip), packet.dst_ip, ntohs(packet.dst_port));
+		   addr(packet->dst_ip), packet->dst_ip, ntohs(packet->dst_port));
 	printf("-----------------\n");
-	if ((packet.src_ip & nat_ip.in_netmask) == (nat_ip.in_ip & nat_ip.in_netmask) &&
-		(packet.dst_ip & nat_ip.in_netmask) == (nat_ip.in_ip & nat_ip.in_netmask)) {
+	if ((packet->src_ip & ctx->in_netmask) == (ctx->in_ip & ctx->in_netmask) &&
+		(packet->dst_ip & ctx->in_netmask) == (ctx->in_ip & ctx->in_netmask)) {
 		printf("local to local\n");
-		forward(&packet);
-	} else if ((packet.src_ip & nat_ip.in_netmask) == (nat_ip.in_ip & nat_ip.in_netmask) &&
-			   (packet.dst_ip & nat_ip.in_netmask) != (nat_ip.in_ip & nat_ip.in_netmask)) {
+		forward(packet);
+	} else if ((packet->src_ip & ctx->in_netmask) == (ctx->in_ip & ctx->in_netmask) &&
+			   (packet->dst_ip & ctx->in_netmask) != (ctx->in_ip & ctx->in_netmask)) {
 		printf("local to internet\n");
-		snat(&packet);
-	} else if ((packet.src_ip & nat_ip.in_netmask) != (nat_ip.in_ip & nat_ip.in_netmask) &&
-			   packet.dst_ip == nat_ip.out_ip) {
+		snat(ctx, packet);
+	} else if ((packet->src_ip & ctx->in_netmask) != (ctx->in_ip & ctx->in_netmask) &&
+			   packet->dst_ip == ctx->out_ip) {
 		printf("internet to local\n");
-		dnat(&packet);
+		dnat(ctx, packet);
 	} else {
 		printf("not interest\n");
 	}
 	printf("src_ip:%s(%#x)\tsrc_port:%d\tpro:%d\t",
-		   addr(packet.src_ip), packet.src_ip, ntohs(packet.src_port), packet.proto);
+		   addr(packet->src_ip), packet->src_ip, ntohs(packet->src_port), packet->proto);
 	printf("dst_ip:%s(%#x)\tdst_port:%d\n",
-		   addr(packet.dst_ip), packet.dst_ip, ntohs(packet.dst_port));
+		   addr(packet->dst_ip), packet->dst_ip, ntohs(packet->dst_port));
 	printf("=================\n\n");
 }
 
@@ -198,15 +167,16 @@ int main() {
 			.dst_port=htons(80),
 			.proto=IPPROTO_TCP
 	};
+	struct nat *ctx = (struct nat *) malloc(sizeof(struct nat));
 
-	init(inet_addr("192.168.1.1"), inet_addr("255.255.255.0"), inet_addr("1.1.1.1"));
+	init(ctx, inet_addr("192.168.1.1"), inet_addr("255.255.255.0"), inet_addr("1.1.1.1"));
 
-	deal(packet1);
-	deal(packet2);
-	deal(packet3);
-	deal(packet4);
-	deal(packet5);
-	deal(packet6);
+	deal(ctx, &packet1);
+	deal(ctx, &packet2);
+	deal(ctx, &packet3);
+	deal(ctx, &packet4);
+	deal(ctx, &packet5);
+	deal(ctx, &packet6);
 
 	return 0;
 }
