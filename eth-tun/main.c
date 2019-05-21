@@ -254,95 +254,95 @@ static int tun_create(char *name) {
 	return fd;
 }
 
-///* Main processing loop */
-//static int
-//main_loop_back(__attribute__((unused)) void *arg)
-//{
-//	const unsigned lcore_id = rte_lcore_id();
-//	char tap_name[IFNAMSIZ];
-//	int tap_fd;
-//
-//	if ((1ULL << lcore_id) & input_cores_mask) {
-//		/* Create new tap interface */
-//		snprintf(tap_name, IFNAMSIZ, "tap_dpdk_%.2u", lcore_id);
-//		tap_fd = tap_create(tap_name);
-//		if (tap_fd < 0)
-//			FATAL_ERROR("Could not create tap interface \"%s\" (%d)",
-//						tap_name, tap_fd);
-//
-//		PRINT_INFO("Lcore %u is reading from port %u and writing to %s",
-//				   lcore_id, (unsigned)port_ids[lcore_id], tap_name);
-//		fflush(stdout);
-//		/* Loop forever reading from NIC and writing to tap */
-//		for (;;) {
-//			struct rte_mbuf *pkts_burst[PKT_BURST_SZ];
-//			unsigned i;
-//			const unsigned nb_rx =
-//					rte_eth_rx_burst(port_ids[lcore_id], 0,
-//									 pkts_burst, PKT_BURST_SZ);
-//			lcore_stats[lcore_id].rx += nb_rx;
-//			for (i = 0; likely(i < nb_rx); i++) {
-//				struct rte_mbuf *m = pkts_burst[i];
-//				/* Ignore return val from write() */
-//				int ret = write(tap_fd,
-//								rte_pktmbuf_mtod(m, void*),
-//								rte_pktmbuf_data_len(m));
-//				rte_pktmbuf_free(m);
-//				if (unlikely(ret < 0))
-//					lcore_stats[lcore_id].dropped++;
-//				else
-//					lcore_stats[lcore_id].tx++;
-//			}
-//		}
-//	}
-//	else if ((1ULL << lcore_id) & output_cores_mask) {
-//		/* Create new tap interface */
-//		snprintf(tap_name, IFNAMSIZ, "tap_dpdk_%.2u", lcore_id);
-//		tap_fd = tap_create(tap_name);
-//		if (tap_fd < 0)
-//			FATAL_ERROR("Could not create tap interface \"%s\" (%d)",
-//						tap_name, tap_fd);
-//
-//		PRINT_INFO("Lcore %u is reading from %s and writing to port %u",
-//				   lcore_id, tap_name, (unsigned)port_ids[lcore_id]);
-//		fflush(stdout);
-//		/* Loop forever reading from tap and writing to NIC */
-//		for (;;) {
-//			int ret;
-//			struct rte_mbuf *m = rte_pktmbuf_alloc(pktmbuf_pool);
-//			if (m == NULL)
-//				continue;
-//
-//			ret = read(tap_fd, rte_pktmbuf_mtod(m, void *),
-//					   MAX_PACKET_SZ);
-//			lcore_stats[lcore_id].rx++;
-//			if (unlikely(ret < 0)) {
-//				FATAL_ERROR("Reading from %s interface failed",
-//							tap_name);
-//			}
-//			m->nb_segs = 1;
-//			m->next = NULL;
-//			m->pkt_len = (uint16_t)ret;
-//			m->data_len = (uint16_t)ret;
-//			ret = rte_eth_tx_burst(port_ids[lcore_id], 0, &m, 1);
-//			if (unlikely(ret < 1)) {
-//				rte_pktmbuf_free(m);
-//				lcore_stats[lcore_id].dropped++;
-//			}
-//			else {
-//				lcore_stats[lcore_id].tx++;
-//			}
-//		}
-//	}
-//	else {
-//		PRINT_INFO("Lcore %u has nothing to do", lcore_id);
-//		return 0;
-//	}
-//	/*
-//	 * Tap file is closed automatically when program exits. Putting close()
-//	 * here will cause the compiler to give an error about unreachable code.
-//	 */
-//}
+/* Main processing loop */
+static int
+main_loop_back(__attribute__((unused)) void *arg)
+{
+	const unsigned lcore_id = rte_lcore_id();
+	char tap_name[IFNAMSIZ];
+	int tap_fd;
+
+	if ((1ULL << lcore_id) & input_cores_mask) {
+		/* Create new tap interface */
+		snprintf(tap_name, IFNAMSIZ, "tap_dpdk_%.2u", lcore_id);
+		tap_fd = tap_create(tap_name);
+		if (tap_fd < 0)
+			FATAL_ERROR("Could not create tap interface \"%s\" (%d)",
+						tap_name, tap_fd);
+
+		PRINT_INFO("Lcore %u is reading from port %u and writing to %s",
+				   lcore_id, (unsigned)port_ids[lcore_id], tap_name);
+		fflush(stdout);
+		/* Loop forever reading from NIC and writing to tap */
+		for (;;) {
+			struct rte_mbuf *pkts_burst[PKT_BURST_SZ];
+			unsigned i;
+			const unsigned nb_rx =
+					rte_eth_rx_burst(port_ids[lcore_id], 0,
+									 pkts_burst, PKT_BURST_SZ);
+			lcore_stats[lcore_id].rx += nb_rx;
+			for (i = 0; likely(i < nb_rx); i++) {
+				struct rte_mbuf *m = pkts_burst[i];
+				/* Ignore return val from write() */
+				int ret = write(tap_fd,
+								rte_pktmbuf_mtod(m, void*),
+								rte_pktmbuf_data_len(m));
+				rte_pktmbuf_free(m);
+				if (unlikely(ret < 0))
+					lcore_stats[lcore_id].dropped++;
+				else
+					lcore_stats[lcore_id].tx++;
+			}
+		}
+	}
+	else if ((1ULL << lcore_id) & output_cores_mask) {
+		/* Create new tap interface */
+		snprintf(tap_name, IFNAMSIZ, "tap_dpdk_%.2u", lcore_id);
+		tap_fd = tap_create(tap_name);
+		if (tap_fd < 0)
+			FATAL_ERROR("Could not create tap interface \"%s\" (%d)",
+						tap_name, tap_fd);
+
+		PRINT_INFO("Lcore %u is reading from %s and writing to port %u",
+				   lcore_id, tap_name, (unsigned)port_ids[lcore_id]);
+		fflush(stdout);
+		/* Loop forever reading from tap and writing to NIC */
+		for (;;) {
+			int ret;
+			struct rte_mbuf *m = rte_pktmbuf_alloc(pktmbuf_pool);
+			if (m == NULL)
+				continue;
+
+			ret = read(tap_fd, rte_pktmbuf_mtod(m, void *),
+					   MAX_PACKET_SZ);
+			lcore_stats[lcore_id].rx++;
+			if (unlikely(ret < 0)) {
+				FATAL_ERROR("Reading from %s interface failed",
+							tap_name);
+			}
+			m->nb_segs = 1;
+			m->next = NULL;
+			m->pkt_len = (uint16_t)ret;
+			m->data_len = (uint16_t)ret;
+			ret = rte_eth_tx_burst(port_ids[lcore_id], 0, &m, 1);
+			if (unlikely(ret < 1)) {
+				rte_pktmbuf_free(m);
+				lcore_stats[lcore_id].dropped++;
+			}
+			else {
+				lcore_stats[lcore_id].tx++;
+			}
+		}
+	}
+	else {
+		PRINT_INFO("Lcore %u has nothing to do", lcore_id);
+		return 0;
+	}
+	/*
+	 * Tap file is closed automatically when program exits. Putting close()
+	 * here will cause the compiler to give an error about unreachable code.
+	 */
+}
 
 /* port/source ethernet addr and destination ethernet addr */
 struct ethaddr_info {
