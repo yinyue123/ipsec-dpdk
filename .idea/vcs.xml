@@ -2,7 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bysjps" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/mydpdkdns" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/shadowVPN" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/xfrm-listen" vcs="Git" />
   </component>
 </project>

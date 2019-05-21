@@ -82,6 +82,7 @@
 #include "xfrm.h"
 #include "ipsec.h"
 #include "parser.h"
+#include "iptables.h"
 
 #define RTE_LOGTYPE_IPSEC RTE_LOGTYPE_USER1
 
@@ -243,11 +244,15 @@ prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid
 	/*forward to kni check*/
 	if (KNI_PORT(portid)) {
 //		if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
-		if (check_kni_data(pkt)) {
+//		if (check_kni_data(pkt)) {
+//			t->kni.pkts[(t->kni.num)++] = pkt;
+//			return;
+//		}
+//		}
+		if (bypass_before_tunnel(pkt)) {
 			t->kni.pkts[(t->kni.num)++] = pkt;
 			return;
 		}
-//		}
 	}
 
 	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
@@ -658,6 +663,7 @@ route4_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {
 //		//输出IP
 //		unsigned char *strIp = (char *)dst_ip[i];
 //		printf("route4_pkts send to: %d.%d.%d.%d\n", strIp[0], strIp[1], strIp[2], strIp[3]);
+		bypass_after_tunnel(pkts[i]);
 	}
 
 	rte_lpm_lookup_bulk((struct rte_lpm *) rt_ctx, dst_ip, hop, nb_pkts);
@@ -825,6 +831,12 @@ main_loop(__attribute__((unused)) void *dummy) {
 			sa_check_add_rules(qconf->inbound.sa_ctx, qconf->outbound.sa_ctx);
 //			sp4_check_add_rules(&(qconf->inbound.sp4_ctx), &(qconf->outbound.sp4_ctx));
 			sp4_check_add_rules(qconf->inbound.sp4_ctx, qconf->outbound.sp4_ctx);
+			for (i = 0; i < qconf->nb_rx_queue; ++i) {
+				if (KNI_PORT(portid)) {
+					sendarp(socket_ctx[socket_id].mbuf_pool, qconf->tx_queue_id[portid], portid);
+				}
+
+			}
 			prev_tsc = cur_tsc;
 		}
 

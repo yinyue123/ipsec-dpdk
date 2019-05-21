@@ -60,7 +60,6 @@ struct arp {
 	uint32_t local_ip;
 	unsigned char local_mac[ETHER_ADDR_LEN];
 	struct arp_table *atap;
-
 };
 
 void printHex(unsigned char *ptr, int len) {
