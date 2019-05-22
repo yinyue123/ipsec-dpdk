@@ -141,8 +141,10 @@ int bypass_before_tunnel_protect(struct rte_mbuf *pkt) {
 			}
 		}
 		return 1;
+	} else if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv6)) {
+		return 0;
 	}
-	return 0;
+	return 1;
 }
 
 void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
@@ -230,7 +232,7 @@ void bypass_after_tunnel(struct rte_mbuf *pkt) {
 	}
 }
 
-void sendarp(struct rte_mempool *mbuf_pool, uint16_t queueid, uint8_t port) {
+void send_arp(struct rte_mempool *mbuf_pool, uint16_t queueid, uint8_t port) {
 #define LEFT_TIME 5000
 	static int wait_timp = LEFT_TIME;//100us * LEFT_TIME (0.1ms * LEFT_TIME)
 	struct rte_mbuf *m;

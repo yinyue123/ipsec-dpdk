@@ -334,14 +334,15 @@ prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
 		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv6);
 	}
 
-	if (KNI_PORT(port))
-		get_mac_by_ip(ethhdr, ethaddr_kni, ip);
-	else {
-		memcpy(&ethhdr->s_addr, &ethaddr_tbl[port].src,
-			   sizeof(struct ether_addr));
-		memcpy(&ethhdr->d_addr, &ethaddr_tbl[port].dst,
-			   sizeof(struct ether_addr));
-	}
+	prepend_ether(ethhdr,ip);
+//	if (KNI_PORT(port))
+//		get_mac_by_ip(ethhdr, ethaddr_kni, ip);
+//	else {
+//		memcpy(&ethhdr->s_addr, &ethaddr_tbl[port].src,
+//			   sizeof(struct ether_addr));
+//		memcpy(&ethhdr->d_addr, &ethaddr_tbl[port].dst,
+//			   sizeof(struct ether_addr));
+//	}
 }
 
 static inline void
@@ -835,9 +836,8 @@ main_loop(__attribute__((unused)) void *dummy) {
 			sp4_check_add_rules(qconf->inbound.sp4_ctx, qconf->outbound.sp4_ctx);
 			for (i = 0; i < qconf->nb_rx_queue; ++i) {
 				if (KNI_PORT(portid)) {
-					sendarp(socket_ctx[socket_id].mbuf_pool, qconf->tx_queue_id[portid], portid);
+					send_arp(socket_ctx[socket_id].mbuf_pool, qconf->tx_queue_id[portid], portid);
 				}
-
 			}
 			prev_tsc = cur_tsc;
 		}
