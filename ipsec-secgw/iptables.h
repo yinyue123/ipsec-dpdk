@@ -68,7 +68,11 @@ void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t target_ip
 void parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result);
 
 //iptables
-int bypass_before_tunnel(struct rte_mbuf *pkt);
+//int bypass_before_tunnel(struct rte_mbuf *pkt);
+
+int bypass_before_tunnel_protect(struct rte_mbuf *pkt);
+
+void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt);
 
 void bypass_after_tunnel(struct rte_mbuf *pkt);
 
