@@ -76,7 +76,7 @@ void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt);
 
 void bypass_after_tunnel(struct rte_mbuf *pkt);
 
-void sendarp(struct rte_mempool *mbuf_pool, uint8_t port, uint16_t queueid);
+void send_arp(struct rte_mempool *mbuf_pool, uint8_t port, uint16_t queueid);
 
 void prepend_ether(struct ether_hdr *eth, struct ip *ip);
 
