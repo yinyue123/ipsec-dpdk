@@ -39,10 +39,113 @@ void parse_pkt(struct ipv4_hdr *ip_hdr, struct udp_hdr *udp_hdr, struct tcp_hdr 
 	}
 }
 
-int bypass_before_tunnel(struct rte_mbuf *pkt) {
+//int bypass_before_tunnel(struct rte_mbuf *pkt) {
+//	//return:
+//	//0:go on
+//	//1:send to kni
+//	struct ether_hdr *eth;
+//	struct ipv4_hdr *ip_hdr;
+//	struct udp_hdr *udp_hdr;
+//	struct tcp_hdr *tcp_hdr;
+//	struct arp_table arp_pkt;
+//	struct tuple pkt_tuple;
+//
+//	eth = rte_pktmbuf_mtod(pkt,
+//	struct ether_hdr *);
+//
+//	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_ARP)) { //proto is arp
+//		parse_arp(ctx, pkt, &arp_pkt);
+//		if (arp_pkt.ip == gw_ctx->wan_gateway) { //from wan gateway
+//			printf("before:ARP from wan gateway\n");
+//			print_ip_mac(arp_pkt.ip, &(arp_pkt.mac));
+//			memcpy(gw_ctx->wan_gateway_ha.addr_bytes, arp_pkt.mac.addr_bytes, ETHER_ADDR_LEN);
+//			return 0;
+//		} else { // from other host, send to kni
+//			printf("before:ARP from other host\n");
+//			printf("before:IN\n");
+//			print_ip_mac(arp_pkt.ip, &(arp_pkt.mac));
+//			return 1;
+//		}
+//	}
+//
+//	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) { // proto is ip
+//		ip_hdr = rte_pktmbuf_mtod_offset(pkt,
+//		struct ipv4_hdr *,sizeof(struct ether_hdr));
+//		if (ip_hdr->next_proto_id == IPPROTO_ESP) {//proto is esp, decrype
+//			printf("before:ESP\n");
+//			// decrype
+//			return 0;
+//		}
+//
+//		if (!parse_pkt(pkt, ip_hdr, udp_hdr, tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
+//			printf("before:ICMP etc.\n");
+//			print_tuple(&pkt_tuple);
+//			return 1;
+//		}
+//		print_tuple(&pkt_tuple);
+//		if (check_dnat(gw_ctx, &pkt_tuple)) { // dnat data
+//			printf("before:DNAT\n");
+//			print_tuple(&pkt_tuple);
+//			ip_hdr->dst_addr = pkt_tuple.dst_ip;
+//			if (pkt_tuple.proto == IPPROTO_TCP)
+//				tcp_hdr->dst_port = pkt_tuple.dst_port;
+//			else if (pkt_tuple.proto == IPPROTO_UDP)
+//				udp_hdr->dst_port = pkt_tuple.dst_port;
+//			return 0;
+//		} else { // data dnat to kni,send to kni
+//			printf("before:IN\n");
+//			return 1;
+//		}
+//	}
+//	return 0;
+//}
+
+void parse_ike_ip_mac(struct rte_mbuf *pkt) {
+	struct ether_hdr *eth;
+	struct ipv4_hdr *ip4_hdr;
+
+	eth = rte_pktmbuf_mtod(pkt,
+	struct ether_hdr *);
+	ip4_hdr = rte_pktmbuf_mtod_offset(pkt,
+	struct ipv4_hdr *, sizeof(struct ether_hdr));
+
+	printf("parse_ike_ip_mac add_tab\n");
+	add_tab(gw_ctx, ip4_hdr->src_addr, &(eth->s_addr));
+}
+
+int bypass_before_tunnel_protect(struct rte_mbuf *pkt) {
 	//return:
 	//0:go on
 	//1:send to kni
+	struct ether_hdr *eth;
+	struct ipv4_hdr *ip_hdr;
+	struct udp_hdr *udp_hdr;
+	struct tuple pkt_tuple;
+
+	eth = rte_pktmbuf_mtod(pkt,
+	struct ether_hdr *);
+
+	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) { // proto is ip
+		ip_hdr = rte_pktmbuf_mtod_offset(pkt,
+		struct ipv4_hdr *,sizeof(struct ether_hdr));
+		if (ip_hdr->next_proto_id == IPPROTO_ESP) { //proto is esp, decrype
+			printf("before:ESP\n");
+			// decrype
+			return 0;
+		} else if (ip_hdr->next_proto_id == IPPROTO_UDP) { //ike etc.
+			udp_hdr = (struct udp_hdr *) ((unsigned char *) ip_hdr +
+										  sizeof(struct ipv4_hdr));
+			dport = rte_be_to_cpu_16(udp_hdr->dst_port);
+			if (dport == 500) {
+				parse_ike_ip_mac(pkt);
+			}
+		}
+		return 1;
+	}
+	return 0;
+}
+
+void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 	struct ether_hdr *eth;
 	struct ipv4_hdr *ip_hdr;
 	struct udp_hdr *udp_hdr;
@@ -59,28 +162,18 @@ int bypass_before_tunnel(struct rte_mbuf *pkt) {
 			printf("before:ARP from wan gateway\n");
 			print_ip_mac(arp_pkt.ip, &(arp_pkt.mac));
 			memcpy(gw_ctx->wan_gateway_ha.addr_bytes, arp_pkt.mac.addr_bytes, ETHER_ADDR_LEN);
-			return 0;
-		} else { // from other host, send to kni
-			printf("before:ARP from other host\n");
-			printf("before:IN\n");
-			print_ip_mac(arp_pkt.ip, &(arp_pkt.mac));
-			return 1;
+			return;
 		}
 	}
 
 	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) { // proto is ip
 		ip_hdr = rte_pktmbuf_mtod_offset(pkt,
 		struct ipv4_hdr *,sizeof(struct ether_hdr));
-		if (ip_hdr->next_proto_id == IPPROTO_ESP) {//proto is esp, decrype
-			printf("before:ESP\n");
-			// decrype
-			return 0;
-		}
 
 		if (!parse_pkt(pkt, ip_hdr, udp_hdr, tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
 			printf("before:ICMP etc.\n");
 			print_tuple(&pkt_tuple);
-			return 1;
+			return;
 		}
 		print_tuple(&pkt_tuple);
 		if (check_dnat(gw_ctx, &pkt_tuple)) { // dnat data
@@ -91,13 +184,13 @@ int bypass_before_tunnel(struct rte_mbuf *pkt) {
 				tcp_hdr->dst_port = pkt_tuple.dst_port;
 			else if (pkt_tuple.proto == IPPROTO_UDP)
 				udp_hdr->dst_port = pkt_tuple.dst_port;
-			return 0;
+			return;
 		} else { // data dnat to kni,send to kni
 			printf("before:IN\n");
-			return 1;
+			return;
 		}
 	}
-	return 0;
+	return;
 }
 
 void bypass_after_tunnel(struct rte_mbuf *pkt) {

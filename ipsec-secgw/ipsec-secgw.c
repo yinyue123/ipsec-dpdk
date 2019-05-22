@@ -249,10 +249,12 @@ prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid
 //			return;
 //		}
 //		}
-		if (bypass_before_tunnel(pkt)) {
+		if (bypass_before_tunnel_protect(pkt)) {
 			t->kni.pkts[(t->kni.num)++] = pkt;
 			return;
 		}
+	}else{
+		bypass_before_tunnel_unprotect(pkt);
 	}
 
 	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {

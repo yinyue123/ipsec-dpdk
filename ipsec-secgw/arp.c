@@ -72,7 +72,7 @@ void add_tab(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac) {
 		}
 		memset(obj, 0, sizeof(struct arp_table));
 		obj->ip = ip;
-		memcpy(&(obj->mac.addr_bytes), mac, ETHER_ADDR_LEN);
+		memcpy(&(obj->mac.addr_bytes), mac->addr_bytes, ETHER_ADDR_LEN);
 		HASH_ADD(hh, ctx->arp_tab, ip, sizeof(uint32_t), obj);
 	} else if (memcmp(obj->mac.addr_bytes, mac->addr_bytes, ETHER_ADDR_LEN)) {
 		printf("renew arp\t");
