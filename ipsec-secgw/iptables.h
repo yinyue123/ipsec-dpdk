@@ -5,7 +5,12 @@
 #ifndef BYSJ_IPTABLES_H
 #define BYSJ_IPTABLES_H
 
-#include "../lib/rte_ether.h"
+#include <netinet/ip.h>
+
+#include <rte_ether.h>
+//#include "../lib/rte_ether.h"
+
+#include "uthash.h"
 
 //arp
 struct arp_table {
@@ -78,9 +83,9 @@ void bypass_after_tunnel(struct rte_mbuf *pkt);
 
 void send_arp(struct rte_mempool *mbuf_pool, uint8_t port, uint16_t queueid);
 
-void prepend_ether(struct ether_hdr *eth, struct ip *ip);
+void prepend_ether(struct ether_hdr *eth, uint32_t *dst_ip);
 
-void init();
+void iptables_init(void);
 
 #endif //BYSJ_IPTABLES_H
 

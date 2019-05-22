@@ -253,7 +253,7 @@ prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid
 			t->kni.pkts[(t->kni.num)++] = pkt;
 			return;
 		}
-	}else{
+	} else {
 		bypass_before_tunnel_unprotect(pkt);
 	}
 
@@ -305,10 +305,10 @@ prepare_traffic(struct rte_mbuf **pkts, struct ipsec_traffic *t,
 }
 
 static inline void
-prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
+prepare_tx_pkt(struct rte_mbuf *pkt) {
 	struct ip *ip;
 	struct ether_hdr *ethhdr;
-	struct ethaddr_info ethaddr_kni;
+//	struct ethaddr_info ethaddr_kni;
 
 	ip = rte_pktmbuf_mtod(pkt,
 	struct ip *);
@@ -334,7 +334,7 @@ prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
 		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv6);
 	}
 
-	prepend_ether(ethhdr,ip);
+	prepend_ether(ethhdr, &(ip->ip_dst.s_addr));
 //	if (KNI_PORT(port))
 //		get_mac_by_ip(ethhdr, ethaddr_kni, ip);
 //	else {
@@ -346,17 +346,17 @@ prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
 }
 
 static inline void
-prepare_tx_burst(struct rte_mbuf *pkts[], uint16_t nb_pkts, uint8_t port) {
+prepare_tx_burst(struct rte_mbuf *pkts[], uint16_t nb_pkts) {
 	int32_t i;
 	const int32_t prefetch_offset = 2;
 
 	for (i = 0; i < (nb_pkts - prefetch_offset); i++) {
 		rte_mbuf_prefetch_part2(pkts[i + prefetch_offset]);
-		prepare_tx_pkt(pkts[i], port);
+		prepare_tx_pkt(pkts[i]);
 	}
 	/* Process left packets */
 	for (; i < nb_pkts; i++)
-		prepare_tx_pkt(pkts[i], port);
+		prepare_tx_pkt(pkts[i]);
 }
 
 /* Send burst of packets on an output interface */
@@ -369,7 +369,7 @@ send_burst(struct lcore_conf *qconf, uint16_t n, uint8_t port) {
 	queueid = qconf->tx_queue_id[port];
 	m_table = (struct rte_mbuf **) qconf->tx_mbufs[port].m_table;
 
-	prepare_tx_burst(m_table, n, port);
+	prepare_tx_burst(m_table, n);
 
 	ret = rte_eth_tx_burst(port, queueid, m_table, n);
 	if (unlikely(ret < n)) {
@@ -1584,6 +1584,8 @@ main(int32_t argc, char **argv) {
 	if (xfrm_init() < 0) {
 		return 1;
 	}
+
+	iptables_init();
 
 	if ((unprotected_port_mask & enabled_port_mask) !=
 		unprotected_port_mask)

@@ -6,12 +6,17 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 //#include <net/if_arp.h>
+
+#include <rte_ether.h>
+#include <rte_arp.h>
+
 #include "uthash.h"
 #include "iptables.h"
-#include "../lib/rte_ether.h"
-#include "../lib/rte_arp.h"
 
-void printHex(unsigned char *ptr, int len) {
+//#include "../lib/rte_ether.h"
+//#include "../lib/rte_arp.h"
+
+static void printHex(unsigned char *ptr, int len) {
 	int i;
 	for (i = 0; i < len; i++) {
 		printf("%02X ", *(ptr + i));
@@ -23,7 +28,7 @@ void printHex(unsigned char *ptr, int len) {
 	printf("\n");
 }
 
-char *addr(uint32_t ip) {
+static char *addr(uint32_t ip) {
 	struct in_addr temp;
 	temp.s_addr = ip;
 	return inet_ntoa(temp);
@@ -35,15 +40,15 @@ void print_ip_mac(uint32_t ip, struct ether_addr *ha) {
 		   ha->addr_bytes[3], ha->addr_bytes[4], ha->addr_bytes[5]);
 }
 
-void init(struct gateway_ctx *ctx, uint32_t wan_ip, struct ether_addr *wan_ha) {
-	memset(ctx, 0, sizeof(struct gateway_ctx));
-	ctx->wan_ip = wan_ip;
-	memcpy(&(ctx->wan_ha), wan_ha, ETHER_ADDR_LEN);
-	printf("------ arp init ------\n");
-	printf("wan_ha:\t");
-	print_ip_mac(addr(wan_ip), wan_ha);
-	printf("----------------------\n\n");
-}
+//void init(struct gateway_ctx *ctx, uint32_t wan_ip, struct ether_addr *wan_ha) {
+//	memset(ctx, 0, sizeof(struct gateway_ctx));
+//	ctx->wan_ip = wan_ip;
+//	memcpy(&(ctx->wan_ha), wan_ha, ETHER_ADDR_LEN);
+//	printf("------ arp init ------\n");
+//	printf("wan_ha:\t");
+//	print_ip_mac(wan_ip, wan_ha);
+//	printf("----------------------\n\n");
+//}
 
 struct ether_addr *find_tab(struct gateway_ctx *ctx, uint32_t ip) {
 	struct arp_table *obj = NULL;
@@ -51,7 +56,7 @@ struct ether_addr *find_tab(struct gateway_ctx *ctx, uint32_t ip) {
 	printf("find tab test\n");
 	HASH_FIND(hh, ctx->arp_tab, &ip, sizeof(uint32_t), obj);
 	if (obj) {
-		print_ip_mac(addr(ip), &(obj->mac));
+		print_ip_mac(ip, &(obj->mac));
 		printf("----------------------\n\n");
 		return &(obj->mac);
 	} else {
@@ -78,7 +83,7 @@ void add_tab(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac) {
 		printf("renew arp\t");
 		memcpy(obj->mac.addr_bytes, mac->addr_bytes, ETHER_ADDR_LEN);
 	}
-	print_ip_mac(addr(ip), mac);
+	print_ip_mac(ip, mac);
 }
 
 void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t target_ip) {    // send
@@ -139,15 +144,15 @@ void parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *re
 	memcpy(result->mac.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN);
 }
 
-void show_table(struct gateway_ctx *ctx) {
-	struct arp_table *s, *tmp;
-	printf("----------------------\n");
-	printf("show tab test\n");
-	HASH_ITER(hh, ctx->arp_tab, s, tmp) {
-		print_ip_mac(addr(s->ip), &(s->mac));
-	}
-	printf("----------------------\n\n");
-}
+//void show_table(struct gateway_ctx *ctx) {
+//	struct arp_table *s, *tmp;
+//	printf("----------------------\n");
+//	printf("show tab test\n");
+//	HASH_ITER(hh, ctx->arp_tab, s, tmp) {
+//		print_ip_mac(s->ip, &(s->mac));
+//	}
+//	printf("----------------------\n\n");
+//}
 
 //int main() {
 //	struct gateway_ctx *ctx = (struct gateway_ctx *) malloc(sizeof(struct gateway_ctx));
