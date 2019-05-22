@@ -179,7 +179,7 @@ add_sa(
 
 }
 
-void
+static void
 xfrm_add_addr(uint32_t addr) {
 	struct in_addr addr_addr;
 	addr_addr.s_addr = addr;

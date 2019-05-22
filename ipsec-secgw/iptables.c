@@ -5,20 +5,26 @@
 #include <stdint.h>
 #include <arpa/inet.h>
 
-#include <rte_ether.h>
 #include <rte_ip.h>
 #include <rte_udp.h>
+#include <rte_tcp.h>
+#include <rte_arp.h>
+#include <rte_ether.h>
+#include <rte_ethdev.h>
+
+#include "uthash.h"
 #include "iptables.h"
 
-#include "../lib/rte_ether.h"
-#include "../lib/rte_ip.h"
-#include "../lib/rte_udp.h"
-#include "../lib/rte_tcp.h"
+//#include "../lib/rte_ether.h"
+//#include "../lib/rte_ip.h"
+//#include "../lib/rte_udp.h"
+//#include "../lib/rte_tcp.h"
 
 struct gateway_ctx *gw_ctx;
 
-void parse_pkt(struct ipv4_hdr *ip_hdr, struct udp_hdr *udp_hdr, struct tcp_hdr *tcp_hdr, struct tuple *pkt_tuple) {
-	memset(tuple, 0, sizeof(struct tuple));
+static int
+parse_pkt(struct ipv4_hdr *ip_hdr, struct udp_hdr *udp_hdr, struct tcp_hdr *tcp_hdr, struct tuple *pkt_tuple) {
+	memset(pkt_tuple, 0, sizeof(struct tuple));
 	pkt_tuple->dst_ip = ip_hdr->dst_addr;
 	pkt_tuple->dst_ip = ip_hdr->src_addr;
 	pkt_tuple->proto = ip_hdr->next_proto_id;
@@ -100,7 +106,7 @@ void parse_pkt(struct ipv4_hdr *ip_hdr, struct udp_hdr *udp_hdr, struct tcp_hdr 
 //	return 0;
 //}
 
-void parse_ike_ip_mac(struct rte_mbuf *pkt) {
+static void parse_ike_ip_mac(struct rte_mbuf *pkt) {
 	struct ether_hdr *eth;
 	struct ipv4_hdr *ip4_hdr;
 
@@ -120,7 +126,7 @@ int bypass_before_tunnel_protect(struct rte_mbuf *pkt) {
 	struct ether_hdr *eth;
 	struct ipv4_hdr *ip_hdr;
 	struct udp_hdr *udp_hdr;
-	struct tuple pkt_tuple;
+	int dport;
 
 	eth = rte_pktmbuf_mtod(pkt,
 	struct ether_hdr *);
@@ -150,8 +156,8 @@ int bypass_before_tunnel_protect(struct rte_mbuf *pkt) {
 void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 	struct ether_hdr *eth;
 	struct ipv4_hdr *ip_hdr;
-	struct udp_hdr *udp_hdr;
-	struct tcp_hdr *tcp_hdr;
+	struct udp_hdr *udp_hdr = NULL;
+	struct tcp_hdr *tcp_hdr = NULL;
 	struct arp_table arp_pkt;
 	struct tuple pkt_tuple;
 
@@ -159,7 +165,8 @@ void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 	struct ether_hdr *);
 
 	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_ARP)) { //proto is arp
-		parse_arp(ctx, pkt, &arp_pkt);
+		parse_arp(gw_ctx, rte_pktmbuf_mtod(pkt, unsigned
+		char *), &arp_pkt);
 		if (arp_pkt.ip == gw_ctx->wan_gateway) { //from wan gateway
 			printf("before:ARP from wan gateway\n");
 			print_ip_mac(arp_pkt.ip, &(arp_pkt.mac));
@@ -172,7 +179,7 @@ void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 		ip_hdr = rte_pktmbuf_mtod_offset(pkt,
 		struct ipv4_hdr *,sizeof(struct ether_hdr));
 
-		if (!parse_pkt(pkt, ip_hdr, udp_hdr, tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
+		if (!parse_pkt(ip_hdr, udp_hdr, tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
 			printf("before:ICMP etc.\n");
 			print_tuple(&pkt_tuple);
 			return;
@@ -198,8 +205,8 @@ void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 void bypass_after_tunnel(struct rte_mbuf *pkt) {
 	struct ether_hdr *eth;
 	struct ipv4_hdr *ip_hdr;
-	struct udp_hdr *udp_hdr;
-	struct tcp_hdr *tcp_hdr;
+	struct udp_hdr *udp_hdr = NULL;
+	struct tcp_hdr *tcp_hdr = NULL;
 	struct tuple pkt_tuple;
 
 	eth = rte_pktmbuf_mtod(pkt,
@@ -211,7 +218,7 @@ void bypass_after_tunnel(struct rte_mbuf *pkt) {
 	ip_hdr = rte_pktmbuf_mtod_offset(pkt,
 	struct ipv4_hdr *,sizeof(struct ether_hdr));
 
-	if (!parse_pkt(pkt, ip_hdr, udp_hdr, tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
+	if (!parse_pkt(ip_hdr, udp_hdr, tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
 		printf("after:ICMP\n");
 		return;
 	}
@@ -225,14 +232,14 @@ void bypass_after_tunnel(struct rte_mbuf *pkt) {
 				tcp_hdr->src_port = pkt_tuple.src_port;
 			else if (pkt_tuple.proto == IPPROTO_UDP)
 				udp_hdr->src_port = pkt_tuple.src_port;
-		} else if (check_forward(gw_ctx, pkt_tuple)) {
+		} else if (check_forward(gw_ctx, &pkt_tuple)) {
 			printf("after:FORWARD\n");
 			print_tuple(&pkt_tuple);
 		}
 	}
 }
 
-void send_arp(struct rte_mempool *mbuf_pool, uint16_t queueid, uint8_t port) {
+void send_arp(struct rte_mempool *mbuf_pool, uint8_t port, uint16_t queueid) {
 #define LEFT_TIME 5000
 	static int wait_timp = LEFT_TIME;//100us * LEFT_TIME (0.1ms * LEFT_TIME)
 	struct rte_mbuf *m;
@@ -247,8 +254,8 @@ void send_arp(struct rte_mempool *mbuf_pool, uint16_t queueid, uint8_t port) {
 		return;
 	}
 	wait_timp = LEFT_TIME;
-	m = rte_pktmbuf_alloc(pktmbuf_pool);
-	if (m == null) {
+	m = rte_pktmbuf_alloc(mbuf_pool);
+	if (m == NULL) {
 		return;
 	}
 	printf("send arp to gateway\n");
@@ -263,27 +270,27 @@ void send_arp(struct rte_mempool *mbuf_pool, uint16_t queueid, uint8_t port) {
 	}
 }
 
-void prepend_ether(struct ether_hdr *eth, struct ip *ip) {
+void prepend_ether(struct ether_hdr *eth, uint32_t *dst_ip) {
 	struct ether_addr *res;
 	printf("prepend_ether\n");
-	res = find_tab(gw_ctx, *ip);
+	res = find_tab(gw_ctx, *dst_ip);
 	if (res) {
-		memcpy(eth->s_addr.addr_bytes, gw_ctx->wan_ha, sizeof(struct ether_addr));
-		memcpy(eth->d_addr.addr_bytes, res->addr_bytes, sizeof(struct ether_addr));
+		memcpy(eth->s_addr.addr_bytes, gw_ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
+		memcpy(eth->d_addr.addr_bytes, res->addr_bytes, ETHER_ADDR_LEN);
 
 	} else {
-		memcpy(eth->s_addr.addr_bytes, gw_ctx->wan_ha, sizeof(struct ether_addr));
-		memcpy(eth->d_addr.addr_bytes, gw_ctx->wan_gateway_ha, sizeof(struct ether_addr));
+		memcpy(eth->s_addr.addr_bytes, gw_ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
+		memcpy(eth->d_addr.addr_bytes, gw_ctx->wan_gateway_ha.addr_bytes, ETHER_ADDR_LEN);
 	}
 }
 
-void init() {
+void iptables_init(void) {
 	struct gateway_ctx temp = {
 			.wan_ip = inet_addr("192.168.100.1"),
 			.wan_netmask = inet_addr("255.255.255.0"),
 			.wan_gateway = inet_addr("192.168.100.254"),
 			.wan_ha.addr_bytes = {0x01, 0x01, 0x01, 0x01, 0x01, 0x01},
-			.lan_ip = net_addr("10.31.2.0"),
+			.lan_ip = inet_addr("10.31.2.0"),
 			.lan_netmask = inet_addr("255.255.255.0")
 	};
 	gw_ctx = (struct gateway_ctx *) malloc(sizeof(struct gateway_ctx));
@@ -291,5 +298,5 @@ void init() {
 		printf("malloc error\n");
 	}
 //	memset(gw_ctx, 0, sizeof(struct gateway_ctx));
-	memcpy(gw_ctx, temp, sizeof(struct gateway_ctx));
+	memcpy(gw_ctx, &temp, sizeof(struct gateway_ctx));
 }
