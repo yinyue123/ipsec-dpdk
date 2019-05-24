@@ -51,6 +51,7 @@
 #include <arpa/inet.h>
 #include <stddef.h>
 
+#include <rte_ip.h>
 #include <rte_common.h>
 #include <rte_byteorder.h>
 #include <rte_log.h>
@@ -200,6 +201,7 @@ static struct rte_eth_conf port_conf = {
 				.split_hdr_size = 0,
 				.header_split   = 0, /**< Header Split disabled */
 				.hw_ip_checksum = 1, /**< IP checksum offload enabled */
+//				.hw_ip_checksum = 0, /**< IP checksum offload enabled */
 				.hw_vlan_filter = 0, /**< VLAN filtering disabled */
 				.jumbo_frame    = 0, /**< Jumbo Frame Support disabled */
 				.hw_strip_crc   = 0, /**< CRC stripped by hardware */
@@ -321,7 +323,9 @@ prepare_tx_pkt(struct rte_mbuf *pkt) {
 	ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
 
 	if (ip->ip_v == IPVERSION) {
-		pkt->ol_flags |= PKT_TX_IP_CKSUM | PKT_TX_IPV4;
+//		pkt->ol_flags |= PKT_TX_IP_CKSUM | PKT_TX_IPV4;
+//		if manual calculate checksum, don't use PKT_TX_IP_CKSUM
+		pkt->ol_flags |= PKT_TX_IPV4;
 		pkt->l3_len = sizeof(struct ip);
 		pkt->l2_len = ETHER_HDR_LEN;
 
@@ -333,8 +337,21 @@ prepare_tx_pkt(struct rte_mbuf *pkt) {
 
 		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv6);
 	}
-
+	ip->ip_sum = 0;
+	ip->ip_sum = rte_ipv4_cksum((struct ipv4_hdr *) ip);
 	prepend_ether(ethhdr, &(ip->ip_dst.s_addr));
+	printf("ip->ip_ttl:%d\n", ip->ip_ttl);
+	printf("ip->ip_tos:%d\n", ip->ip_tos);
+	printf("ip->ip_p:%d\n", ip->ip_p);
+	printf("ip->ip_sum:%04x\n", ip->ip_sum);
+	printf("ip->ip_src:%s\n", inet_ntoa(ip->ip_src));
+	printf("ip->ip_dst:%s\n", inet_ntoa(ip->ip_dst));
+	printf("src:\t");
+	print_ip_mac(ip->ip_src.s_addr, &(ethhdr->s_addr));
+	printf("dst:\t");
+	print_ip_mac(ip->ip_dst.s_addr, &(ethhdr->d_addr));
+//	printf("ip->ip_src:%s\n",ethhdr);
+//	printf("ip->ip_dst:%s\n",ethhdr);
 //	if (KNI_PORT(port))
 //		get_mac_by_ip(ethhdr, ethaddr_kni, ip);
 //	else {
@@ -662,6 +679,7 @@ route4_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {
 		dst_ip[i] = *rte_pktmbuf_mtod_offset(pkts[i],
 											 uint32_t * , offset);
 		dst_ip[i] = rte_be_to_cpu_32(dst_ip[i]);
+//		printf("1 offset:%d\n",offset);
 
 //		//输出IP
 //		unsigned char *strIp = (char *)dst_ip[i];
@@ -835,7 +853,7 @@ main_loop(__attribute__((unused)) void *dummy) {
 //			sp4_check_add_rules(&(qconf->inbound.sp4_ctx), &(qconf->outbound.sp4_ctx));
 			sp4_check_add_rules(qconf->inbound.sp4_ctx, qconf->outbound.sp4_ctx);
 			for (i = 0; i < qconf->nb_rx_queue; ++i) {
-				if (KNI_PORT(portid)) {
+				if (!KNI_PORT(portid)) {
 					send_arp(socket_ctx[socket_id].mbuf_pool, qconf->tx_queue_id[portid], portid);
 				}
 			}

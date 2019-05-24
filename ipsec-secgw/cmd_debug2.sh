@@ -6,4 +6,4 @@
 #./build/app/ipsec-secgw --master-lcore 0 -l 0,1 -n 1 --socket-mem=512,0 --vdev "crypto_null" -w 03:00.0 -w 06:00.0 -- -k 0x1 -p 0x3 -P -u 0x01 --config="(0,0,0),(1,0,0)" -f ipsec-test.cfg
 
 gdb -args \
-./build/app/ipsec-secgw --master-lcore 0 -l 0,1 -n 1 --socket-mem=512,0 --vdev "crypto_openssl" -w 03:00.0 -w 06:00.0 -- -k 0x1 -p 0x3 -P -u 0x01 --config="(0,0,0),(1,0,0)" -f ipsec-test.cfg
+./build/app/ipsec-secgw --master-lcore 0 -l 0,1 -n 1 --socket-mem=512,0 --vdev "crypto_openssl" -w 03:00.0 -w 06:00.0 -- -k 0x1 -p 0x3 -P -u 0x01 --config="(0,0,0),(1,0,1)" -f ipsec-test.cfg
