@@ -23,22 +23,22 @@
 struct gateway_ctx *gw_ctx;
 
 static int
-parse_pkt(struct ipv4_hdr *ip_hdr, struct udp_hdr *udp_hdr, struct tcp_hdr *tcp_hdr, struct tuple *pkt_tuple) {
+parse_pkt(struct ipv4_hdr *ip_hdr, struct udp_hdr **udp_hdr, struct tcp_hdr **tcp_hdr, struct tuple *pkt_tuple) {
 	memset(pkt_tuple, 0, sizeof(struct tuple));
 	pkt_tuple->dst_ip = ip_hdr->dst_addr;
-	pkt_tuple->dst_ip = ip_hdr->src_addr;
+	pkt_tuple->src_ip = ip_hdr->src_addr;
 	pkt_tuple->proto = ip_hdr->next_proto_id;
 	if (pkt_tuple->proto == IPPROTO_TCP) { //proto is tcp,
-		tcp_hdr = (struct tcp_hdr *) ((unsigned char *) ip_hdr +
-									  sizeof(struct ipv4_hdr));
-		pkt_tuple->src_port = tcp_hdr->src_port;
-		pkt_tuple->dst_port = tcp_hdr->dst_port;
+		*tcp_hdr = (struct tcp_hdr *) ((unsigned char *) ip_hdr +
+									   sizeof(struct ipv4_hdr));
+		pkt_tuple->src_port = (*tcp_hdr)->src_port;
+		pkt_tuple->dst_port = (*tcp_hdr)->dst_port;
 		return 1;
 	} else if (pkt_tuple->proto == IPPROTO_UDP) { //proto is udp
-		udp_hdr = (struct udp_hdr *) ((unsigned char *) ip_hdr +
-									  sizeof(struct ipv4_hdr));
-		pkt_tuple->src_port = udp_hdr->src_port;
-		pkt_tuple->dst_port = udp_hdr->dst_port;
+		*udp_hdr = (struct udp_hdr *) ((unsigned char *) ip_hdr +
+									   sizeof(struct ipv4_hdr));
+		pkt_tuple->src_port = (*udp_hdr)->src_port;
+		pkt_tuple->dst_port = (*udp_hdr)->dst_port;
 		return 1;
 	} else { // proto is icmp etc, send to kni
 		return 0;
@@ -179,7 +179,7 @@ void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 		ip_hdr = rte_pktmbuf_mtod_offset(pkt,
 		struct ipv4_hdr *,sizeof(struct ether_hdr));
 
-		if (!parse_pkt(ip_hdr, udp_hdr, tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
+		if (!parse_pkt(ip_hdr, &udp_hdr, &tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
 			printf("before:ICMP etc.\n");
 			print_tuple(&pkt_tuple);
 			return;
@@ -202,45 +202,74 @@ void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 	return;
 }
 
+//static uint16_t get_ip_checksum(char *ip_hdr) {
+//	int i;
+//	char *ptr_data = ip_hdr;
+//	uint32_t tmp = 0;
+//	uint32_t sum = 0;
+//	for (i = 0; i < 20; i += 2) {
+//		tmp += (uint8_t) ptr_data[i] << 8;
+//		tmp += (uint8_t) ptr_data[i + 1];
+//		sum += tmp;
+//		tmp = 0;
+//	}
+//	uint16_t lWord = sum & 0x0000FFFF;
+//	uint16_t hWord = sum >> 16;
+//	uint16_t checksum = lWord + hWord;
+//	checksum = ~checksum;
+//	return checksum;
+//}
+
 void bypass_after_tunnel(struct rte_mbuf *pkt) {
-	struct ether_hdr *eth;
 	struct ipv4_hdr *ip_hdr;
 	struct udp_hdr *udp_hdr = NULL;
 	struct tcp_hdr *tcp_hdr = NULL;
 	struct tuple pkt_tuple;
+//	uint16_t ip_cksum;
 
-	eth = rte_pktmbuf_mtod(pkt,
-	struct ether_hdr *);
+	printf("bypass_after_tunnel\n");
 
-	if (eth->ether_type != rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
+	ip_hdr = rte_pktmbuf_mtod(pkt,
+	struct ipv4_hdr *);
+
+//	printf("2 offset:%d\n",offsetof(
+//	struct ipv4_hdr, dst_addr));
+
+	if (!parse_pkt(ip_hdr, &udp_hdr, &tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
+		printf("after:ICMP,ESP,etc.\n");
 		return;
 	}
-	ip_hdr = rte_pktmbuf_mtod_offset(pkt,
-	struct ipv4_hdr *,sizeof(struct ether_hdr));
 
-	if (!parse_pkt(ip_hdr, udp_hdr, tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
-		printf("after:ICMP\n");
-		return;
-	}
+	print_tuple(&pkt_tuple);
 
-	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
-		if (check_snat(gw_ctx, &pkt_tuple)) {
-			printf("after:SNAT\n");
-			print_tuple(&pkt_tuple);
-			ip_hdr->src_addr = pkt_tuple.src_ip;
-			if (pkt_tuple.proto == IPPROTO_TCP)
-				tcp_hdr->src_port = pkt_tuple.src_port;
-			else if (pkt_tuple.proto == IPPROTO_UDP)
-				udp_hdr->src_port = pkt_tuple.src_port;
-		} else if (check_forward(gw_ctx, &pkt_tuple)) {
-			printf("after:FORWARD\n");
-			print_tuple(&pkt_tuple);
+	if (check_snat(gw_ctx, &pkt_tuple)) {
+		printf("after:SNAT\n");
+		print_tuple(&pkt_tuple);
+		ip_hdr->src_addr = pkt_tuple.src_ip;
+//		memset(&(ip_hdr->hdr_checksum), 0, sizeof(uint16_t));
+//		printf("get_ip_checksum:0x%04x\n", get_ip_checksum((char *) ip_hdr));
+//		printf("rte_ipv4_cksum :0x%04x\n", rte_ipv4_cksum(ip_hdr));
+//		ip_cksum = rte_ipv4_cksum(ip_hdr);
+//		ip_hdr->hdr_checksum = 0;
+//		ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr);
+//		printf("ip_hdr->hdr_checksum:%x\n", ip_hdr->hdr_checksum);
+		if (pkt_tuple.proto == IPPROTO_TCP) {
+			tcp_hdr->src_port = pkt_tuple.src_port;
+			tcp_hdr->cksum = 0;
+			tcp_hdr->cksum = rte_ipv4_udptcp_cksum(ip_hdr, (unsigned char *) ip_hdr + sizeof(struct ipv4_hdr));
+		} else if (pkt_tuple.proto == IPPROTO_UDP) {
+			udp_hdr->src_port = pkt_tuple.src_port;
+			udp_hdr->dgram_cksum = 0;
+			udp_hdr->dgram_cksum = rte_ipv4_udptcp_cksum(ip_hdr, (unsigned char *) ip_hdr + sizeof(struct ipv4_hdr));
 		}
+	} else if (check_forward(gw_ctx, &pkt_tuple)) {
+		printf("after:FORWARD\n");
+		print_tuple(&pkt_tuple);
 	}
 }
 
 void send_arp(struct rte_mempool *mbuf_pool, uint8_t port, uint16_t queueid) {
-#define LEFT_TIME 5000
+#define LEFT_TIME 50000
 	static int wait_timp = LEFT_TIME;//100us * LEFT_TIME (0.1ms * LEFT_TIME)
 	struct rte_mbuf *m;
 	int32_t ret;
@@ -277,7 +306,6 @@ void prepend_ether(struct ether_hdr *eth, uint32_t *dst_ip) {
 	if (res) {
 		memcpy(eth->s_addr.addr_bytes, gw_ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
 		memcpy(eth->d_addr.addr_bytes, res->addr_bytes, ETHER_ADDR_LEN);
-
 	} else {
 		memcpy(eth->s_addr.addr_bytes, gw_ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
 		memcpy(eth->d_addr.addr_bytes, gw_ctx->wan_gateway_ha.addr_bytes, ETHER_ADDR_LEN);
@@ -286,10 +314,10 @@ void prepend_ether(struct ether_hdr *eth, uint32_t *dst_ip) {
 
 void iptables_init(void) {
 	struct gateway_ctx temp = {
-			.wan_ip = inet_addr("192.168.100.1"),
+			.wan_ip = inet_addr("192.168.11.123"),
 			.wan_netmask = inet_addr("255.255.255.0"),
-			.wan_gateway = inet_addr("192.168.100.254"),
-			.wan_ha.addr_bytes = {0x01, 0x01, 0x01, 0x01, 0x01, 0x01},
+			.wan_gateway = inet_addr("192.168.11.2"),
+			.wan_ha.addr_bytes = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55},
 			.lan_ip = inet_addr("10.31.2.0"),
 			.lan_netmask = inet_addr("255.255.255.0")
 	};

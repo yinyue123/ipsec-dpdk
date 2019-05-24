@@ -565,8 +565,6 @@ xfrm_init(void) {
 	int shmid;
 	int i;
 
-	xfrm_add_addr(inet_addr("192.168.100.1"));
-
 	// create share memory
 	if ((shmid = shmget(IPC_PRIVATE, sizeof(struct shared_data), 0666)) < 0) {
 		perror("Shmget faild\n");
@@ -590,6 +588,7 @@ xfrm_init(void) {
 		for (i = 0; i < 20; i++) {
 			shared_mem->tokens[i] = shared_mem->tokens_save[i];
 		}
+		xfrm_add_addr(inet_addr("192.168.100.1"));
 		return 0;
 	}
 
