@@ -62,6 +62,8 @@ int check_snat(struct gateway_ctx *ctx, struct tuple *packet);
 int check_forward(struct gateway_ctx *ctx, struct tuple *packet);
 
 //arp
+//void printHex(unsigned char *ptr, int len);
+
 void print_ip_mac(uint32_t ip, struct ether_addr *ha);
 
 struct ether_addr *find_tab(struct gateway_ctx *ctx, uint32_t ip);
