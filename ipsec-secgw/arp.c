@@ -13,8 +13,8 @@
 #include "uthash.h"
 #include "iptables.h"
 
-//#include "../lib/rte_ether.h"
-//#include "../lib/rte_arp.h"
+#include "../lib/rte_ether.h"
+#include "../lib/rte_arp.h"
 
 static void printHex(unsigned char *ptr, int len) {
 	int i;
@@ -39,16 +39,6 @@ void print_ip_mac(uint32_t ip, struct ether_addr *ha) {
 		   ha->addr_bytes[0], ha->addr_bytes[1], ha->addr_bytes[2],
 		   ha->addr_bytes[3], ha->addr_bytes[4], ha->addr_bytes[5]);
 }
-
-//void init(struct gateway_ctx *ctx, uint32_t wan_ip, struct ether_addr *wan_ha) {
-//	memset(ctx, 0, sizeof(struct gateway_ctx));
-//	ctx->wan_ip = wan_ip;
-//	memcpy(&(ctx->wan_ha), wan_ha, ETHER_ADDR_LEN);
-//	printf("------ arp init ------\n");
-//	printf("wan_ha:\t");
-//	print_ip_mac(wan_ip, wan_ha);
-//	printf("----------------------\n\n");
-//}
 
 struct ether_addr *find_tab(struct gateway_ctx *ctx, uint32_t ip) {
 	struct arp_table *obj = NULL;
@@ -86,63 +76,165 @@ void add_tab(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac) {
 	print_ip_mac(ip, mac);
 }
 
-void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t target_ip) {    // send
+// send
+void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, struct arp_table *target) {
 	struct ether_hdr *eth = (struct ether_hdr *) pkt;
 	struct arp_hdr *arp = (struct arp_hdr *) (pkt + sizeof(struct ether_hdr));
 	printf("----------------------\n");
 	printf("prepare arp packet\n");
-	memset(eth->d_addr.addr_bytes, 0xff, ETHER_ADDR_LEN);
+
+	//ether hdr
 	memcpy(eth->s_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
 	eth->ether_type = htons(ETHER_TYPE_ARP);
 
+	//arp body
 	arp->arp_hrd = htons(ARP_HRD_ETHER);
 	arp->arp_pro = htons(ETHER_TYPE_IPv4);
 	arp->arp_hln = ETHER_ADDR_LEN;
 	arp->arp_pln = 4;
-	arp->arp_op = htons(ARP_OP_REQUEST);
+
 	arp->arp_data.arp_sip = ctx->wan_ip;
-	arp->arp_data.arp_tip = target_ip;
-	memset(arp->arp_data.arp_tha.addr_bytes, 0x00, ETHER_ADDR_LEN);
+	arp->arp_data.arp_tip = target->ip;
+
 	memcpy(arp->arp_data.arp_sha.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
+
+	switch (arp_op) {
+		case ARP_OP_REQUEST:
+			memset(eth->d_addr.addr_bytes, 0xff, ETHER_ADDR_LEN);
+			arp->arp_op = htons(ARP_OP_REQUEST);
+			memset(arp->arp_data.arp_tha.addr_bytes, 0x00, ETHER_ADDR_LEN);
+			break;
+		case ARP_OP_REPLY:
+			memcpy(eth->s_addr.addr_bytes, target->mac.addr_bytes, ETHER_ADDR_LEN);
+			arp->arp_op = htons(ARP_OP_REPLY);
+			memcpy(arp->arp_data.arp_tha.addr_bytes, target->mac.addr_bytes, ETHER_ADDR_LEN);
+			break;
+		default:
+			break;
+	}
 	printHex(pkt, sizeof(struct ether_hdr) + sizeof(struct arp_hdr));
 	printf("----------------------\n\n");
 }
 
-//void parse_arp(struct gateway_ctx *ctx, unsigned char *pkt) {        //recv
-void parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result) {
+//recv
+//return need reply
+int parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result) {
+	struct ether_addr bdcst_ha = {.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}};
+	struct ether_addr zero_ha = {.addr_bytes = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 	struct ether_hdr *eth = (struct ether_hdr *) pkt;
 	struct arp_hdr *arp_pkt = (struct arp_hdr *) (pkt + sizeof(struct ether_hdr));
-	struct arp_hdr chk = {
-			.arp_hrd=htons(ARP_HRD_ETHER),
-			.arp_pro=htons(ETHER_TYPE_IPv4),
-			.arp_hln=ETHER_ADDR_LEN,
-			.arp_pln=4,
-			.arp_op=htons(ARP_OP_REPLY),
-	};
+
 	printf("----------------------\n");
 	printf("parse arp packet\n");
 	printHex(pkt, sizeof(struct ether_hdr) + sizeof(struct arp_hdr));
-//	printHex(arp_pkt, sizeof(struct arp_hdr));
-	if (eth->ether_type != htons(ETHER_TYPE_ARP) ||
-		memcmp(eth->d_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN) ||
-		memcmp(eth->s_addr.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN)) {
-		printf("not interest\n");
-		return;
+	if (memcmp(eth->d_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN) && //not to me
+		memcmp(eth->d_addr.addr_bytes, bdcst_ha.addr_bytes, ETHER_ADDR_LEN)) { //not to everyone
+		printf("not to me\n");
+		printf("----------------------\n\n");
+		return 0;
 	}
-	chk.arp_data.arp_sip = arp_pkt->arp_data.arp_sip;
-	chk.arp_data.arp_tip = ctx->wan_ip;
-	memcpy(chk.arp_data.arp_sha.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN);
-	memcpy(chk.arp_data.arp_tha.addr_bytes, arp_pkt->arp_data.arp_tha.addr_bytes, ETHER_ADDR_LEN);
-	if (memcmp(&chk, arp_pkt, sizeof(struct arp_hdr))) {
-		printf("arp reply not match\n");
-		return;
+	if (!(arp_pkt->arp_hln == htons(ARP_HRD_ETHER) &&
+		  arp_pkt->arp_pro == htons(ETHER_TYPE_IPv4) &&
+		  arp_pkt->arp_hln == ETHER_ADDR_LEN &&
+		  arp_pkt->arp_pln == 4)) {
+		printf("packet incorrect\n");
+		printf("----------------------\n\n");
+		return 0;
 	}
-//	add_tab(ctx, arp_pkt->arp_data.arp_sip, &(arp_pkt->arp_data.arp_sha));
-	printf("----------------------\n\n");
-
-	result->ip = arp_pkt->arp_data.arp_sip;
-	memcpy(result->mac.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN);
+	switch (htons(arp_pkt->arp_op)) {
+		case ARP_OP_REQUEST:
+			if (memcmp(arp_pkt->arp_data.arp_tha.addr_bytes, zero_ha.addr_bytes, ETHER_ADDR_LEN) ||
+				arp_pkt->arp_data.arp_tip != ctx->wan_ip) {
+				printf("not to me2\n");
+				return 0;
+			}
+			result->ip = arp_pkt->arp_data.arp_sip;
+			memcpy(result->mac.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN);
+			printf("----------------------\n\n");
+			return 1;
+		case ARP_OP_REPLY:
+			if (memcmp(arp_pkt->arp_data.arp_tha.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN) ||
+				arp_pkt->arp_data.arp_tip != ctx->wan_ip) {
+				printf("not to me 2\n");
+				return 0;
+			}
+			result->ip = arp_pkt->arp_data.arp_sip;
+			memcpy(result->mac.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN);
+			printf("----------------------\n\n");
+			return 0;
+		default:
+			return 0;
+	}
+	return 0;
 }
+
+//void init(struct gateway_ctx *ctx, uint32_t wan_ip, struct ether_addr *wan_ha) {
+//	memset(ctx, 0, sizeof(struct gateway_ctx));
+//	ctx->wan_ip = wan_ip;
+//	memcpy(&(ctx->wan_ha), wan_ha, ETHER_ADDR_LEN);
+//	printf("------ arp init ------\n");
+//	printf("wan_ha:\t");
+//	print_ip_mac(wan_ip, wan_ha);
+//	printf("----------------------\n\n");
+//}
+
+//void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t target_ip) {    // send
+//	struct ether_hdr *eth = (struct ether_hdr *) pkt;
+//	struct arp_hdr *arp = (struct arp_hdr *) (pkt + sizeof(struct ether_hdr));
+//	printf("----------------------\n");
+//	printf("prepare arp packet\n");
+//	memset(eth->d_addr.addr_bytes, 0xff, ETHER_ADDR_LEN);
+//	memcpy(eth->s_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
+//	eth->ether_type = htons(ETHER_TYPE_ARP);
+//
+//	arp->arp_hrd = htons(ARP_HRD_ETHER);
+//	arp->arp_pro = htons(ETHER_TYPE_IPv4);
+//	arp->arp_hln = ETHER_ADDR_LEN;
+//	arp->arp_pln = 4;
+//	arp->arp_op = htons(ARP_OP_REQUEST);
+//	arp->arp_data.arp_sip = ctx->wan_ip;
+//	arp->arp_data.arp_tip = target_ip;
+//	memset(arp->arp_data.arp_tha.addr_bytes, 0x00, ETHER_ADDR_LEN);
+//	memcpy(arp->arp_data.arp_sha.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
+//	printHex(pkt, sizeof(struct ether_hdr) + sizeof(struct arp_hdr));
+//	printf("----------------------\n\n");
+//}
+
+////void parse_arp(struct gateway_ctx *ctx, unsigned char *pkt) {        //recv
+//void parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result) {
+//	struct ether_hdr *eth = (struct ether_hdr *) pkt;
+//	struct arp_hdr *arp_pkt = (struct arp_hdr *) (pkt + sizeof(struct ether_hdr));
+//	struct arp_hdr chk = {
+//			.arp_hrd=htons(ARP_HRD_ETHER),
+//			.arp_pro=htons(ETHER_TYPE_IPv4),
+//			.arp_hln=ETHER_ADDR_LEN,
+//			.arp_pln=4,
+//			.arp_op=htons(ARP_OP_REPLY),
+//	};
+//	printf("----------------------\n");
+//	printf("parse arp packet\n");
+//	printHex(pkt, sizeof(struct ether_hdr) + sizeof(struct arp_hdr));
+////	printHex(arp_pkt, sizeof(struct arp_hdr));
+//	if (eth->ether_type != htons(ETHER_TYPE_ARP) ||
+//		memcmp(eth->d_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN) ||
+//		memcmp(eth->s_addr.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN)) {
+//		printf("not interest\n");
+//		return;
+//	}
+//	chk.arp_data.arp_sip = arp_pkt->arp_data.arp_sip;
+//	chk.arp_data.arp_tip = ctx->wan_ip;
+//	memcpy(chk.arp_data.arp_sha.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN);
+//	memcpy(chk.arp_data.arp_tha.addr_bytes, arp_pkt->arp_data.arp_tha.addr_bytes, ETHER_ADDR_LEN);
+//	if (memcmp(&chk, arp_pkt, sizeof(struct arp_hdr))) {
+//		printf("arp reply not match\n");
+//		return;
+//	}
+////	add_tab(ctx, arp_pkt->arp_data.arp_sip, &(arp_pkt->arp_data.arp_sha));
+//	printf("----------------------\n\n");
+//
+//	result->ip = arp_pkt->arp_data.arp_sip;
+//	memcpy(result->mac.addr_bytes, arp_pkt->arp_data.arp_sha.addr_bytes, ETHER_ADDR_LEN);
+//}
 
 //void show_table(struct gateway_ctx *ctx) {
 //	struct arp_table *s, *tmp;
