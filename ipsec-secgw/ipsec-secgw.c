@@ -52,6 +52,7 @@
 #include <stddef.h>
 
 #include <rte_ip.h>
+#include <rte_arp.h>
 #include <rte_common.h>
 #include <rte_byteorder.h>
 #include <rte_log.h>
@@ -248,9 +249,9 @@ prepare_tx_pkt(struct rte_mbuf *pkt) {
 ////		return;
 //	}
 
-	ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
+	if (ip->ip_v == IPVERSION) {	// ipv4
+		ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
 
-	if (ip->ip_v == IPVERSION) {
 //		pkt->ol_flags |= PKT_TX_IP_CKSUM | PKT_TX_IPV4;
 //		if manual calculate checksum, don't use PKT_TX_IP_CKSUM
 		pkt->ol_flags |= PKT_TX_IPV4;
@@ -258,26 +259,39 @@ prepare_tx_pkt(struct rte_mbuf *pkt) {
 		pkt->l2_len = ETHER_HDR_LEN;
 
 		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv4);
-	} else {
+
+		ip->ip_sum = 0;
+		ip->ip_sum = rte_ipv4_cksum((struct ipv4_hdr *) ip);
+		prepend_ether(ethhdr, &(ip->ip_dst.s_addr));
+		printf("prepare_tx_pkt:ipv4\n");
+		printf("ip->ip_ttl:%d\n", ip->ip_ttl);
+		printf("ip->ip_tos:%d\n", ip->ip_tos);
+		printf("ip->ip_p:%d\n", ip->ip_p);
+		printf("ip->ip_sum:%04x\n", ip->ip_sum);
+		printf("ip->ip_src:%s\n", inet_ntoa(ip->ip_src));
+		printf("ip->ip_dst:%s\n", inet_ntoa(ip->ip_dst));
+		printf("src:\t");
+		print_ip_mac(ip->ip_src.s_addr, &(ethhdr->s_addr));
+		printf("dst:\t");
+		print_ip_mac(ip->ip_dst.s_addr, &(ethhdr->d_addr));
+	} else if(ip->ip_v==6) {	// ipv6
+		ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
+
+		printf("prepare_tx_pkt:ipv6\n");
 		pkt->ol_flags |= PKT_TX_IPV6;
 		pkt->l3_len = sizeof(struct ip6_hdr);
 		pkt->l2_len = ETHER_HDR_LEN;
 
 		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv6);
+	} else {	// arp
+		printf("prepare_tx_pkt:arp\n");
+//		printHex(rte_pktmbuf_mtod(pkt,void *),42);
+		pkt->nb_segs = 1;
+		pkt->next = NULL;
+		pkt->pkt_len = sizeof(struct ether_hdr) + sizeof(struct arp_hdr);
+		pkt->data_len = sizeof(struct ether_hdr) + sizeof(struct arp_hdr);
 	}
-	ip->ip_sum = 0;
-	ip->ip_sum = rte_ipv4_cksum((struct ipv4_hdr *) ip);
-	prepend_ether(ethhdr, &(ip->ip_dst.s_addr));
-	printf("ip->ip_ttl:%d\n", ip->ip_ttl);
-	printf("ip->ip_tos:%d\n", ip->ip_tos);
-	printf("ip->ip_p:%d\n", ip->ip_p);
-	printf("ip->ip_sum:%04x\n", ip->ip_sum);
-	printf("ip->ip_src:%s\n", inet_ntoa(ip->ip_src));
-	printf("ip->ip_dst:%s\n", inet_ntoa(ip->ip_dst));
-	printf("src:\t");
-	print_ip_mac(ip->ip_src.s_addr, &(ethhdr->s_addr));
-	printf("dst:\t");
-	print_ip_mac(ip->ip_dst.s_addr, &(ethhdr->d_addr));
+
 //	printf("ip->ip_src:%s\n",ethhdr);
 //	printf("ip->ip_dst:%s\n",ethhdr);
 //	if (KNI_PORT(port))

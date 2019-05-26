@@ -13,10 +13,11 @@
 #include "uthash.h"
 #include "iptables.h"
 
-#include "../lib/rte_ether.h"
-#include "../lib/rte_arp.h"
+//#include "../lib/rte_ether.h"
+//#include "../lib/rte_arp.h"
 
 static void printHex(unsigned char *ptr, int len) {
+//void printHex(unsigned char *ptr, int len) {
 	int i;
 	for (i = 0; i < len; i++) {
 		printf("%02X ", *(ptr + i));
@@ -76,6 +77,46 @@ void add_tab(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac) {
 	print_ip_mac(ip, mac);
 }
 
+//// send
+//void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, struct arp_table *target) {
+//	struct ether_hdr *eth = (struct ether_hdr *) pkt;
+//	struct arp_hdr *arp = (struct arp_hdr *) (pkt + sizeof(struct ether_hdr));
+//	printf("----------------------\n");
+//	printf("prepare arp packet\n");
+//
+//	//ether hdr
+//	memcpy(eth->s_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
+//	eth->ether_type = htons(ETHER_TYPE_ARP);
+//
+//	//arp body
+//	arp->arp_hrd = htons(ARP_HRD_ETHER);
+//	arp->arp_pro = htons(ETHER_TYPE_IPv4);
+//	arp->arp_hln = ETHER_ADDR_LEN;
+//	arp->arp_pln = 4;
+//
+//	arp->arp_data.arp_sip = ctx->wan_ip;
+//	arp->arp_data.arp_tip = target->ip;
+//
+//	memcpy(arp->arp_data.arp_sha.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
+//
+//	switch (arp_op) {
+//		case ARP_OP_REQUEST:
+//			memset(eth->d_addr.addr_bytes, 0xff, ETHER_ADDR_LEN);
+//			arp->arp_op = htons(ARP_OP_REQUEST);
+//			memset(arp->arp_data.arp_tha.addr_bytes, 0x00, ETHER_ADDR_LEN);
+//			break;
+//		case ARP_OP_REPLY:
+//			memcpy(eth->s_addr.addr_bytes, target->mac.addr_bytes, ETHER_ADDR_LEN);
+//			arp->arp_op = htons(ARP_OP_REPLY);
+//			memcpy(arp->arp_data.arp_tha.addr_bytes, target->mac.addr_bytes, ETHER_ADDR_LEN);
+//			break;
+//		default:
+//			break;
+//	}
+//	printHex(pkt, sizeof(struct ether_hdr) + sizeof(struct arp_hdr));
+//	printf("----------------------\n\n");
+//}
+
 // send
 void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, struct arp_table *target) {
 	struct ether_hdr *eth = (struct ether_hdr *) pkt;
@@ -84,7 +125,6 @@ void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, s
 	printf("prepare arp packet\n");
 
 	//ether hdr
-	memcpy(eth->s_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
 	eth->ether_type = htons(ETHER_TYPE_ARP);
 
 	//arp body
@@ -101,11 +141,14 @@ void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, s
 	switch (arp_op) {
 		case ARP_OP_REQUEST:
 			memset(eth->d_addr.addr_bytes, 0xff, ETHER_ADDR_LEN);
+			memcpy(eth->s_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
 			arp->arp_op = htons(ARP_OP_REQUEST);
 			memset(arp->arp_data.arp_tha.addr_bytes, 0x00, ETHER_ADDR_LEN);
 			break;
 		case ARP_OP_REPLY:
-			memcpy(eth->s_addr.addr_bytes, target->mac.addr_bytes, ETHER_ADDR_LEN);
+//			DONT KNOW WHY,DONT CHANGE IT
+//			memcpy(eth->d_addr.addr_bytes, target->mac.addr_bytes, ETHER_ADDR_LEN);
+//			memcpy(eth->s_addr.addr_bytes, ctx->wan_ha.addr_bytes, ETHER_ADDR_LEN);
 			arp->arp_op = htons(ARP_OP_REPLY);
 			memcpy(arp->arp_data.arp_tha.addr_bytes, target->mac.addr_bytes, ETHER_ADDR_LEN);
 			break;
@@ -122,7 +165,7 @@ int parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *res
 	struct ether_addr bdcst_ha = {.addr_bytes = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}};
 	struct ether_addr zero_ha = {.addr_bytes = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 	struct ether_hdr *eth = (struct ether_hdr *) pkt;
-	struct arp_hdr *arp_pkt = (struct arp_hdr *) (pkt + sizeof(struct ether_hdr));
+	struct arp_hdr *arp_pkt = (struct arp_hdr *) (eth + 1);
 
 	printf("----------------------\n");
 	printf("parse arp packet\n");
@@ -133,7 +176,7 @@ int parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *res
 		printf("----------------------\n\n");
 		return 0;
 	}
-	if (!(arp_pkt->arp_hln == htons(ARP_HRD_ETHER) &&
+	if (!(arp_pkt->arp_hrd == htons(ARP_HRD_ETHER) &&
 		  arp_pkt->arp_pro == htons(ETHER_TYPE_IPv4) &&
 		  arp_pkt->arp_hln == ETHER_ADDR_LEN &&
 		  arp_pkt->arp_pln == 4)) {
