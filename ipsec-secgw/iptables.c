@@ -153,25 +153,35 @@ int bypass_before_tunnel_protect(struct rte_mbuf *pkt) {
 	return 1;
 }
 
-void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
+static void
+prepare_arp_reply(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *target) {
+	prepare_arp(ctx, pkt, ARP_OP_REPLY, target);
+}
+
+//return arp reply
+int
+bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 	struct ether_hdr *eth;
 	struct ipv4_hdr *ip_hdr;
 	struct udp_hdr *udp_hdr = NULL;
 	struct tcp_hdr *tcp_hdr = NULL;
 	struct arp_table arp_pkt;
 	struct tuple pkt_tuple;
+	int arp_request;
 
 	eth = rte_pktmbuf_mtod(pkt,
 	struct ether_hdr *);
 
 	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_ARP)) { //proto is arp
-		parse_arp(gw_ctx, rte_pktmbuf_mtod(pkt, unsigned
-		char *), &arp_pkt);
-		if (arp_pkt.ip == gw_ctx->wan_gateway) { //from wan gateway
+		arp_request = parse_arp(gw_ctx, rte_pktmbuf_mtod(pkt, void * ), &arp_pkt);
+		if (arp_request) {
+			prepare_arp_reply(gw_ctx, rte_pktmbuf_mtod(pkt, void * ), &arp_pkt);
+			return 1;
+		} else if (arp_pkt.ip == gw_ctx->wan_gateway) { //from wan gateway
 			printf("before:ARP from wan gateway\n");
 			print_ip_mac(arp_pkt.ip, &(arp_pkt.mac));
 			memcpy(gw_ctx->wan_gateway_ha.addr_bytes, arp_pkt.mac.addr_bytes, ETHER_ADDR_LEN);
-			return;
+			return 0;
 		}
 	}
 
@@ -182,7 +192,7 @@ void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 		if (!parse_pkt(ip_hdr, &udp_hdr, &tcp_hdr, &pkt_tuple)) { // proto is icmp etc, send to kni
 			printf("before:ICMP etc.\n");
 			print_tuple(&pkt_tuple);
-			return;
+			return 0;
 		}
 		print_tuple(&pkt_tuple);
 		if (check_dnat(gw_ctx, &pkt_tuple)) { // dnat data
@@ -193,13 +203,13 @@ void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 				tcp_hdr->dst_port = pkt_tuple.dst_port;
 			else if (pkt_tuple.proto == IPPROTO_UDP)
 				udp_hdr->dst_port = pkt_tuple.dst_port;
-			return;
+			return 0;
 		} else { // data dnat to kni,send to kni
 			printf("before:IN\n");
-			return;
+			return 0;
 		}
 	}
-	return;
+	return 0;
 }
 
 //static uint16_t get_ip_checksum(char *ip_hdr) {
@@ -268,35 +278,33 @@ void bypass_after_tunnel(struct rte_mbuf *pkt) {
 	}
 }
 
-void send_arp(struct rte_mempool *mbuf_pool, uint8_t port, uint16_t queueid) {
-#define LEFT_TIME 50000
-	static int wait_timp = LEFT_TIME;//100us * LEFT_TIME (0.1ms * LEFT_TIME)
+static struct rte_mbuf *
+prepare_arp_request(struct rte_mempool *mbuf_pool, uint32_t target_ip) {
 	struct rte_mbuf *m;
-	int32_t ret;
-	struct ether_addr empty = {
-			.addr_bytes = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
-	};
-	if (likely(memcmp(gw_ctx->wan_gateway_ha.addr_bytes, empty.addr_bytes, sizeof(struct ether_addr)))) {
-		return;
-	}
-	if (likely(wait_timp--)) {
-		return;
-	}
-	wait_timp = LEFT_TIME;
+	struct arp_table target;
 	m = rte_pktmbuf_alloc(mbuf_pool);
 	if (m == NULL) {
-		return;
+		return m;
 	}
-	printf("send arp to gateway\n");
-	prepare_arp(gw_ctx, rte_pktmbuf_mtod(m, void * ), gw_ctx->wan_gateway);
-	m->nb_segs = 1;
-	m->next = NULL;
-	m->pkt_len = sizeof(struct ether_hdr) + sizeof(struct arp_hdr);
-	m->data_len = sizeof(struct ether_hdr) + sizeof(struct arp_hdr);
-	ret = rte_eth_tx_burst(port, queueid, &m, 1);
-	if (unlikely(ret < 1)) {
-		rte_pktmbuf_free(m);
+	target.ip = target_ip;
+	memset(target.mac.addr_bytes, 0x00, ETHER_ADDR_LEN);
+	prepare_arp(gw_ctx, rte_pktmbuf_mtod(m, void * ), ARP_OP_REQUEST, &target);
+	return m;
+}
+
+struct rte_mbuf *send_arp_gw(struct rte_mempool *mbuf_pool) {
+#define LEFT_TIME 50000
+	static int wait_timp = LEFT_TIME;//100us * LEFT_TIME (0.1ms * LEFT_TIME)
+	struct ether_addr empty = {.addr_bytes = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+	if (likely(memcmp(gw_ctx->wan_gateway_ha.addr_bytes, empty.addr_bytes, sizeof(struct ether_addr)))) {
+		return NULL;
 	}
+	if (likely(wait_timp--)) {
+		return NULL;
+	}
+	wait_timp = LEFT_TIME;
+	return prepare_arp_request(mbuf_pool, gw_ctx->wan_gateway);
+//	send_arp(mbuf_pool, port, queueid, 0, NULL);
 }
 
 void prepend_ether(struct ether_hdr *eth, uint32_t *dst_ip) {
@@ -328,3 +336,34 @@ void iptables_init(void) {
 //	memset(gw_ctx, 0, sizeof(struct gateway_ctx));
 	memcpy(gw_ctx, &temp, sizeof(struct gateway_ctx));
 }
+
+//void send_arp(struct rte_mempool *mbuf_pool, uint8_t port, uint16_t queueid) {
+//#define LEFT_TIME 50000
+//	static int wait_timp = LEFT_TIME;//100us * LEFT_TIME (0.1ms * LEFT_TIME)
+//	struct rte_mbuf *m;
+//	int32_t ret;
+//	struct ether_addr empty = {
+//			.addr_bytes = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+//	};
+//	if (likely(memcmp(gw_ctx->wan_gateway_ha.addr_bytes, empty.addr_bytes, sizeof(struct ether_addr)))) {
+//		return;
+//	}
+//	if (likely(wait_timp--)) {
+//		return;
+//	}
+//	wait_timp = LEFT_TIME;
+//	m = rte_pktmbuf_alloc(mbuf_pool);
+//	if (m == NULL) {
+//		return;
+//	}
+//	printf("send arp to gateway\n");
+//	prepare_arp(gw_ctx, rte_pktmbuf_mtod(m, void * ), gw_ctx->wan_gateway);
+//	m->nb_segs = 1;
+//	m->next = NULL;
+//	m->pkt_len = sizeof(struct ether_hdr) + sizeof(struct arp_hdr);
+//	m->data_len = sizeof(struct ether_hdr) + sizeof(struct arp_hdr);
+//	ret = rte_eth_tx_burst(port, queueid, &m, 1);
+//	if (unlikely(ret < 1)) {
+//		rte_pktmbuf_free(m);
+//	}
+//}

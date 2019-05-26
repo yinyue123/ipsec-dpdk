@@ -68,20 +68,22 @@ struct ether_addr *find_tab(struct gateway_ctx *ctx, uint32_t ip);
 
 void add_tab(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac);
 
-void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t target_ip);
+//void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t target_ip);
+void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, struct arp_table *target);
 
-void parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result);
+//void parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result);
+int parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result);
 
 //iptables
 //int bypass_before_tunnel(struct rte_mbuf *pkt);
 
 int bypass_before_tunnel_protect(struct rte_mbuf *pkt);
 
-void bypass_before_tunnel_unprotect(struct rte_mbuf *pkt);
+int bypass_before_tunnel_unprotect(struct rte_mbuf *pkt);
 
 void bypass_after_tunnel(struct rte_mbuf *pkt);
 
-void send_arp(struct rte_mempool *mbuf_pool, uint8_t port, uint16_t queueid);
+struct rte_mbuf *send_arp_gw(struct rte_mempool *mbuf_pool);
 
 void prepend_ether(struct ether_hdr *eth, uint32_t *dst_ip);
 

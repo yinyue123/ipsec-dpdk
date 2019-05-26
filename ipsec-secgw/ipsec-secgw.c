@@ -234,78 +234,6 @@ struct ipsec_traffic {
 	struct traffic_type kni;
 };
 
-
-static inline void
-prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid) {
-	uint8_t *nlp;
-	struct ether_hdr *eth;
-
-	//printf("prepare_one_packet\tportid:%d\n",portid);
-	eth = rte_pktmbuf_mtod(pkt,
-	struct ether_hdr *);
-	/*forward to kni check*/
-	if (KNI_PORT(portid)) {
-//		if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
-//		if (check_kni_data(pkt)) {
-//			t->kni.pkts[(t->kni.num)++] = pkt;
-//			return;
-//		}
-//		}
-		if (bypass_before_tunnel_protect(pkt)) {
-			t->kni.pkts[(t->kni.num)++] = pkt;
-			return;
-		}
-	} else {
-		bypass_before_tunnel_unprotect(pkt);
-	}
-
-	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
-		nlp = (uint8_t *) rte_pktmbuf_adj(pkt, ETHER_HDR_LEN);
-		nlp = RTE_PTR_ADD(nlp, offsetof(
-		struct ip, ip_p));
-		if (*nlp == IPPROTO_ESP)
-			t->ipsec.pkts[(t->ipsec.num)++] = pkt;
-		else {
-			t->ip4.data[t->ip4.num] = nlp;
-			t->ip4.pkts[(t->ip4.num)++] = pkt;
-		}
-	} else if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv6)) {
-		nlp = (uint8_t *) rte_pktmbuf_adj(pkt, ETHER_HDR_LEN);
-		nlp = RTE_PTR_ADD(nlp, offsetof(
-		struct ip6_hdr, ip6_nxt));
-		if (*nlp == IPPROTO_ESP)
-			t->ipsec.pkts[(t->ipsec.num)++] = pkt;
-		else {
-			t->ip6.data[t->ip6.num] = nlp;
-			t->ip6.pkts[(t->ip6.num)++] = pkt;
-		}
-	} else {
-		/* Unknown/Unsupported type, drop the packet */
-		RTE_LOG(ERR, IPSEC, "Unsupported packet type\n");
-		rte_pktmbuf_free(pkt);
-	}
-}
-
-static inline void
-prepare_traffic(struct rte_mbuf **pkts, struct ipsec_traffic *t,
-				uint16_t nb_pkts, uint8_t portid) {
-	int32_t i;
-
-	t->ipsec.num = 0;
-	t->ip4.num = 0;
-	t->ip6.num = 0;
-	t->kni.num = 0;
-
-	for (i = 0; i < (nb_pkts - PREFETCH_OFFSET); i++) {
-		rte_prefetch0(rte_pktmbuf_mtod(pkts[i + PREFETCH_OFFSET],
-									   void * ));
-		prepare_one_packet(pkts[i], t, portid);
-	}
-	/* Process left packets */
-	for (; i < nb_pkts; i++)
-		prepare_one_packet(pkts[i], t, portid);
-}
-
 static inline void
 prepare_tx_pkt(struct rte_mbuf *pkt) {
 	struct ip *ip;
@@ -421,6 +349,80 @@ send_single_packet(struct rte_mbuf *m, uint8_t port) {
 	qconf->tx_mbufs[port].len = len;
 	printf("lcore_id:%d\tlen:%d\tqconf:%p\n", lcore_id, len, qconf);
 	return 0;
+}
+
+static inline void
+prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid) {
+	uint8_t *nlp;
+	struct ether_hdr *eth;
+
+	//printf("prepare_one_packet\tportid:%d\n",portid);
+	eth = rte_pktmbuf_mtod(pkt,
+	struct ether_hdr *);
+	/*forward to kni check*/
+	if (KNI_PORT(portid)) {
+//		if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
+//		if (check_kni_data(pkt)) {
+//			t->kni.pkts[(t->kni.num)++] = pkt;
+//			return;
+//		}
+//		}
+		if (bypass_before_tunnel_protect(pkt)) {
+			t->kni.pkts[(t->kni.num)++] = pkt;
+			return;
+		}
+	} else {
+		if (bypass_before_tunnel_unprotect(pkt)) {
+			send_single_packet(pkt, portid);
+			return;
+		}
+	}
+
+	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
+		nlp = (uint8_t *) rte_pktmbuf_adj(pkt, ETHER_HDR_LEN);
+		nlp = RTE_PTR_ADD(nlp, offsetof(
+		struct ip, ip_p));
+		if (*nlp == IPPROTO_ESP)
+			t->ipsec.pkts[(t->ipsec.num)++] = pkt;
+		else {
+			t->ip4.data[t->ip4.num] = nlp;
+			t->ip4.pkts[(t->ip4.num)++] = pkt;
+		}
+	} else if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv6)) {
+		nlp = (uint8_t *) rte_pktmbuf_adj(pkt, ETHER_HDR_LEN);
+		nlp = RTE_PTR_ADD(nlp, offsetof(
+		struct ip6_hdr, ip6_nxt));
+		if (*nlp == IPPROTO_ESP)
+			t->ipsec.pkts[(t->ipsec.num)++] = pkt;
+		else {
+			t->ip6.data[t->ip6.num] = nlp;
+			t->ip6.pkts[(t->ip6.num)++] = pkt;
+		}
+	} else {
+		/* Unknown/Unsupported type, drop the packet */
+		RTE_LOG(ERR, IPSEC, "Unsupported packet type\n");
+		rte_pktmbuf_free(pkt);
+	}
+}
+
+static inline void
+prepare_traffic(struct rte_mbuf **pkts, struct ipsec_traffic *t,
+				uint16_t nb_pkts, uint8_t portid) {
+	int32_t i;
+
+	t->ipsec.num = 0;
+	t->ip4.num = 0;
+	t->ip6.num = 0;
+	t->kni.num = 0;
+
+	for (i = 0; i < (nb_pkts - PREFETCH_OFFSET); i++) {
+		rte_prefetch0(rte_pktmbuf_mtod(pkts[i + PREFETCH_OFFSET],
+									   void * ));
+		prepare_one_packet(pkts[i], t, portid);
+	}
+	/* Process left packets */
+	for (; i < nb_pkts; i++)
+		prepare_one_packet(pkts[i], t, portid);
 }
 
 static inline void
@@ -748,7 +750,7 @@ process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 	printf("1 prepare_traffic\n");
 	prepare_traffic(pkts, &traffic, nb_pkts, portid);
 	/*forward to kni check*/
-	if (KNI_PORT(portid)) {
+	if (KNI_PORT(portid) && traffic.kni.num > 0) {
 		printf("2 send_to_kni\n");
 		send_to_kni(portid, traffic.kni.pkts, traffic.kni.num);
 	}
@@ -802,6 +804,7 @@ main_loop(__attribute__((unused)) void *dummy) {
 	const uint64_t drain_tsc = (rte_get_tsc_hz() + US_PER_S - 1)
 							   / US_PER_S * BURST_TX_DRAIN_US;
 	struct lcore_rx_queue *rxql;
+	struct rte_mbuf *arp_data;
 
 	prev_tsc = 0;
 	lcore_id = rte_lcore_id();
@@ -854,7 +857,13 @@ main_loop(__attribute__((unused)) void *dummy) {
 			sp4_check_add_rules(qconf->inbound.sp4_ctx, qconf->outbound.sp4_ctx);
 			for (i = 0; i < qconf->nb_rx_queue; ++i) {
 				if (!KNI_PORT(portid)) {
-					send_arp(socket_ctx[socket_id].mbuf_pool, qconf->tx_queue_id[portid], portid);
+					arp_data = send_arp_gw(socket_ctx[socket_id].mbuf_pool);
+					if (arp_data) {
+						send_single_packet(arp_data, portid);
+					}
+				}
+				if (KNI_PORT(portid)) {
+					forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
 				}
 			}
 			prev_tsc = cur_tsc;
@@ -873,10 +882,6 @@ main_loop(__attribute__((unused)) void *dummy) {
 //			if(TUN_PORT(portid)){
 //				tun_read(pkts);
 //			}
-
-			if (KNI_PORT(portid)) {
-				forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
-			}
 		}
 	}
 }
