@@ -200,7 +200,7 @@ bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 			print_tuple(&pkt_tuple);
 			ip_hdr->dst_addr = pkt_tuple.dst_ip;
 			ip_hdr->hdr_checksum = 0;
-			ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr);
+			ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr)+0x1;
 			if (pkt_tuple.proto == IPPROTO_TCP) {
 				tcp_hdr->dst_port = pkt_tuple.dst_port;
 				tcp_hdr->cksum = 0;
