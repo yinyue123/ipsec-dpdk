@@ -199,10 +199,18 @@ bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {
 			printf("before:DNAT\n");
 			print_tuple(&pkt_tuple);
 			ip_hdr->dst_addr = pkt_tuple.dst_ip;
-			if (pkt_tuple.proto == IPPROTO_TCP)
+			ip_hdr->hdr_checksum = 0;
+			ip_hdr->hdr_checksum = rte_ipv4_cksum(ip_hdr);
+			if (pkt_tuple.proto == IPPROTO_TCP) {
 				tcp_hdr->dst_port = pkt_tuple.dst_port;
-			else if (pkt_tuple.proto == IPPROTO_UDP)
+				tcp_hdr->cksum = 0;
+				tcp_hdr->cksum = rte_ipv4_udptcp_cksum(ip_hdr, (unsigned char *) ip_hdr + sizeof(struct ipv4_hdr));
+			} else if (pkt_tuple.proto == IPPROTO_UDP) {
 				udp_hdr->dst_port = pkt_tuple.dst_port;
+				udp_hdr->dgram_cksum = 0;
+				udp_hdr->dgram_cksum = rte_ipv4_udptcp_cksum(ip_hdr,
+															 (unsigned char *) ip_hdr + sizeof(struct ipv4_hdr));
+			}
 			return 0;
 		} else { // data dnat to kni,send to kni
 			printf("before:IN\n");

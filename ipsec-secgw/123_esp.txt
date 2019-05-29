@@ -1,0 +1,9 @@
+---------------     SA     ---------------
+ src : 192.168.100.1		 dst : 192.168.100.2
+ proto : 50(esp:50 ah:51)		spi : 0xcc01c02 
+ repid : 4 		mode : tunnel
+ replay window : 0
+ hmac(sha1) 	0x22d21f20816888aedc32b51e7ee39d6900ed1e47
+in 3419803926 cipher_algo aes-128-cbc cipher_key ed:d2:a4:ae:24:ce:5c:52:1d:be:36:7d:21:89:c4:30 auth_algo sha1-hmac auth_key 8f:aa:e9:91:95:30:2f:98:9b:42:d6:bc:17:88:23:a6:c8:71:6a:f2 mode ipv4-tunnel src 192.168.100.2 dst 192.168.100.1 
+ cbc(aes) 	0xa04f4e573e6ede71797fd18fee15aa48
+------------------------------------------

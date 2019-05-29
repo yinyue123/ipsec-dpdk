@@ -111,6 +111,7 @@ forward_from_kni_to_eth(uint16_t tx_queue_id, uint8_t port_id) {
 	num = rte_kni_rx_burst(kni_port_params_array[port_id]->kni, pkts_burst, PKT_BURST_SZ);
 	if (likely(num)) {
 		printf("forward_from_kni_to_eth\n");
+		printf("rte_eth_tx_burst(port_id:%d,tx_queue_id:%d,pkts_burst,num:%d)\n", port_id, tx_queue_id, num);
 		nb_tx = rte_eth_tx_burst(port_id, tx_queue_id, pkts_burst, num);
 		if (unlikely(nb_tx < num))
 			kni_burst_free_mbufs(&pkts_burst[nb_tx], num - nb_tx);

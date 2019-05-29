@@ -197,7 +197,7 @@ static struct lcore_conf lcore_conf[RTE_MAX_LCORE];
 
 static struct rte_eth_conf port_conf = {
 		.rxmode = {
-				.mq_mode    = ETH_MQ_RX_RSS,
+//				.mq_mode    = ETH_MQ_RX_RSS,
 				.max_rx_pkt_len = ETHER_MAX_LEN,
 				.split_hdr_size = 0,
 				.header_split   = 0, /**< Header Split disabled */
@@ -249,7 +249,7 @@ prepare_tx_pkt(struct rte_mbuf *pkt) {
 ////		return;
 //	}
 
-	if (ip->ip_v == IPVERSION) {	// ipv4
+	if (ip->ip_v == IPVERSION) {    // ipv4
 		ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
 
 //		pkt->ol_flags |= PKT_TX_IP_CKSUM | PKT_TX_IPV4;
@@ -274,7 +274,7 @@ prepare_tx_pkt(struct rte_mbuf *pkt) {
 		print_ip_mac(ip->ip_src.s_addr, &(ethhdr->s_addr));
 		printf("dst:\t");
 		print_ip_mac(ip->ip_dst.s_addr, &(ethhdr->d_addr));
-	} else if(ip->ip_v==6) {	// ipv6
+	} else if (ip->ip_v == 6) {    // ipv6
 		ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
 
 		printf("prepare_tx_pkt:ipv6\n");
@@ -283,7 +283,7 @@ prepare_tx_pkt(struct rte_mbuf *pkt) {
 		pkt->l2_len = ETHER_HDR_LEN;
 
 		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv6);
-	} else {	// arp
+	} else {    // arp
 		printf("prepare_tx_pkt:arp\n");
 //		printHex(rte_pktmbuf_mtod(pkt,void *),42);
 		pkt->nb_segs = 1;
@@ -330,6 +330,11 @@ send_burst(struct lcore_conf *qconf, uint16_t n, uint8_t port) {
 
 	prepare_tx_burst(m_table, n);
 
+	printf("rte_eth_tx_burst(port:%d,queueid:%d,m_table,n:%d)\n", port, queueid, n);
+	if (port == 0) {
+		printf("port==1,%p\n", m_table);
+	}
+	queueid = 0;
 	ret = rte_eth_tx_burst(port, queueid, m_table, n);
 	if (unlikely(ret < n)) {
 		do {
@@ -1511,6 +1516,7 @@ port_init(uint8_t portid) {
 		qconf->tx_queue_id[portid] = tx_queueid;
 		tx_queueid++;
 
+		printf("--qconf->nb_rx_queue:%d\n", qconf->nb_rx_queue);
 		/* init RX queues */
 		for (queue = 0; queue < qconf->nb_rx_queue; ++queue) {
 			if (portid != qconf->rx_queue_list[queue].port_id)
