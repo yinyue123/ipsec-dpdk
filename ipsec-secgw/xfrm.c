@@ -179,7 +179,7 @@ add_sa(
 
 }
 
-void
+static void
 xfrm_add_addr(uint32_t addr) {
 	struct in_addr addr_addr;
 	addr_addr.s_addr = addr;
@@ -232,7 +232,6 @@ deal_sa(
 
 	// s_in_out
 	//if (strcmp(saddr, localIp) == 0)
-	printf("+++++++++ daddr:%s\tlocalIp:%s\n", daddr, shared_mem->localIp);
 	if (strcmp(daddr, shared_mem->localIp) == 0) {
 		spi_in = spi;
 		s_in_out = "in";
@@ -240,6 +239,7 @@ deal_sa(
 		spi_out = spi;
 		s_in_out = "out";
 	}
+	printf("s_in_out:%s\tdaddr:%s\tlocalIp:%s\n", s_in_out, daddr, shared_mem->localIp);
 
 	// s_spi
 	sprintf(s_spi, "%u", spi);
@@ -375,10 +375,12 @@ parse_sa(struct nlmsghdr *nlh) {
 	printf(" proto : %d(esp:50 ah:51)\t\tspi : 0x%x \n", proto, spi);
 	printf(" repid : %u \t\tmode : %s\n", reqid, s_mode);
 	printf(" replay window : %d\n", replay_win);
-	printf(" %s \t", auth_alg);
-	dump_hex(auth_key, auth_key_len / 8);
-	printf(" %s \t", enc_alg);
-	dump_hex(enc_key, enc_key_len / 8);
+	if(nlh->nlmsg_type == XFRM_MSG_NEWSA){
+		printf(" %s \t", auth_alg);
+		dump_hex(auth_key, auth_key_len / 8);
+		printf(" %s \t", enc_alg);
+		dump_hex(enc_key, enc_key_len / 8);
+	}
 //	printf(" sel src : %s\t dst : %s\n", src, dst);
 	printf("------------------------------------------\n");
 	if (nlh->nlmsg_type == XFRM_MSG_NEWSA || nlh->nlmsg_type == 26)
@@ -440,7 +442,8 @@ deal_sp(
 ) {
 	const char *ip_ver = "ipv4";
 	const char *s_dir = dir ? (dir == 1 ? "out" : "fwd") : "in";
-	const char *s_action = action ? "protect" : "discard";
+//	const char *s_action = action ? "protect" : "discard";
+	const char *s_action = "protect";
 //	char s_priority[20];
 	char s_spi[20];
 	char s_src_ip[20];
@@ -505,7 +508,9 @@ parse_sp(struct nlmsghdr *nlh) {
 	printf(" ifindex : %d\tuserid : %d\n", ifindex, userid);
 	printf("------------------------------------------\n");
 
-	if (nlh->nlmsg_type == XFRM_MSG_NEWPOLICY && dir != 2) {
+	if (dir == 2)
+		return;
+	if (nlh->nlmsg_type == XFRM_MSG_NEWPOLICY) {
 		deal_sp(dir, action, priority, saddr, prefixlen_s, daddr, prefixlen_d, proto, sport, sport_mask, dport,
 				dport_mask);
 	}
@@ -588,6 +593,7 @@ xfrm_init(void) {
 		for (i = 0; i < 20; i++) {
 			shared_mem->tokens[i] = shared_mem->tokens_save[i];
 		}
+		xfrm_add_addr(inet_addr("192.168.100.1"));
 		return 0;
 	}
 
