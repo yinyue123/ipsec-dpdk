@@ -43,8 +43,8 @@ struct ethaddr_info {
 
 #define ETHADDR(a, b, c, d, e, f) (__BYTES_TO_UINT64(a, b, c, d, e, f, 0, 0))
 
-int
-check_kni_data(struct rte_mbuf *pkt);
+//int
+//check_kni_data(struct rte_mbuf *pkt);
 
 void
 send_to_kni(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx);
@@ -57,9 +57,6 @@ kni_main(struct rte_mempool **mbuf_pool, struct rte_eth_conf *portconf, uint32_t
 
 void
 kni_free(void);
-
-void
-parse_pkt_arp(struct rte_mbuf *pkt);
 
 void
 get_mac_by_ip(struct ether_hdr *eth, struct ethaddr_info def, struct ip *ip);

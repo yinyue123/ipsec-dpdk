@@ -51,6 +51,8 @@
 #include <arpa/inet.h>
 #include <stddef.h>
 
+#include <rte_ip.h>
+#include <rte_arp.h>
 #include <rte_common.h>
 #include <rte_byteorder.h>
 #include <rte_log.h>
@@ -82,6 +84,7 @@
 #include "xfrm.h"
 #include "ipsec.h"
 #include "parser.h"
+#include "iptables.h"
 
 #define RTE_LOGTYPE_IPSEC RTE_LOGTYPE_USER1
 
@@ -194,11 +197,12 @@ static struct lcore_conf lcore_conf[RTE_MAX_LCORE];
 
 static struct rte_eth_conf port_conf = {
 		.rxmode = {
-				.mq_mode    = ETH_MQ_RX_RSS,
+//				.mq_mode    = ETH_MQ_RX_RSS,
 				.max_rx_pkt_len = ETHER_MAX_LEN,
 				.split_hdr_size = 0,
 				.header_split   = 0, /**< Header Split disabled */
 				.hw_ip_checksum = 1, /**< IP checksum offload enabled */
+//				.hw_ip_checksum = 0, /**< IP checksum offload enabled */
 				.hw_vlan_filter = 0, /**< VLAN filtering disabled */
 				.jumbo_frame    = 0, /**< Jumbo Frame Support disabled */
 				.hw_strip_crc   = 0, /**< CRC stripped by hardware */
@@ -231,6 +235,140 @@ struct ipsec_traffic {
 	struct traffic_type kni;
 };
 
+static inline void
+prepare_tx_pkt(struct rte_mbuf *pkt) {
+	struct ip *ip;
+	struct ether_hdr *ethhdr;
+//	struct ethaddr_info ethaddr_kni;
+
+	ip = rte_pktmbuf_mtod(pkt,
+	struct ip *);
+
+//	if (TUN_PORT(port)) {
+//		tun_write(pkt);
+////		return;
+//	}
+
+	if (ip->ip_v == IPVERSION) {    // ipv4
+		ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
+
+//		pkt->ol_flags |= PKT_TX_IP_CKSUM | PKT_TX_IPV4;
+//		if manual calculate checksum, don't use PKT_TX_IP_CKSUM
+		pkt->ol_flags |= PKT_TX_IPV4;
+		pkt->l3_len = sizeof(struct ip);
+		pkt->l2_len = ETHER_HDR_LEN;
+
+		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv4);
+
+		ip->ip_sum = 0;
+		ip->ip_sum = rte_ipv4_cksum((struct ipv4_hdr *) ip);
+		prepend_ether(ethhdr, &(ip->ip_dst.s_addr));
+		printf("prepare_tx_pkt:ipv4\n");
+		printf("ip->ip_ttl:%d\n", ip->ip_ttl);
+		printf("ip->ip_tos:%d\n", ip->ip_tos);
+		printf("ip->ip_p:%d\n", ip->ip_p);
+		printf("ip->ip_sum:%04x\n", ip->ip_sum);
+		printf("ip->ip_src:%s\n", inet_ntoa(ip->ip_src));
+		printf("ip->ip_dst:%s\n", inet_ntoa(ip->ip_dst));
+		printf("src:\t");
+		print_ip_mac(ip->ip_src.s_addr, &(ethhdr->s_addr));
+		printf("dst:\t");
+		print_ip_mac(ip->ip_dst.s_addr, &(ethhdr->d_addr));
+	} else if (ip->ip_v == 6) {    // ipv6
+		ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
+
+		printf("prepare_tx_pkt:ipv6\n");
+		pkt->ol_flags |= PKT_TX_IPV6;
+		pkt->l3_len = sizeof(struct ip6_hdr);
+		pkt->l2_len = ETHER_HDR_LEN;
+
+		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv6);
+	} else {    // arp
+		printf("prepare_tx_pkt:arp\n");
+//		printHex(rte_pktmbuf_mtod(pkt,void *),42);
+		pkt->nb_segs = 1;
+		pkt->next = NULL;
+		pkt->pkt_len = sizeof(struct ether_hdr) + sizeof(struct arp_hdr);
+		pkt->data_len = sizeof(struct ether_hdr) + sizeof(struct arp_hdr);
+	}
+
+//	printf("ip->ip_src:%s\n",ethhdr);
+//	printf("ip->ip_dst:%s\n",ethhdr);
+//	if (KNI_PORT(port))
+//		get_mac_by_ip(ethhdr, ethaddr_kni, ip);
+//	else {
+//		memcpy(&ethhdr->s_addr, &ethaddr_tbl[port].src,
+//			   sizeof(struct ether_addr));
+//		memcpy(&ethhdr->d_addr, &ethaddr_tbl[port].dst,
+//			   sizeof(struct ether_addr));
+//	}
+}
+
+static inline void
+prepare_tx_burst(struct rte_mbuf *pkts[], uint16_t nb_pkts) {
+	int32_t i;
+	const int32_t prefetch_offset = 2;
+
+	for (i = 0; i < (nb_pkts - prefetch_offset); i++) {
+		rte_mbuf_prefetch_part2(pkts[i + prefetch_offset]);
+		prepare_tx_pkt(pkts[i]);
+	}
+	/* Process left packets */
+	for (; i < nb_pkts; i++)
+		prepare_tx_pkt(pkts[i]);
+}
+
+/* Send burst of packets on an output interface */
+static inline int32_t
+send_burst(struct lcore_conf *qconf, uint16_t n, uint8_t port) {
+	struct rte_mbuf **m_table;
+	int32_t ret;
+	uint16_t queueid;
+
+	queueid = qconf->tx_queue_id[port];
+	m_table = (struct rte_mbuf **) qconf->tx_mbufs[port].m_table;
+
+	prepare_tx_burst(m_table, n);
+
+	printf("rte_eth_tx_burst(port:%d,queueid:%d,m_table,n:%d)\n", port, queueid, n);
+	if (port == 0) {
+		printf("port==1,%p\n", m_table);
+	}
+	queueid = 0;
+	ret = rte_eth_tx_burst(port, queueid, m_table, n);
+	if (unlikely(ret < n)) {
+		do {
+			rte_pktmbuf_free(m_table[ret]);
+		} while (++ret < n);
+	}
+
+	return 0;
+}
+
+/* Enqueue a single packet, and send burst if queue is filled */
+static inline int32_t
+send_single_packet(struct rte_mbuf *m, uint8_t port) {
+	uint32_t lcore_id;
+	uint16_t len;
+	struct lcore_conf *qconf;
+
+	lcore_id = rte_lcore_id();
+
+	qconf = &lcore_conf[lcore_id];
+	len = qconf->tx_mbufs[port].len;
+	qconf->tx_mbufs[port].m_table[len] = m;
+	len++;
+
+	/* enough pkts to be sent */
+	if (unlikely(len == MAX_PKT_BURST)) {
+		send_burst(qconf, MAX_PKT_BURST, port);
+		len = 0;
+	}
+
+	qconf->tx_mbufs[port].len = len;
+	printf("lcore_id:%d\tlen:%d\tqconf:%p\n", lcore_id, len, qconf);
+	return 0;
+}
 
 static inline void
 prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid) {
@@ -243,11 +381,20 @@ prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid
 	/*forward to kni check*/
 	if (KNI_PORT(portid)) {
 //		if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
-		if (check_kni_data(pkt)) {
+//		if (check_kni_data(pkt)) {
+//			t->kni.pkts[(t->kni.num)++] = pkt;
+//			return;
+//		}
+//		}
+		if (bypass_before_tunnel_protect(pkt)) {
 			t->kni.pkts[(t->kni.num)++] = pkt;
 			return;
 		}
-//		}
+	} else {
+		if (bypass_before_tunnel_unprotect(pkt)) {
+			send_single_packet(pkt, portid);
+			return;
+		}
 	}
 
 	if (eth->ether_type == rte_cpu_to_be_16(ETHER_TYPE_IPv4)) {
@@ -295,107 +442,6 @@ prepare_traffic(struct rte_mbuf **pkts, struct ipsec_traffic *t,
 	/* Process left packets */
 	for (; i < nb_pkts; i++)
 		prepare_one_packet(pkts[i], t, portid);
-}
-
-static inline void
-prepare_tx_pkt(struct rte_mbuf *pkt, uint8_t port) {
-	struct ip *ip;
-	struct ether_hdr *ethhdr;
-	struct ethaddr_info ethaddr_kni;
-
-	ip = rte_pktmbuf_mtod(pkt,
-	struct ip *);
-
-//	if (TUN_PORT(port)) {
-//		tun_write(pkt);
-////		return;
-//	}
-
-	ethhdr = (struct ether_hdr *) rte_pktmbuf_prepend(pkt, ETHER_HDR_LEN);
-
-	if (ip->ip_v == IPVERSION) {
-		pkt->ol_flags |= PKT_TX_IP_CKSUM | PKT_TX_IPV4;
-		pkt->l3_len = sizeof(struct ip);
-		pkt->l2_len = ETHER_HDR_LEN;
-
-		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv4);
-	} else {
-		pkt->ol_flags |= PKT_TX_IPV6;
-		pkt->l3_len = sizeof(struct ip6_hdr);
-		pkt->l2_len = ETHER_HDR_LEN;
-
-		ethhdr->ether_type = rte_cpu_to_be_16(ETHER_TYPE_IPv6);
-	}
-
-	if (KNI_PORT(port))
-		get_mac_by_ip(ethhdr, ethaddr_kni, ip);
-	else {
-		memcpy(&ethhdr->s_addr, &ethaddr_tbl[port].src,
-			   sizeof(struct ether_addr));
-		memcpy(&ethhdr->d_addr, &ethaddr_tbl[port].dst,
-			   sizeof(struct ether_addr));
-	}
-}
-
-static inline void
-prepare_tx_burst(struct rte_mbuf *pkts[], uint16_t nb_pkts, uint8_t port) {
-	int32_t i;
-	const int32_t prefetch_offset = 2;
-
-	for (i = 0; i < (nb_pkts - prefetch_offset); i++) {
-		rte_mbuf_prefetch_part2(pkts[i + prefetch_offset]);
-		prepare_tx_pkt(pkts[i], port);
-	}
-	/* Process left packets */
-	for (; i < nb_pkts; i++)
-		prepare_tx_pkt(pkts[i], port);
-}
-
-/* Send burst of packets on an output interface */
-static inline int32_t
-send_burst(struct lcore_conf *qconf, uint16_t n, uint8_t port) {
-	struct rte_mbuf **m_table;
-	int32_t ret;
-	uint16_t queueid;
-
-	queueid = qconf->tx_queue_id[port];
-	m_table = (struct rte_mbuf **) qconf->tx_mbufs[port].m_table;
-
-	prepare_tx_burst(m_table, n, port);
-
-	ret = rte_eth_tx_burst(port, queueid, m_table, n);
-	if (unlikely(ret < n)) {
-		do {
-			rte_pktmbuf_free(m_table[ret]);
-		} while (++ret < n);
-	}
-
-	return 0;
-}
-
-/* Enqueue a single packet, and send burst if queue is filled */
-static inline int32_t
-send_single_packet(struct rte_mbuf *m, uint8_t port) {
-	uint32_t lcore_id;
-	uint16_t len;
-	struct lcore_conf *qconf;
-
-	lcore_id = rte_lcore_id();
-
-	qconf = &lcore_conf[lcore_id];
-	len = qconf->tx_mbufs[port].len;
-	qconf->tx_mbufs[port].m_table[len] = m;
-	len++;
-
-	/* enough pkts to be sent */
-	if (unlikely(len == MAX_PKT_BURST)) {
-		send_burst(qconf, MAX_PKT_BURST, port);
-		len = 0;
-	}
-
-	qconf->tx_mbufs[port].len = len;
-	printf("lcore_id:%d\tlen:%d\tqconf:%p\n", lcore_id, len, qconf);
-	return 0;
 }
 
 static inline void
@@ -654,10 +700,12 @@ route4_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {
 		dst_ip[i] = *rte_pktmbuf_mtod_offset(pkts[i],
 											 uint32_t * , offset);
 		dst_ip[i] = rte_be_to_cpu_32(dst_ip[i]);
+//		printf("1 offset:%d\n",offset);
 
 //		//输出IP
 //		unsigned char *strIp = (char *)dst_ip[i];
 //		printf("route4_pkts send to: %d.%d.%d.%d\n", strIp[0], strIp[1], strIp[2], strIp[3]);
+		bypass_after_tunnel(pkts[i]);
 	}
 
 	rte_lpm_lookup_bulk((struct rte_lpm *) rt_ctx, dst_ip, hop, nb_pkts);
@@ -721,7 +769,7 @@ process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,
 	printf("1 prepare_traffic\n");
 	prepare_traffic(pkts, &traffic, nb_pkts, portid);
 	/*forward to kni check*/
-	if (KNI_PORT(portid)) {
+	if (KNI_PORT(portid) && traffic.kni.num > 0) {
 		printf("2 send_to_kni\n");
 		send_to_kni(portid, traffic.kni.pkts, traffic.kni.num);
 	}
@@ -775,6 +823,7 @@ main_loop(__attribute__((unused)) void *dummy) {
 	const uint64_t drain_tsc = (rte_get_tsc_hz() + US_PER_S - 1)
 							   / US_PER_S * BURST_TX_DRAIN_US;
 	struct lcore_rx_queue *rxql;
+	struct rte_mbuf *arp_data;
 
 	prev_tsc = 0;
 	lcore_id = rte_lcore_id();
@@ -825,6 +874,17 @@ main_loop(__attribute__((unused)) void *dummy) {
 			sa_check_add_rules(qconf->inbound.sa_ctx, qconf->outbound.sa_ctx);
 //			sp4_check_add_rules(&(qconf->inbound.sp4_ctx), &(qconf->outbound.sp4_ctx));
 			sp4_check_add_rules(qconf->inbound.sp4_ctx, qconf->outbound.sp4_ctx);
+			for (i = 0; i < qconf->nb_rx_queue; ++i) {
+				if (!KNI_PORT(portid)) {
+					arp_data = send_arp_gw(socket_ctx[socket_id].mbuf_pool);
+					if (arp_data) {
+						send_single_packet(arp_data, portid);
+					}
+				}
+				if (KNI_PORT(portid)) {
+					forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
+				}
+			}
 			prev_tsc = cur_tsc;
 		}
 
@@ -841,10 +901,6 @@ main_loop(__attribute__((unused)) void *dummy) {
 //			if(TUN_PORT(portid)){
 //				tun_read(pkts);
 //			}
-
-			if (KNI_PORT(portid)) {
-				forward_from_kni_to_eth(qconf->tx_queue_id[portid], portid);
-			}
 		}
 	}
 }
@@ -1460,6 +1516,7 @@ port_init(uint8_t portid) {
 		qconf->tx_queue_id[portid] = tx_queueid;
 		tx_queueid++;
 
+		printf("--qconf->nb_rx_queue:%d\n", qconf->nb_rx_queue);
 		/* init RX queues */
 		for (queue = 0; queue < qconf->nb_rx_queue; ++queue) {
 			if (portid != qconf->rx_queue_list[queue].port_id)
@@ -1570,6 +1627,8 @@ main(int32_t argc, char **argv) {
 	if (xfrm_init() < 0) {
 		return 1;
 	}
+
+	iptables_init();
 
 	if ((unprotected_port_mask & enabled_port_mask) !=
 		unprotected_port_mask)

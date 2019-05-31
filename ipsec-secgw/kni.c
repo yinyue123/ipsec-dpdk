@@ -69,28 +69,28 @@ kni_burst_free_mbufs(struct rte_mbuf **pkts, unsigned num) {
 	}
 }
 
-int
-check_kni_data(struct rte_mbuf *pkt) {
-	struct ipv4_hdr *ip_hdr;
-	struct udp_hdr *udp_hdr;
-	uint16_t dport;
-
-	ip_hdr = rte_pktmbuf_mtod_offset(pkt,
-	struct ipv4_hdr *, sizeof(struct ether_hdr));
-	if (ip_hdr->next_proto_id == IPPROTO_ESP) {
-		//printf("recv esp package");
-		return 0;
-	} else if (ip_hdr->next_proto_id == IPPROTO_UDP) {
-		udp_hdr = (struct udp_hdr *) ((unsigned char *) ip_hdr +
-									  sizeof(struct ipv4_hdr));
-		dport = rte_be_to_cpu_16(udp_hdr->dst_port);
-		if (dport == 500) {
-			parse_pkt_arp(pkt);
-		}
-	}
-	//printf("return 1");
-	return 1;
-}
+//int
+//check_kni_data(struct rte_mbuf *pkt) {
+//	struct ipv4_hdr *ip_hdr;
+//	struct udp_hdr *udp_hdr;
+//	uint16_t dport;
+//
+//	ip_hdr = rte_pktmbuf_mtod_offset(pkt,
+//	struct ipv4_hdr *, sizeof(struct ether_hdr));
+//	if (ip_hdr->next_proto_id == IPPROTO_ESP) {
+//		//printf("recv esp package");
+//		return 0;
+//	} else if (ip_hdr->next_proto_id == IPPROTO_UDP) {
+//		udp_hdr = (struct udp_hdr *) ((unsigned char *) ip_hdr +
+//									  sizeof(struct ipv4_hdr));
+//		dport = rte_be_to_cpu_16(udp_hdr->dst_port);
+//		if (dport == 500) {
+//			parse_pkt_arp(pkt);
+//		}
+//	}
+//	//printf("return 1");
+//	return 1;
+//}
 
 void
 send_to_kni(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx) {
@@ -111,6 +111,7 @@ forward_from_kni_to_eth(uint16_t tx_queue_id, uint8_t port_id) {
 	num = rte_kni_rx_burst(kni_port_params_array[port_id]->kni, pkts_burst, PKT_BURST_SZ);
 	if (likely(num)) {
 		printf("forward_from_kni_to_eth\n");
+		printf("rte_eth_tx_burst(port_id:%d,tx_queue_id:%d,pkts_burst,num:%d)\n", port_id, tx_queue_id, num);
 		nb_tx = rte_eth_tx_burst(port_id, tx_queue_id, pkts_burst, num);
 		if (unlikely(nb_tx < num))
 			kni_burst_free_mbufs(&pkts_burst[nb_tx], num - nb_tx);

@@ -20,8 +20,8 @@ parse_sa_tokens(char **tokens, uint32_t n_tokens,
 void
 parse_sp4_tokens(char **tokens, uint32_t n_tokens,
 				 struct parse_status *status);
-
-void
-xfrm_add_addr(uint32_t addr);
+//
+//void
+//xfrm_add_addr(uint32_t addr);
 
 #endif //BYSJ_XFRM_H
