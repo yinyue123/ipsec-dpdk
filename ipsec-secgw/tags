@@ -1,0 +1,844 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+APP	Makefile	/^APP = ipsec-secgw$/;"	m
+APP_CHECK	parser.h	46;"	d
+APP_CHECK_PRESENCE	parser.h	56;"	d
+APP_CHECK_TOKEN_EQUAL	parser.h	60;"	d
+APP_CHECK_TOKEN_IS_NUM	parser.h	76;"	d
+BURST_TX_DRAIN_US	ipsec-secgw.c	106;"	d	file:
+BYPASS	ipsec.h	65;"	d
+BYSJ_IPTABLES_H	iptables.h	6;"	d
+BYSJ_XFRM_H	xfrm.h	6;"	d
+CDEV_MAP_ENTRIES	ipsec-secgw.c	98;"	d	file:
+CDEV_MP_CACHE_SZ	ipsec-secgw.c	100;"	d	file:
+CDEV_MP_NB_OBJS	ipsec-secgw.c	99;"	d	file:
+CDEV_QUEUE_DESC	ipsec-secgw.c	97;"	d	file:
+CHECK_INTERVAL	ipsec-secgw.c	1219;"	d	file:
+DECLTYPE	uthash.h	37;"	d
+DECLTYPE	uthash.h	40;"	d
+DECLTYPE	uthash.h	44;"	d
+DECLTYPE	uthash.h	46;"	d
+DECLTYPE_ASSIGN	uthash.h	50;"	d
+DECLTYPE_ASSIGN	uthash.h	56;"	d
+DEFAULT_MAX_CATEGORIES	ipsec.h	58;"	d
+DISCARD	ipsec.h	64;"	d
+DSTP_FIELD_IPV4	sp4.c	/^	DSTP_FIELD_IPV4,$/;"	e	enum:__anon4	file:
+DST_FIELD_IPV4	sp4.c	/^	DST_FIELD_IPV4,$/;"	e	enum:__anon4	file:
+ELMT_FROM_HH	uthash.h	101;"	d
+ETHADDR	kni.h	44;"	d
+ETHADDR_TO_UINT64	kni.h	38;"	d
+HASH_ADD	uthash.h	169;"	d
+HASH_ADD_INT	uthash.h	269;"	d
+HASH_ADD_KEYPTR	uthash.h	182;"	d
+HASH_ADD_PTR	uthash.h	275;"	d
+HASH_ADD_STR	uthash.h	263;"	d
+HASH_ADD_TO_BKT	uthash.h	625;"	d
+HASH_BER	uthash.h	364;"	d
+HASH_BKT_CAPACITY_THRESH	uthash.h	98;"	d
+HASH_BLOOM_ADD	uthash.h	136;"	d
+HASH_BLOOM_ADD	uthash.h	145;"	d
+HASH_BLOOM_BITLEN	uthash.h	117;"	d
+HASH_BLOOM_BITSET	uthash.h	133;"	d
+HASH_BLOOM_BITTEST	uthash.h	134;"	d
+HASH_BLOOM_BYTELEN	uthash.h	118;"	d
+HASH_BLOOM_BYTELEN	uthash.h	147;"	d
+HASH_BLOOM_FREE	uthash.h	128;"	d
+HASH_BLOOM_FREE	uthash.h	144;"	d
+HASH_BLOOM_MAKE	uthash.h	119;"	d
+HASH_BLOOM_MAKE	uthash.h	143;"	d
+HASH_BLOOM_SIGNATURE	uthash.h	917;"	d
+HASH_BLOOM_TEST	uthash.h	139;"	d
+HASH_BLOOM_TEST	uthash.h	146;"	d
+HASH_CLEAR	uthash.h	863;"	d
+HASH_CNT	uthash.h	893;"	d
+HASH_COUNT	uthash.h	892;"	d
+HASH_DEL	uthash.h	279;"	d
+HASH_DELETE	uthash.h	224;"	d
+HASH_DEL_IN_BKT	uthash.h	639;"	d
+HASH_EMIT_KEY	uthash.h	346;"	d
+HASH_EMIT_KEY	uthash.h	353;"	d
+HASH_EXPAND_BUCKETS	uthash.h	680;"	d
+HASH_FCN	uthash.h	358;"	d
+HASH_FCN	uthash.h	360;"	d
+HASH_FIND	uthash.h	103;"	d
+HASH_FIND_INT	uthash.h	267;"	d
+HASH_FIND_IN_BKT	uthash.h	611;"	d
+HASH_FIND_PTR	uthash.h	273;"	d
+HASH_FIND_STR	uthash.h	261;"	d
+HASH_FNV	uthash.h	389;"	d
+HASH_FSCK	uthash.h	287;"	d
+HASH_FSCK	uthash.h	339;"	d
+HASH_INITIAL_NUM_BUCKETS	uthash.h	96;"	d
+HASH_INITIAL_NUM_BUCKETS_LOG2	uthash.h	97;"	d
+HASH_ITER	uthash.h	882;"	d
+HASH_ITER	uthash.h	886;"	d
+HASH_JEN	uthash.h	430;"	d
+HASH_JEN_MIX	uthash.h	417;"	d
+HASH_KEYCMP	uthash.h	608;"	d
+HASH_MAKE_TABLE	uthash.h	150;"	d
+HASH_MUR	uthash.h	568;"	d
+HASH_OAT	uthash.h	401;"	d
+HASH_OOPS	uthash.h	286;"	d
+HASH_OVERHEAD	uthash.h	874;"	d
+HASH_REPLACE	uthash.h	172;"	d
+HASH_REPLACE_INT	uthash.h	271;"	d
+HASH_REPLACE_PTR	uthash.h	277;"	d
+HASH_REPLACE_STR	uthash.h	265;"	d
+HASH_SAX	uthash.h	378;"	d
+HASH_SELECT	uthash.h	825;"	d
+HASH_SFH	uthash.h	482;"	d
+HASH_SIGNATURE	uthash.h	916;"	d
+HASH_SORT	uthash.h	732;"	d
+HASH_SRT	uthash.h	733;"	d
+HASH_TO_BKT	uthash.h	207;"	d
+IN6ADDRSZ	parser.c	71;"	d	file:
+INADDRSZ	parser.c	70;"	d	file:
+INCREMENT_TOKEN_INDEX	parser.h	81;"	d
+INVALID_SPI	ipsec.h	62;"	d
+IP4_TUNNEL	ipsec.h	107;"	d
+IP6_ADDR_SIZE	sp6.c	64;"	d	file:
+IP6_DST0	sp6.c	/^	IP6_DST0,$/;"	e	enum:__anon6	file:
+IP6_DST1	sp6.c	/^	IP6_DST1,$/;"	e	enum:__anon6	file:
+IP6_DST2	sp6.c	/^	IP6_DST2,$/;"	e	enum:__anon6	file:
+IP6_DST3	sp6.c	/^	IP6_DST3,$/;"	e	enum:__anon6	file:
+IP6_DSTP	sp6.c	/^	IP6_DSTP,$/;"	e	enum:__anon6	file:
+IP6_NUM	sp6.c	/^	IP6_NUM$/;"	e	enum:__anon6	file:
+IP6_PROTO	sp6.c	/^	IP6_PROTO,$/;"	e	enum:__anon6	file:
+IP6_SRC0	sp6.c	/^	IP6_SRC0,$/;"	e	enum:__anon6	file:
+IP6_SRC1	sp6.c	/^	IP6_SRC1,$/;"	e	enum:__anon6	file:
+IP6_SRC2	sp6.c	/^	IP6_SRC2,$/;"	e	enum:__anon6	file:
+IP6_SRC3	sp6.c	/^	IP6_SRC3,$/;"	e	enum:__anon6	file:
+IP6_SRCP	sp6.c	/^	IP6_SRCP,$/;"	e	enum:__anon6	file:
+IP6_TUNNEL	ipsec.h	108;"	d
+IP6_VERSION	ipsec.h	71;"	d
+IPSEC_SA_MAX_ENTRIES	ipsec.h	60;"	d
+IPSEC_SECGW_RX_DESC_DEFAULT	ipsec-secgw.c	126;"	d	file:
+IPSEC_SECGW_TX_DESC_DEFAULT	ipsec-secgw.c	127;"	d	file:
+IPSEC_XFORM_MAX	ipsec.h	69;"	d
+KNI_ENET_FCS_SIZE	kni.c	39;"	d	file:
+KNI_ENET_HEADER_SIZE	kni.c	36;"	d	file:
+KNI_PORT	ipsec-secgw.c	119;"	d	file:
+LEFT_TIME	iptables.c	304;"	d	file:
+MAX_ACL_RULE_NUM	sp4.c	49;"	d	file:
+MAX_ACL_RULE_NUM	sp6.c	47;"	d	file:
+MAX_CHECK_TIME	ipsec-secgw.c	1220;"	d	file:
+MAX_DIGEST_SIZE	ipsec.h	49;"	d
+MAX_JUMBO_PKT_LEN	ipsec-secgw.c	91;"	d	file:
+MAX_KEY_SIZE	ipsec.h	93;"	d
+MAX_LCORE_PARAMS	ipsec-secgw.c	115;"	d	file:
+MAX_PACKET_SZ	kni.c	24;"	d	file:
+MAX_PKT_BURST	ipsec.h	46;"	d
+MAX_QP_PER_LCORE	ipsec.h	47;"	d
+MAX_QUEUE_PAIRS	ipsec-secgw.c	101;"	d	file:
+MAX_RX_QUEUE_PER_LCORE	ipsec-secgw.c	113;"	d	file:
+MEMPOOL_CACHE_SIZE	ipsec-secgw.c	93;"	d	file:
+MEMPOOL_CACHE_SZ	kni.c	33;"	d	file:
+MUR_FMIX	uthash.h	559;"	d
+MUR_GETBLOCK	uthash.h	537;"	d
+MUR_GETBLOCK	uthash.h	553;"	d
+MUR_ONE_THREE	uthash.h	547;"	d
+MUR_ONE_THREE	uthash.h	551;"	d
+MUR_PLUS0_ALIGNED	uthash.h	539;"	d
+MUR_PLUS1_ALIGNED	uthash.h	540;"	d
+MUR_PLUS2_ALIGNED	uthash.h	541;"	d
+MUR_PLUS3_ALIGNED	uthash.h	542;"	d
+MUR_ROTL32	uthash.h	558;"	d
+MUR_THREE_ONE	uthash.h	545;"	d
+MUR_THREE_ONE	uthash.h	549;"	d
+MUR_TWO_TWO	uthash.h	546;"	d
+MUR_TWO_TWO	uthash.h	550;"	d
+NB_MBUF	ipsec-secgw.c	95;"	d	file:
+NB_MBUF	kni.c	27;"	d	file:
+NB_SOCKETS	ipsec-secgw.c	108;"	d	file:
+NO_DECLTYPE	uthash.h	39;"	d
+NO_DECLTYPE	uthash.h	43;"	d
+NUM_FIELDS_IPV4	sp4.c	/^	NUM_FIELDS_IPV4$/;"	e	enum:__anon4	file:
+OPTION_CONFIG	ipsec-secgw.c	103;"	d	file:
+OPTION_SINGLE_SA	ipsec-secgw.c	104;"	d	file:
+PARSE_DELIMITER	parser.c	45;"	d	file:
+PKT_BURST_SZ	kni.c	30;"	d	file:
+PREFETCH_OFFSET	ipsec-secgw.c	111;"	d	file:
+PROTECT	ipsec.h	67;"	d
+PROTECT_MASK	ipsec.h	66;"	d
+PROTO_FIELD_IPV4	sp4.c	/^	PROTO_FIELD_IPV4,$/;"	e	enum:__anon4	file:
+RTE_ACL_IPV4_DST	sp4.c	/^	RTE_ACL_IPV4_DST,$/;"	e	enum:__anon5	file:
+RTE_ACL_IPV4_NUM	sp4.c	/^	RTE_ACL_IPV4_NUM$/;"	e	enum:__anon5	file:
+RTE_ACL_IPV4_PORTS	sp4.c	/^	RTE_ACL_IPV4_PORTS,$/;"	e	enum:__anon5	file:
+RTE_ACL_IPV4_PROTO	sp4.c	/^	RTE_ACL_IPV4_PROTO,$/;"	e	enum:__anon5	file:
+RTE_ACL_IPV4_SRC	sp4.c	/^	RTE_ACL_IPV4_SRC,$/;"	e	enum:__anon5	file:
+RTE_LOGTYPE_IPSEC	ipsec-secgw.c	89;"	d	file:
+RTE_LOGTYPE_IPSEC	ipsec.h	42;"	d
+RTE_LOGTYPE_IPSEC	kni.c	21;"	d	file:
+RTE_LOGTYPE_IPSEC_ESP	ipsec.h	43;"	d
+RTE_LOGTYPE_IPSEC_IPIP	ipsec.h	44;"	d
+RTE_TARGET	Makefile	/^RTE_TARGET ?= x86_64-native-linuxapp-gcc$/;"	m
+RT_IPV4_MAX_RULES	rt.c	46;"	d	file:
+RT_IPV6_MAX_RULES	rt.c	47;"	d	file:
+SPI2IDX	ipsec.h	61;"	d
+SRCP_FIELD_IPV4	sp4.c	/^	SRCP_FIELD_IPV4,$/;"	e	enum:__anon4	file:
+SRC_FIELD_IPV4	sp4.c	/^	SRC_FIELD_IPV4,$/;"	e	enum:__anon4	file:
+TRANSPORT	ipsec.h	109;"	d
+UNPROTECTED_PORT	ipsec-secgw.c	117;"	d	file:
+UTHASH_H	uthash.h	25;"	d
+UTHASH_VERSION	uthash.h	76;"	d
+UT_hash_bucket	uthash.h	/^typedef struct UT_hash_bucket {$/;"	s
+UT_hash_bucket	uthash.h	/^} UT_hash_bucket;$/;"	t	typeref:struct:UT_hash_bucket
+UT_hash_bucket::count	uthash.h	/^   unsigned count;$/;"	m	struct:UT_hash_bucket	access:public
+UT_hash_bucket::expand_mult	uthash.h	/^   unsigned expand_mult;$/;"	m	struct:UT_hash_bucket	access:public
+UT_hash_bucket::hh_head	uthash.h	/^   struct UT_hash_handle *hh_head;$/;"	m	struct:UT_hash_bucket	typeref:struct:UT_hash_bucket::UT_hash_handle	access:public
+UT_hash_handle	uthash.h	/^typedef struct UT_hash_handle {$/;"	s
+UT_hash_handle	uthash.h	/^} UT_hash_handle;$/;"	t	typeref:struct:UT_hash_handle
+UT_hash_handle::hashv	uthash.h	/^   unsigned hashv;                   \/* result of hash-fcn(key)        *\/$/;"	m	struct:UT_hash_handle	access:public
+UT_hash_handle::hh_next	uthash.h	/^   struct UT_hash_handle *hh_next;   \/* next hh in bucket order        *\/$/;"	m	struct:UT_hash_handle	typeref:struct:UT_hash_handle::UT_hash_handle	access:public
+UT_hash_handle::hh_prev	uthash.h	/^   struct UT_hash_handle *hh_prev;   \/* previous hh in bucket order    *\/$/;"	m	struct:UT_hash_handle	typeref:struct:UT_hash_handle::UT_hash_handle	access:public
+UT_hash_handle::key	uthash.h	/^   void *key;                        \/* ptr to enclosing struct's key  *\/$/;"	m	struct:UT_hash_handle	access:public
+UT_hash_handle::keylen	uthash.h	/^   unsigned keylen;                  \/* enclosing struct's key len     *\/$/;"	m	struct:UT_hash_handle	access:public
+UT_hash_handle::next	uthash.h	/^   void *next;                       \/* next element in app order      *\/$/;"	m	struct:UT_hash_handle	access:public
+UT_hash_handle::prev	uthash.h	/^   void *prev;                       \/* prev element in app order      *\/$/;"	m	struct:UT_hash_handle	access:public
+UT_hash_handle::tbl	uthash.h	/^   struct UT_hash_table *tbl;$/;"	m	struct:UT_hash_handle	typeref:struct:UT_hash_handle::UT_hash_table	access:public
+UT_hash_table	uthash.h	/^typedef struct UT_hash_table {$/;"	s
+UT_hash_table	uthash.h	/^} UT_hash_table;$/;"	t	typeref:struct:UT_hash_table
+UT_hash_table::bloom_bv	uthash.h	/^   uint8_t *bloom_bv;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::bloom_nbits	uthash.h	/^   uint8_t bloom_nbits;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::bloom_sig	uthash.h	/^   uint32_t bloom_sig; \/* used only to test bloom exists in external analysis *\/$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::buckets	uthash.h	/^   UT_hash_bucket *buckets;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::hho	uthash.h	/^   ptrdiff_t hho; \/* hash handle offset (byte pos of hash handle in element *\/$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::ideal_chain_maxlen	uthash.h	/^   unsigned ideal_chain_maxlen;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::ineff_expands	uthash.h	/^   unsigned ineff_expands, noexpand;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::log2_num_buckets	uthash.h	/^   unsigned num_buckets, log2_num_buckets;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::noexpand	uthash.h	/^   unsigned ineff_expands, noexpand;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::nonideal_items	uthash.h	/^   unsigned nonideal_items;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::num_buckets	uthash.h	/^   unsigned num_buckets, log2_num_buckets;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::num_items	uthash.h	/^   unsigned num_items;$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::signature	uthash.h	/^   uint32_t signature; \/* used only to find hash tables in external analysis *\/$/;"	m	struct:UT_hash_table	access:public
+UT_hash_table::tail	uthash.h	/^   struct UT_hash_handle *tail; \/* tail hh in app order, for fast append    *\/$/;"	m	struct:UT_hash_table	typeref:struct:UT_hash_table::UT_hash_handle	access:public
+WP	uthash.h	543;"	d
+__BYTES_TO_UINT64	kni.h	17;"	d
+__BYTES_TO_UINT64	kni.h	27;"	d
+__IPIP_H__	ipip.h	35;"	d
+__IPSEC_H__	ipsec.h	35;"	d
+__KNI_H__	kni.h	6;"	d
+__PARSER_H	parser.h	39;"	d
+__RTE_IPSEC_XFORM_ESP_H__	esp.h	34;"	d
+__STRNCMP	ipsec-secgw.c	1084;"	d	file:
+__STRNCMP	ipsec-secgw.c	1111;"	d	file:
+__rte_cache_aligned	ipsec-secgw.c	/^} __rte_cache_aligned;$/;"	v	typeref:struct:lcore_conf
+__rte_cache_aligned	ipsec-secgw.c	/^} __rte_cache_aligned;$/;"	v	typeref:struct:lcore_params
+__rte_cache_aligned	ipsec-secgw.c	/^} __rte_cache_aligned;$/;"	v	typeref:struct:lcore_rx_queue
+__rte_cache_aligned	ipsec.h	/^} __rte_cache_aligned;$/;"	v	typeref:struct:ipsec_mbuf_metadata
+__rte_cache_aligned	ipsec.h	/^} __rte_cache_aligned;$/;"	v	typeref:struct:ipsec_sa
+__rte_cache_aligned	kni.c	/^} __rte_cache_aligned;$/;"	v	typeref:struct:kni_port_params
+a	sa.c	/^		struct rte_crypto_sym_xform a;$/;"	m	struct:sa_ctx::__anon3	typeref:struct:sa_ctx::__anon3::rte_crypto_sym_xform	file:	access:public
+aad_len	ipsec.h	/^	uint16_t aad_len;$/;"	m	struct:ipsec_sa	access:public
+aad_len	sa.c	/^	uint8_t aad_len;$/;"	m	struct:supported_auth_algo	file:	access:public
+acl4_init	sp4.c	/^acl4_init(const char *name, int32_t socketid, const struct acl4_rules *rules,$/;"	f	file:	signature:(const char *name, int32_t socketid, const struct acl4_rules *rules, uint32_t rules_nb)
+acl4_rules_in	sp4.c	/^struct acl4_rules acl4_rules_in[MAX_ACL_RULE_NUM];$/;"	v	typeref:struct:acl4_rules
+acl4_rules_out	sp4.c	/^struct acl4_rules acl4_rules_out[MAX_ACL_RULE_NUM];$/;"	v	typeref:struct:acl4_rules
+acl6_init	sp6.c	/^acl6_init(const char *name, int32_t socketid, const struct acl6_rules *rules,$/;"	f	file:	signature:(const char *name, int32_t socketid, const struct acl6_rules *rules, uint32_t rules_nb)
+acl6_rules_in	sp6.c	/^struct acl6_rules acl6_rules_in[MAX_ACL_RULE_NUM];$/;"	v	typeref:struct:acl6_rules
+acl6_rules_out	sp6.c	/^struct acl6_rules acl6_rules_out[MAX_ACL_RULE_NUM];$/;"	v	typeref:struct:acl6_rules
+add_cdev_mapping	ipsec-secgw.c	/^add_cdev_mapping(struct rte_cryptodev_info *dev_info, uint16_t cdev_id,$/;"	f	file:	signature:(struct rte_cryptodev_info *dev_info, uint16_t cdev_id, uint16_t qp, struct lcore_params *params)
+add_mapping	ipsec-secgw.c	/^add_mapping(struct rte_hash *map, const char *str, uint16_t cdev_id,$/;"	f	file:	signature:(struct rte_hash *map, const char *str, uint16_t cdev_id, uint16_t qp, struct lcore_params *params, struct ipsec_ctx *ipsec_ctx, const struct rte_cryptodev_capabilities *cipher, const struct rte_cryptodev_capabilities *auth)
+add_sa	xfrm.c	/^add_sa($/;"	f	file:	signature:( const char *in_out, const char *spi, const char *cipher_algo, const char *cipher_key, const char *auth_algo, const char *auth_key, const char *mode, const char *src, const char *dst )
+add_sp	xfrm.c	/^add_sp($/;"	f	file:	signature:( const char *ip_ver, const char *dir, const char *action, const char *priority, const char *src_ip, const char *dst_ip, const char *proto, const char *sport, const char *dport )
+add_tab	arp.c	/^void add_tab(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac) {$/;"	f	signature:(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac)
+add_tab	iptables.h	/^void add_tab(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac);$/;"	p	signature:(struct gateway_ctx *ctx, uint32_t ip, struct ether_addr *mac)
+addr	arp.c	/^static char *addr(uint32_t ip) {$/;"	f	file:	signature:(uint32_t ip)
+addr	nat.c	/^static char *addr(uint32_t ip) {$/;"	f	file:	signature:(uint32_t ip)
+algo	sa.c	/^	enum rte_crypto_auth_algorithm algo;$/;"	m	struct:supported_auth_algo	typeref:enum:supported_auth_algo::rte_crypto_auth_algorithm	file:	access:public
+algo	sa.c	/^	enum rte_crypto_cipher_algorithm algo;$/;"	m	struct:supported_cipher_algo	typeref:enum:supported_cipher_algo::rte_crypto_cipher_algorithm	file:	access:public
+arp_tab	iptables.h	/^	struct arp_table *arp_tab;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::arp_table	access:public
+arp_table	iptables.h	/^struct arp_table {$/;"	s
+arp_table::hh	iptables.h	/^	UT_hash_handle hh;$/;"	m	struct:arp_table	access:public
+arp_table::ip	iptables.h	/^	uint32_t ip;$/;"	m	struct:arp_table	access:public
+arp_table::mac	iptables.h	/^	struct ether_addr mac;$/;"	m	struct:arp_table	typeref:struct:arp_table::ether_addr	access:public
+auth_algo	ipsec.h	/^	enum rte_crypto_auth_algorithm auth_algo;$/;"	m	struct:ipsec_sa	typeref:enum:ipsec_sa::rte_crypto_auth_algorithm	access:public
+auth_algo	ipsec.h	/^	uint8_t auth_algo;$/;"	m	struct:cdev_key	access:public
+auth_algos	sa.c	/^const struct supported_auth_algo auth_algos[] = {$/;"	v	typeref:struct:supported_auth_algo
+auth_key	ipsec.h	/^	uint8_t auth_key[MAX_KEY_SIZE];$/;"	m	struct:ipsec_sa	access:public
+auth_key_len	ipsec.h	/^	uint16_t auth_key_len;$/;"	m	struct:ipsec_sa	access:public
+b	sa.c	/^		struct rte_crypto_sym_xform b;$/;"	m	struct:sa_ctx::__anon3	typeref:struct:sa_ctx::__anon3::rte_crypto_sym_xform	file:	access:public
+block_size	ipsec.h	/^	uint16_t block_size;$/;"	m	struct:ipsec_sa	access:public
+block_size	sa.c	/^	uint16_t block_size;$/;"	m	struct:supported_cipher_algo	file:	access:public
+bloom_bv	uthash.h	/^   uint8_t *bloom_bv;$/;"	m	struct:UT_hash_table	access:public
+bloom_nbits	uthash.h	/^   uint8_t bloom_nbits;$/;"	m	struct:UT_hash_table	access:public
+bloom_sig	uthash.h	/^   uint32_t bloom_sig; \/* used only to test bloom exists in external analysis *\/$/;"	m	struct:UT_hash_table	access:public
+buckets	uthash.h	/^   UT_hash_bucket *buckets;$/;"	m	struct:UT_hash_table	access:public
+buf	ipsec.h	/^	uint8_t buf[32];$/;"	m	struct:ipsec_mbuf_metadata	access:public
+buffer	ipsec-secgw.c	/^struct buffer {$/;"	s	file:
+buffer::len	ipsec-secgw.c	/^	uint16_t len;$/;"	m	struct:buffer	file:	access:public
+buffer::sizeof	ipsec-secgw.c	/^	__rte_aligned(sizeof(void *));$/;"	p	struct:buffer	file:	access:public	signature:(void *)
+bypass_after_tunnel	iptables.c	/^void bypass_after_tunnel(struct rte_mbuf *pkt) {$/;"	f	signature:(struct rte_mbuf *pkt)
+bypass_after_tunnel	iptables.h	/^void bypass_after_tunnel(struct rte_mbuf *pkt);$/;"	p	signature:(struct rte_mbuf *pkt)
+bypass_before_tunnel_protect	iptables.c	/^int bypass_before_tunnel_protect(struct rte_mbuf *pkt) {$/;"	f	signature:(struct rte_mbuf *pkt)
+bypass_before_tunnel_protect	iptables.h	/^int bypass_before_tunnel_protect(struct rte_mbuf *pkt);$/;"	p	signature:(struct rte_mbuf *pkt)
+bypass_before_tunnel_unprotect	iptables.c	/^bypass_before_tunnel_unprotect(struct rte_mbuf *pkt) {$/;"	f	signature:(struct rte_mbuf *pkt)
+bypass_before_tunnel_unprotect	iptables.h	/^int bypass_before_tunnel_unprotect(struct rte_mbuf *pkt);$/;"	p	signature:(struct rte_mbuf *pkt)
+cdev_id_qp	ipsec.h	/^	uint32_t cdev_id_qp;$/;"	m	struct:ipsec_sa	access:public
+cdev_key	ipsec.h	/^struct cdev_key {$/;"	s
+cdev_key::auth_algo	ipsec.h	/^	uint8_t auth_algo;$/;"	m	struct:cdev_key	access:public
+cdev_key::cipher_algo	ipsec.h	/^	uint8_t cipher_algo;$/;"	m	struct:cdev_key	access:public
+cdev_key::lcore_id	ipsec.h	/^	uint16_t lcore_id;$/;"	m	struct:cdev_key	access:public
+cdev_map	ipsec.h	/^	struct rte_hash *cdev_map;$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::rte_hash	access:public
+cdev_map_in	ipsec-secgw.c	/^static struct rte_hash *cdev_map_in;$/;"	v	typeref:struct:rte_hash	file:
+cdev_map_out	ipsec-secgw.c	/^static struct rte_hash *cdev_map_out;$/;"	v	typeref:struct:rte_hash	file:
+cdev_qp	ipsec.h	/^struct cdev_qp {$/;"	s
+cdev_qp::id	ipsec.h	/^	uint16_t id;$/;"	m	struct:cdev_qp	access:public
+cdev_qp::in_flight	ipsec.h	/^	uint16_t in_flight;$/;"	m	struct:cdev_qp	access:public
+cdev_qp::len	ipsec.h	/^	uint16_t len;$/;"	m	struct:cdev_qp	access:public
+cdev_qp::qp	ipsec.h	/^	uint16_t qp;$/;"	m	struct:cdev_qp	access:public
+cdev_qp::sizeof	ipsec.h	/^	__rte_aligned(sizeof(void *));$/;"	p	struct:cdev_qp	access:public	signature:(void *)
+cfg_rt_add_cfg_item	parser.c	/^struct cfg_rt_add_cfg_item {$/;"	s	file:
+cfg_rt_add_cfg_item::multi_string	parser.c	/^	cmdline_multi_string_t multi_string;$/;"	m	struct:cfg_rt_add_cfg_item	file:	access:public
+cfg_rt_add_cfg_item::rt_keyword	parser.c	/^	cmdline_fixed_string_t rt_keyword;$/;"	m	struct:cfg_rt_add_cfg_item	file:	access:public
+cfg_rt_add_cfg_item_parsed	parser.c	/^cfg_rt_add_cfg_item_parsed(void *parsed_result,$/;"	f	file:	signature:(void *parsed_result, __rte_unused struct cmdline *cl, void *data)
+cfg_rt_add_multi_str	parser.c	/^static cmdline_parse_token_string_t cfg_rt_add_multi_str =$/;"	v	file:
+cfg_rt_add_rt_str	parser.c	/^static cmdline_parse_token_string_t cfg_rt_add_rt_str =$/;"	v	file:
+cfg_rt_add_rule	parser.c	/^cmdline_parse_inst_t cfg_rt_add_rule = {$/;"	v
+cfg_sa_add_cfg_item	parser.c	/^struct cfg_sa_add_cfg_item {$/;"	s	file:
+cfg_sa_add_cfg_item::multi_string	parser.c	/^	cmdline_multi_string_t multi_string;$/;"	m	struct:cfg_sa_add_cfg_item	file:	access:public
+cfg_sa_add_cfg_item::sa_keyword	parser.c	/^	cmdline_fixed_string_t sa_keyword;$/;"	m	struct:cfg_sa_add_cfg_item	file:	access:public
+cfg_sa_add_cfg_item_parsed	parser.c	/^cfg_sa_add_cfg_item_parsed(void *parsed_result,$/;"	f	file:	signature:(void *parsed_result, __rte_unused struct cmdline *cl, void *data)
+cfg_sa_add_multi_str	parser.c	/^static cmdline_parse_token_string_t cfg_sa_add_multi_str =$/;"	v	file:
+cfg_sa_add_rule	parser.c	/^cmdline_parse_inst_t cfg_sa_add_rule = {$/;"	v
+cfg_sa_add_sa_str	parser.c	/^static cmdline_parse_token_string_t cfg_sa_add_sa_str =$/;"	v	file:
+cfg_sp_add_cfg_item	parser.c	/^struct cfg_sp_add_cfg_item {$/;"	s	file:
+cfg_sp_add_cfg_item::multi_string	parser.c	/^	cmdline_multi_string_t multi_string;$/;"	m	struct:cfg_sp_add_cfg_item	file:	access:public
+cfg_sp_add_cfg_item::sp_keyword	parser.c	/^	cmdline_fixed_string_t sp_keyword;$/;"	m	struct:cfg_sp_add_cfg_item	file:	access:public
+cfg_sp_add_cfg_item_parsed	parser.c	/^cfg_sp_add_cfg_item_parsed(void *parsed_result,$/;"	f	file:	signature:(void *parsed_result, __rte_unused struct cmdline *cl, void *data)
+cfg_sp_add_multi_str	parser.c	/^static cmdline_parse_token_string_t cfg_sp_add_multi_str =$/;"	v	file:
+cfg_sp_add_rule	parser.c	/^cmdline_parse_inst_t cfg_sp_add_rule = {$/;"	v
+cfg_sp_add_sp_str	parser.c	/^static cmdline_parse_token_string_t cfg_sp_add_sp_str =$/;"	v	file:
+check_all_ports_link_status	ipsec-secgw.c	/^check_all_ports_link_status(uint8_t port_num, uint32_t port_mask) {$/;"	f	file:	signature:(uint8_t port_num, uint32_t port_mask)
+check_dnat	iptables.h	/^int check_dnat(struct gateway_ctx *ctx, struct tuple *packet);$/;"	p	signature:(struct gateway_ctx *ctx, struct tuple *packet)
+check_dnat	nat.c	/^int check_dnat(struct gateway_ctx *ctx, struct tuple *packet) {$/;"	f	signature:(struct gateway_ctx *ctx, struct tuple *packet)
+check_forward	iptables.h	/^int check_forward(struct gateway_ctx *ctx, struct tuple *packet);$/;"	p	signature:(struct gateway_ctx *ctx, struct tuple *packet)
+check_forward	nat.c	/^int check_forward(struct gateway_ctx *ctx, struct tuple *packet) {$/;"	f	signature:(struct gateway_ctx *ctx, struct tuple *packet)
+check_params	ipsec-secgw.c	/^check_params(void) {$/;"	f	file:	signature:(void)
+check_snat	iptables.h	/^int check_snat(struct gateway_ctx *ctx, struct tuple *packet);$/;"	p	signature:(struct gateway_ctx *ctx, struct tuple *packet)
+check_snat	nat.c	/^int check_snat(struct gateway_ctx *ctx, struct tuple *packet) {$/;"	f	signature:(struct gateway_ctx *ctx, struct tuple *packet)
+cipher_algo	ipsec.h	/^	enum rte_crypto_cipher_algorithm cipher_algo;$/;"	m	struct:ipsec_sa	typeref:enum:ipsec_sa::rte_crypto_cipher_algorithm	access:public
+cipher_algo	ipsec.h	/^	uint8_t cipher_algo;$/;"	m	struct:cdev_key	access:public
+cipher_algos	sa.c	/^const struct supported_cipher_algo cipher_algos[] = {$/;"	v	typeref:struct:supported_cipher_algo
+cipher_key	ipsec.h	/^	uint8_t cipher_key[MAX_KEY_SIZE];$/;"	m	struct:ipsec_sa	access:public
+cipher_key_len	ipsec.h	/^	uint16_t cipher_key_len;$/;"	m	struct:ipsec_sa	access:public
+cnt	ipsec.h	/^	uint32_t cnt;$/;"	m	struct:cnt_blk	access:public
+cnt_blk	ipsec.h	/^struct cnt_blk {$/;"	s
+cnt_blk::cnt	ipsec.h	/^	uint32_t cnt;$/;"	m	struct:cnt_blk	access:public
+cnt_blk::iv	ipsec.h	/^	uint64_t iv;$/;"	m	struct:cnt_blk	access:public
+cnt_blk::salt	ipsec.h	/^	uint32_t salt;$/;"	m	struct:cnt_blk	access:public
+cop	ipsec.h	/^	struct rte_crypto_op cop;$/;"	m	struct:ipsec_mbuf_metadata	typeref:struct:ipsec_mbuf_metadata::rte_crypto_op	access:public
+count	uthash.h	/^   unsigned count;$/;"	m	struct:UT_hash_bucket	access:public
+create_session	ipsec.c	/^create_session(struct ipsec_ctx *ipsec_ctx __rte_unused, struct ipsec_sa *sa) {$/;"	f	file:	signature:(struct ipsec_ctx *ipsec_ctx __rte_unused, struct ipsec_sa *sa)
+crypto_session	ipsec.h	/^	struct rte_cryptodev_sym_session *crypto_session;$/;"	m	struct:ipsec_sa	typeref:struct:ipsec_sa::rte_cryptodev_sym_session	access:public
+cryptodevs_init	ipsec-secgw.c	/^cryptodevs_init(void) {$/;"	f	file:	signature:(void)
+data	ipsec-secgw.c	/^	const uint8_t *data[MAX_PKT_BURST * 2];$/;"	m	struct:traffic_type	file:	access:public
+deal_sa	xfrm.c	/^deal_sa($/;"	f	file:	signature:( char *saddr, char *daddr, uint8_t proto, uint32_t spi, char *mode, char *auth_alg, char *auth_key, unsigned int auth_key_len, char *enc_alg, char *enc_key, unsigned int enc_key_len )
+deal_sp	xfrm.c	/^deal_sp($/;"	f	file:	signature:( int dir, int action, int priority, char *saddr, int prefixlen_s, char *daddr, int prefixlen_d, int proto, int sport, int sport_mask, int dport, int dport_mask )
+depth	rt.c	/^	uint8_t depth;$/;"	m	struct:ip4_route	file:	access:public
+depth	rt.c	/^	uint8_t depth;$/;"	m	struct:ip6_route	file:	access:public
+dhh	iptables.h	/^	UT_hash_handle dhh;$/;"	m	struct:nat_table	access:public
+digest_len	ipsec.h	/^	uint16_t digest_len;$/;"	m	struct:ipsec_sa	access:public
+digest_len	sa.c	/^	uint16_t digest_len;$/;"	m	struct:supported_auth_algo	file:	access:public
+dnat	iptables.h	/^	struct tuple dnat;$/;"	m	struct:nat_table	typeref:struct:nat_table::tuple	access:public
+dnat	nat.c	/^static int dnat(struct gateway_ctx *ctx, struct tuple *packet) {$/;"	f	file:	signature:(struct gateway_ctx *ctx, struct tuple *packet)
+dnat_tab	iptables.h	/^	struct nat_table *dnat_tab;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::nat_table	access:public
+drain_buffers	ipsec-secgw.c	/^drain_buffers(struct lcore_conf *qconf) {$/;"	f	file:	signature:(struct lcore_conf *qconf)
+dst	ipsec.h	/^	struct ip_addr dst;$/;"	m	struct:ipsec_sa	typeref:struct:ipsec_sa::ip_addr	access:public
+dst	kni.h	/^	uint64_t src, dst;$/;"	m	struct:ethaddr_info	access:public
+dst_ip	iptables.h	/^	uint32_t dst_ip;$/;"	m	struct:tuple	access:public
+dst_port	iptables.h	/^	uint16_t dst_port;$/;"	m	struct:tuple	access:public
+dump_hex	xfrm.c	/^dump_hex(char *buf, int len) {$/;"	f	signature:(char *buf, int len)
+dump_hex	xfrm.c	/^dump_hex(char *buf, int len);$/;"	p	file:	signature:(char *buf, int len)
+dump_hex_string	xfrm.c	/^dump_hex_string(char *output, char *buf, int len) {$/;"	f	file:	signature:(char *output, char *buf, int len)
+dump_ip4_rules	sp4.c	/^dump_ip4_rules(const struct acl4_rules *rule, int32_t num, int32_t extra) {$/;"	f	file:	signature:(const struct acl4_rules *rule, int32_t num, int32_t extra)
+dump_ip6_rules	sp6.c	/^dump_ip6_rules(const struct acl6_rules *rule, int32_t num, int32_t extra) {$/;"	f	file:	signature:(const struct acl6_rules *rule, int32_t num, int32_t extra)
+enabled_port_mask	ipsec-secgw.c	/^static uint32_t enabled_port_mask;$/;"	v	file:
+enqueue_cop	ipsec.c	/^enqueue_cop(struct cdev_qp *cqp, struct rte_crypto_op *cop) {$/;"	f	file:	signature:(struct cdev_qp *cqp, struct rte_crypto_op *cop)
+esp_hdr	esp.h	/^struct esp_hdr {$/;"	s
+esp_hdr::seq	esp.h	/^	uint32_t seq;$/;"	m	struct:esp_hdr	access:public
+esp_hdr::spi	esp.h	/^	uint32_t spi;$/;"	m	struct:esp_hdr	access:public
+esp_inbound	esp.c	/^esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,$/;"	f	signature:(struct rte_mbuf *m, struct ipsec_sa *sa, struct rte_crypto_op *cop)
+esp_inbound	esp.h	/^esp_inbound(struct rte_mbuf *m, struct ipsec_sa *sa,$/;"	p	signature:(struct rte_mbuf *m, struct ipsec_sa *sa, struct rte_crypto_op *cop)
+esp_inbound_post	esp.c	/^esp_inbound_post(struct rte_mbuf *m, struct ipsec_sa *sa,$/;"	f	signature:(struct rte_mbuf *m, struct ipsec_sa *sa, struct rte_crypto_op *cop)
+esp_inbound_post	esp.h	/^esp_inbound_post(struct rte_mbuf *m, struct ipsec_sa *sa,$/;"	p	signature:(struct rte_mbuf *m, struct ipsec_sa *sa, struct rte_crypto_op *cop)
+esp_outbound	esp.c	/^esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,$/;"	f	signature:(struct rte_mbuf *m, struct ipsec_sa *sa, struct rte_crypto_op *cop)
+esp_outbound	esp.h	/^esp_outbound(struct rte_mbuf *m, struct ipsec_sa *sa,$/;"	p	signature:(struct rte_mbuf *m, struct ipsec_sa *sa, struct rte_crypto_op *cop)
+esp_outbound_post	esp.c	/^esp_outbound_post(struct rte_mbuf *m __rte_unused,$/;"	f	signature:(struct rte_mbuf *m __rte_unused, struct ipsec_sa *sa __rte_unused, struct rte_crypto_op *cop)
+esp_outbound_post	esp.h	/^esp_outbound_post(struct rte_mbuf *m, struct ipsec_sa *sa,$/;"	p	signature:(struct rte_mbuf *m, struct ipsec_sa *sa, struct rte_crypto_op *cop)
+ethaddr_info	kni.h	/^struct ethaddr_info {$/;"	s
+ethaddr_info::dst	kni.h	/^	uint64_t src, dst;$/;"	m	struct:ethaddr_info	access:public
+ethaddr_info::src	kni.h	/^	uint64_t src, dst;$/;"	m	struct:ethaddr_info	access:public
+ethaddr_tbl	ipsec-secgw.c	/^struct ethaddr_info ethaddr_tbl[RTE_MAX_ETHPORTS] = {$/;"	v	typeref:struct:ethaddr_info
+expand_mult	uthash.h	/^   unsigned expand_mult;$/;"	m	struct:UT_hash_bucket	access:public
+find_match_auth_algo	sa.c	/^find_match_auth_algo(const char *auth_keyword) {$/;"	f	file:	signature:(const char *auth_keyword)
+find_match_cipher_algo	sa.c	/^find_match_cipher_algo(const char *cipher_keyword) {$/;"	f	file:	signature:(const char *cipher_keyword)
+find_tab	arp.c	/^struct ether_addr *find_tab(struct gateway_ctx *ctx, uint32_t ip) {$/;"	f	signature:(struct gateway_ctx *ctx, uint32_t ip)
+find_tab	iptables.h	/^struct ether_addr *find_tab(struct gateway_ctx *ctx, uint32_t ip);$/;"	p	signature:(struct gateway_ctx *ctx, uint32_t ip)
+flags	ipsec.h	/^	uint16_t flags;$/;"	m	struct:ipsec_sa	access:public
+forward	nat.c	/^static void forward(struct tuple *packet) {$/;"	f	file:	signature:(struct tuple *packet)
+forward_from_kni_to_eth	kni.c	/^forward_from_kni_to_eth(uint16_t tx_queue_id, uint8_t port_id) {$/;"	f	signature:(uint16_t tx_queue_id, uint8_t port_id)
+forward_from_kni_to_eth	kni.h	/^forward_from_kni_to_eth(uint16_t tx_queue_id, uint8_t port_id);$/;"	p	signature:(uint16_t tx_queue_id, uint8_t port_id)
+gateway_ctx	iptables.h	/^struct gateway_ctx {$/;"	s
+gateway_ctx::arp_tab	iptables.h	/^	struct arp_table *arp_tab;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::arp_table	access:public
+gateway_ctx::dnat_tab	iptables.h	/^	struct nat_table *dnat_tab;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::nat_table	access:public
+gateway_ctx::lan_ip	iptables.h	/^	uint32_t lan_ip;$/;"	m	struct:gateway_ctx	access:public
+gateway_ctx::lan_netmask	iptables.h	/^	uint32_t lan_netmask;$/;"	m	struct:gateway_ctx	access:public
+gateway_ctx::snat_tab	iptables.h	/^	struct nat_table *snat_tab;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::nat_table	access:public
+gateway_ctx::wan_gateway	iptables.h	/^	uint32_t wan_gateway;$/;"	m	struct:gateway_ctx	access:public
+gateway_ctx::wan_gateway_ha	iptables.h	/^	struct ether_addr wan_gateway_ha;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::ether_addr	access:public
+gateway_ctx::wan_ha	iptables.h	/^	struct ether_addr wan_ha;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::ether_addr	access:public
+gateway_ctx::wan_ip	iptables.h	/^	uint32_t wan_ip;$/;"	m	struct:gateway_ctx	access:public
+gateway_ctx::wan_netmask	iptables.h	/^	uint32_t wan_netmask;$/;"	m	struct:gateway_ctx	access:public
+get16bits	uthash.h	472;"	d
+get16bits	uthash.h	475;"	d
+get16bits	uthash.h	479;"	d
+get_aad	ipsec.h	/^get_aad(struct rte_mbuf *m) {$/;"	f	signature:(struct rte_mbuf *m)
+get_cnt_blk	ipsec.h	/^get_cnt_blk(struct rte_mbuf *m) {$/;"	f	signature:(struct rte_mbuf *m)
+get_mac_by_ip	kni.h	/^get_mac_by_ip(struct ether_hdr *eth, struct ethaddr_info def, struct ip *ip);$/;"	p	signature:(struct ether_hdr *eth, struct ethaddr_info def, struct ip *ip)
+get_port_nb_rx_queues	ipsec-secgw.c	/^get_port_nb_rx_queues(const uint8_t port) {$/;"	f	file:	signature:(const uint8_t port)
+get_priv	ipsec.h	/^get_priv(struct rte_mbuf *m) {$/;"	f	signature:(struct rte_mbuf *m)
+get_sym_cop	ipsec.h	/^get_sym_cop(struct rte_crypto_op *cop) {$/;"	f	signature:(struct rte_crypto_op *cop)
+gw_ctx	iptables.c	/^struct gateway_ctx *gw_ctx;$/;"	v	typeref:struct:gateway_ctx
+hashv	uthash.h	/^   unsigned hashv;                   \/* result of hash-fcn(key)        *\/$/;"	m	struct:UT_hash_handle	access:public
+hh	iptables.h	/^	UT_hash_handle hh;$/;"	m	struct:arp_table	access:public
+hh_head	uthash.h	/^   struct UT_hash_handle *hh_head;$/;"	m	struct:UT_hash_bucket	typeref:struct:UT_hash_bucket::UT_hash_handle	access:public
+hh_next	uthash.h	/^   struct UT_hash_handle *hh_next;   \/* next hh in bucket order        *\/$/;"	m	struct:UT_hash_handle	typeref:struct:UT_hash_handle::UT_hash_handle	access:public
+hh_prev	uthash.h	/^   struct UT_hash_handle *hh_prev;   \/* previous hh in bucket order    *\/$/;"	m	struct:UT_hash_handle	typeref:struct:UT_hash_handle::UT_hash_handle	access:public
+hho	uthash.h	/^   ptrdiff_t hho; \/* hash handle offset (byte pos of hash handle in element *\/$/;"	m	struct:UT_hash_table	access:public
+id	ipsec.h	/^	uint16_t id;$/;"	m	struct:cdev_qp	access:public
+ideal_chain_maxlen	uthash.h	/^   unsigned ideal_chain_maxlen;$/;"	m	struct:UT_hash_table	access:public
+if_out	rt.c	/^	uint8_t if_out;$/;"	m	struct:ip4_route	file:	access:public
+if_out	rt.c	/^	uint8_t if_out;$/;"	m	struct:ip6_route	file:	access:public
+in_flight	ipsec.h	/^	uint16_t in_flight;$/;"	m	struct:cdev_qp	access:public
+inbound	ipsec-secgw.c	/^	struct ipsec_ctx inbound;$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::ipsec_ctx	file:	access:public
+inbound_sa_check	ipsec.h	/^inbound_sa_check(struct sa_ctx *sa_ctx, struct rte_mbuf *m, uint32_t sa_idx);$/;"	p	signature:(struct sa_ctx *sa_ctx, struct rte_mbuf *m, uint32_t sa_idx)
+inbound_sa_check	sa.c	/^inbound_sa_check(struct sa_ctx *sa_ctx, struct rte_mbuf *m, uint32_t sa_idx) {$/;"	f	signature:(struct sa_ctx *sa_ctx, struct rte_mbuf *m, uint32_t sa_idx)
+inbound_sa_lookup	ipsec.h	/^inbound_sa_lookup(struct sa_ctx *sa_ctx, struct rte_mbuf *pkts[],$/;"	p	signature:(struct sa_ctx *sa_ctx, struct rte_mbuf *pkts[], struct ipsec_sa *sa[], uint16_t nb_pkts)
+inbound_sa_lookup	sa.c	/^inbound_sa_lookup(struct sa_ctx *sa_ctx, struct rte_mbuf *pkts[],$/;"	f	signature:(struct sa_ctx *sa_ctx, struct rte_mbuf *pkts[], struct ipsec_sa *sa[], uint16_t nb_pkts)
+inbound_sp_sa	ipsec-secgw.c	/^inbound_sp_sa(struct sp_ctx *sp, struct sa_ctx *sa, struct traffic_type *ip,$/;"	f	file:	signature:(struct sp_ctx *sp, struct sa_ctx *sa, struct traffic_type *ip, uint16_t lim)
+ineff_expands	uthash.h	/^   unsigned ineff_expands, noexpand;$/;"	m	struct:UT_hash_table	access:public
+inet_pton4	parser.c	/^inet_pton4(const char *src, unsigned char *dst) {$/;"	f	file:	signature:(const char *src, unsigned char *dst)
+inet_pton6	parser.c	/^inet_pton6(const char *src, unsigned char *dst) {$/;"	f	file:	signature:(const char *src, unsigned char *dst)
+init_kni	kni.c	/^init_kni(void) {$/;"	f	file:	signature:(void)
+init_kni_param	kni.c	/^init_kni_param(uint8_t port_id) {$/;"	f	file:	signature:(uint8_t port_id)
+init_lcore_rx_queues	ipsec-secgw.c	/^init_lcore_rx_queues(void) {$/;"	f	file:	signature:(void)
+ip	ipsec.h	/^	} ip;$/;"	m	struct:ip_addr	typeref:union:ip_addr::__anon1	access:public
+ip	iptables.h	/^	uint32_t ip;$/;"	m	struct:arp_table	access:public
+ip	rt.c	/^	uint32_t ip;$/;"	m	struct:ip4_route	file:	access:public
+ip	rt.c	/^	uint8_t ip[16];$/;"	m	struct:ip6_route	file:	access:public
+ip4	ipsec-secgw.c	/^	struct traffic_type ip4;$/;"	m	struct:ipsec_traffic	typeref:struct:ipsec_traffic::traffic_type	file:	access:public
+ip4	ipsec.h	/^		uint32_t ip4;$/;"	m	union:ip_addr::__anon1	access:public
+ip4_defs	sp4.c	/^struct rte_acl_field_def ip4_defs[NUM_FIELDS_IPV4] = {$/;"	v	typeref:struct:rte_acl_field_def
+ip4_ecn_setup	ipip.h	/^ip4_ecn_setup(struct ip *ip4) {$/;"	f	signature:(struct ip *ip4)
+ip4_route	rt.c	/^struct ip4_route {$/;"	s	file:
+ip4_route::depth	rt.c	/^	uint8_t depth;$/;"	m	struct:ip4_route	file:	access:public
+ip4_route::if_out	rt.c	/^	uint8_t if_out;$/;"	m	struct:ip4_route	file:	access:public
+ip4_route::ip	rt.c	/^	uint32_t ip;$/;"	m	struct:ip4_route	file:	access:public
+ip4ip_outbound	ipip.h	/^ip4ip_outbound(struct rte_mbuf *m, uint32_t offset,$/;"	f	signature:(struct rte_mbuf *m, uint32_t offset, struct ip_addr *src, struct ip_addr *dst)
+ip6	ipsec-secgw.c	/^	struct traffic_type ip6;$/;"	m	struct:ipsec_traffic	typeref:struct:ipsec_traffic::traffic_type	file:	access:public
+ip6	ipsec.h	/^			uint64_t ip6[2];$/;"	m	union:ip_addr::__anon1::__anon2	access:public
+ip6	ipsec.h	/^		} ip6;$/;"	m	union:ip_addr::__anon1	typeref:union:ip_addr::__anon1::__anon2	access:public
+ip6_b	ipsec.h	/^			uint8_t ip6_b[16];$/;"	m	union:ip_addr::__anon1::__anon2	access:public
+ip6_defs	sp6.c	/^struct rte_acl_field_def ip6_defs[IP6_NUM] = {$/;"	v	typeref:struct:rte_acl_field_def
+ip6_ecn_setup	ipip.h	/^ip6_ecn_setup(struct ip6_hdr *ip6) {$/;"	f	signature:(struct ip6_hdr *ip6)
+ip6_route	rt.c	/^struct ip6_route {$/;"	s	file:
+ip6_route::depth	rt.c	/^	uint8_t depth;$/;"	m	struct:ip6_route	file:	access:public
+ip6_route::if_out	rt.c	/^	uint8_t if_out;$/;"	m	struct:ip6_route	file:	access:public
+ip6_route::ip	rt.c	/^	uint8_t ip[16];$/;"	m	struct:ip6_route	file:	access:public
+ip6ip_outbound	ipip.h	/^ip6ip_outbound(struct rte_mbuf *m, uint32_t offset,$/;"	f	signature:(struct rte_mbuf *m, uint32_t offset, struct ip_addr *src, struct ip_addr *dst)
+ip_addr	ipsec.h	/^struct ip_addr {$/;"	s
+ip_addr::__anon1::__anon2::ip6	ipsec.h	/^			uint64_t ip6[2];$/;"	m	union:ip_addr::__anon1::__anon2	access:public
+ip_addr::__anon1::__anon2::ip6_b	ipsec.h	/^			uint8_t ip6_b[16];$/;"	m	union:ip_addr::__anon1::__anon2	access:public
+ip_addr::__anon1::ip4	ipsec.h	/^		uint32_t ip4;$/;"	m	union:ip_addr::__anon1	access:public
+ip_addr::__anon1::ip6	ipsec.h	/^		} ip6;$/;"	m	union:ip_addr::__anon1	typeref:union:ip_addr::__anon1::__anon2	access:public
+ip_addr::ip	ipsec.h	/^	} ip;$/;"	m	struct:ip_addr	typeref:union:ip_addr::__anon1	access:public
+ipip_inbound	ipip.h	/^ipip_inbound(struct rte_mbuf *m, uint32_t offset) {$/;"	f	signature:(struct rte_mbuf *m, uint32_t offset)
+ipip_outbound	ipip.h	/^ipip_outbound(struct rte_mbuf *m, uint32_t offset, uint32_t is_ipv6,$/;"	f	signature:(struct rte_mbuf *m, uint32_t offset, uint32_t is_ipv6, struct ip_addr *src, struct ip_addr *dst)
+ipsec	ipsec-secgw.c	/^	struct traffic_type ipsec;$/;"	m	struct:ipsec_traffic	typeref:struct:ipsec_traffic::traffic_type	file:	access:public
+ipsec_ctx	ipsec.h	/^struct ipsec_ctx {$/;"	s
+ipsec_ctx	parser.c	/^cmdline_parse_ctx_t ipsec_ctx[] = {$/;"	v
+ipsec_ctx::cdev_map	ipsec.h	/^	struct rte_hash *cdev_map;$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::rte_hash	access:public
+ipsec_ctx::last_qp	ipsec.h	/^	uint16_t last_qp;$/;"	m	struct:ipsec_ctx	access:public
+ipsec_ctx::nb_qps	ipsec.h	/^	uint16_t nb_qps;$/;"	m	struct:ipsec_ctx	access:public
+ipsec_ctx::sa_ctx	ipsec.h	/^	struct sa_ctx *sa_ctx;$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::sa_ctx	access:public
+ipsec_ctx::sp4_ctx	ipsec.h	/^	struct sp_ctx *sp4_ctx;$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::sp_ctx	access:public
+ipsec_ctx::sp6_ctx	ipsec.h	/^	struct sp_ctx *sp6_ctx;$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::sp_ctx	access:public
+ipsec_ctx::tbl	ipsec.h	/^	struct cdev_qp tbl[MAX_QP_PER_LCORE];$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::cdev_qp	access:public
+ipsec_dequeue	ipsec.c	/^ipsec_dequeue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,$/;"	f	file:	signature:(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx, struct rte_mbuf *pkts[], uint16_t max_pkts)
+ipsec_enqueue	ipsec.c	/^ipsec_enqueue(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx,$/;"	f	file:	signature:(ipsec_xform_fn xform_func, struct ipsec_ctx *ipsec_ctx, struct rte_mbuf *pkts[], struct ipsec_sa *sas[], uint16_t nb_pkts)
+ipsec_inbound	ipsec.c	/^ipsec_inbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],$/;"	f	signature:(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[], uint16_t nb_pkts, uint16_t len)
+ipsec_inbound	ipsec.h	/^ipsec_inbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],$/;"	p	signature:(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[], uint16_t nb_pkts, uint16_t len)
+ipsec_mbuf_metadata	ipsec.h	/^struct ipsec_mbuf_metadata {$/;"	s
+ipsec_mbuf_metadata::buf	ipsec.h	/^	uint8_t buf[32];$/;"	m	struct:ipsec_mbuf_metadata	access:public
+ipsec_mbuf_metadata::cop	ipsec.h	/^	struct rte_crypto_op cop;$/;"	m	struct:ipsec_mbuf_metadata	typeref:struct:ipsec_mbuf_metadata::rte_crypto_op	access:public
+ipsec_mbuf_metadata::sa	ipsec.h	/^	struct ipsec_sa *sa;$/;"	m	struct:ipsec_mbuf_metadata	typeref:struct:ipsec_mbuf_metadata::ipsec_sa	access:public
+ipsec_mbuf_metadata::sym_cop	ipsec.h	/^	struct rte_crypto_sym_op sym_cop;$/;"	m	struct:ipsec_mbuf_metadata	typeref:struct:ipsec_mbuf_metadata::rte_crypto_sym_op	access:public
+ipsec_metadata_size	ipsec.h	/^ipsec_metadata_size(void) {$/;"	f	signature:(void)
+ipsec_outbound	ipsec.c	/^ipsec_outbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],$/;"	f	signature:(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[], uint32_t sa_idx[], uint16_t nb_pkts, uint16_t len)
+ipsec_outbound	ipsec.h	/^ipsec_outbound(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[],$/;"	p	signature:(struct ipsec_ctx *ctx, struct rte_mbuf *pkts[], uint32_t sa_idx[], uint16_t nb_pkts, uint16_t len)
+ipsec_sa	ipsec.h	/^struct ipsec_sa {$/;"	s
+ipsec_sa::aad_len	ipsec.h	/^	uint16_t aad_len;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::auth_algo	ipsec.h	/^	enum rte_crypto_auth_algorithm auth_algo;$/;"	m	struct:ipsec_sa	typeref:enum:ipsec_sa::rte_crypto_auth_algorithm	access:public
+ipsec_sa::auth_key	ipsec.h	/^	uint8_t auth_key[MAX_KEY_SIZE];$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::auth_key_len	ipsec.h	/^	uint16_t auth_key_len;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::block_size	ipsec.h	/^	uint16_t block_size;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::cdev_id_qp	ipsec.h	/^	uint32_t cdev_id_qp;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::cipher_algo	ipsec.h	/^	enum rte_crypto_cipher_algorithm cipher_algo;$/;"	m	struct:ipsec_sa	typeref:enum:ipsec_sa::rte_crypto_cipher_algorithm	access:public
+ipsec_sa::cipher_key	ipsec.h	/^	uint8_t cipher_key[MAX_KEY_SIZE];$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::cipher_key_len	ipsec.h	/^	uint16_t cipher_key_len;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::crypto_session	ipsec.h	/^	struct rte_cryptodev_sym_session *crypto_session;$/;"	m	struct:ipsec_sa	typeref:struct:ipsec_sa::rte_cryptodev_sym_session	access:public
+ipsec_sa::digest_len	ipsec.h	/^	uint16_t digest_len;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::dst	ipsec.h	/^	struct ip_addr dst;$/;"	m	struct:ipsec_sa	typeref:struct:ipsec_sa::ip_addr	access:public
+ipsec_sa::flags	ipsec.h	/^	uint16_t flags;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::iv_len	ipsec.h	/^	uint16_t iv_len;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::salt	ipsec.h	/^	uint32_t salt;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::seq	ipsec.h	/^	uint64_t seq;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::spi	ipsec.h	/^	uint32_t spi;$/;"	m	struct:ipsec_sa	access:public
+ipsec_sa::src	ipsec.h	/^	struct ip_addr src;$/;"	m	struct:ipsec_sa	typeref:struct:ipsec_sa::ip_addr	access:public
+ipsec_sa::xforms	ipsec.h	/^	struct rte_crypto_sym_xform *xforms;$/;"	m	struct:ipsec_sa	typeref:struct:ipsec_sa::rte_crypto_sym_xform	access:public
+ipsec_traffic	ipsec-secgw.c	/^struct ipsec_traffic {$/;"	s	file:
+ipsec_traffic::ip4	ipsec-secgw.c	/^	struct traffic_type ip4;$/;"	m	struct:ipsec_traffic	typeref:struct:ipsec_traffic::traffic_type	file:	access:public
+ipsec_traffic::ip6	ipsec-secgw.c	/^	struct traffic_type ip6;$/;"	m	struct:ipsec_traffic	typeref:struct:ipsec_traffic::traffic_type	file:	access:public
+ipsec_traffic::ipsec	ipsec-secgw.c	/^	struct traffic_type ipsec;$/;"	m	struct:ipsec_traffic	typeref:struct:ipsec_traffic::traffic_type	file:	access:public
+ipsec_traffic::kni	ipsec-secgw.c	/^	struct traffic_type kni;$/;"	m	struct:ipsec_traffic	typeref:struct:ipsec_traffic::traffic_type	file:	access:public
+ipsec_xform_fn	ipsec.h	/^typedef int32_t (*ipsec_xform_fn)(struct rte_mbuf *m, struct ipsec_sa *sa,$/;"	t
+iptables_init	iptables.c	/^void iptables_init(void) {$/;"	f	signature:(void)
+iptables_init	iptables.h	/^void iptables_init(void);$/;"	p	signature:(void)
+is_str_num	parser.h	/^is_str_num(const char *str) {$/;"	f	signature:(const char *str)
+iv	ipsec.h	/^	uint64_t iv;$/;"	m	struct:cnt_blk	access:public
+iv_len	ipsec.h	/^	uint16_t iv_len;$/;"	m	struct:ipsec_sa	access:public
+iv_len	sa.c	/^	uint16_t iv_len;$/;"	m	struct:supported_cipher_algo	file:	access:public
+key	uthash.h	/^   void *key;                        \/* ptr to enclosing struct's key  *\/$/;"	m	struct:UT_hash_handle	access:public
+key_len	sa.c	/^	uint16_t key_len;$/;"	m	struct:supported_auth_algo	file:	access:public
+key_len	sa.c	/^	uint16_t key_len;$/;"	m	struct:supported_cipher_algo	file:	access:public
+key_not_req	sa.c	/^	uint8_t key_not_req;$/;"	m	struct:supported_auth_algo	file:	access:public
+keylen	uthash.h	/^   unsigned keylen;                  \/* enclosing struct's key len     *\/$/;"	m	struct:UT_hash_handle	access:public
+keyword	sa.c	/^	const char *keyword;$/;"	m	struct:supported_auth_algo	file:	access:public
+keyword	sa.c	/^	const char *keyword;$/;"	m	struct:supported_cipher_algo	file:	access:public
+kni	ipsec-secgw.c	/^	struct traffic_type kni;$/;"	m	struct:ipsec_traffic	typeref:struct:ipsec_traffic::traffic_type	file:	access:public
+kni	kni.c	/^	struct rte_kni *kni; \/* KNI context pointers *\/$/;"	m	struct:kni_port_params	typeref:struct:kni_port_params::rte_kni	file:	access:public
+kni_alloc	kni.c	/^kni_alloc(uint8_t port_id) {$/;"	f	file:	signature:(uint8_t port_id)
+kni_burst_free_mbufs	kni.c	/^kni_burst_free_mbufs(struct rte_mbuf **pkts, unsigned num) {$/;"	f	file:	signature:(struct rte_mbuf **pkts, unsigned num)
+kni_change_mtu	kni.c	/^kni_change_mtu(uint8_t port_id, unsigned new_mtu) {$/;"	f	file:	signature:(uint8_t port_id, unsigned new_mtu)
+kni_change_mtu	kni.c	/^static int kni_change_mtu(uint8_t port_id, unsigned new_mtu);$/;"	p	file:	signature:(uint8_t port_id, unsigned new_mtu)
+kni_config_network_interface	kni.c	/^kni_config_network_interface(uint8_t port_id, uint8_t if_up) {$/;"	f	file:	signature:(uint8_t port_id, uint8_t if_up)
+kni_config_network_interface	kni.c	/^static int kni_config_network_interface(uint8_t port_id, uint8_t if_up);$/;"	p	file:	signature:(uint8_t port_id, uint8_t if_up)
+kni_free	kni.c	/^kni_free(void) {$/;"	f	signature:(void)
+kni_free	kni.h	/^kni_free(void);$/;"	p	signature:(void)
+kni_free_kni	kni.c	/^kni_free_kni(uint8_t port_id) {$/;"	f	file:	signature:(uint8_t port_id)
+kni_main	kni.c	/^kni_main(struct rte_mempool **mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask) {$/;"	f	signature:(struct rte_mempool **mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask)
+kni_main	kni.h	/^kni_main(struct rte_mempool **mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask);$/;"	p	signature:(struct rte_mempool **mbuf_pool, struct rte_eth_conf *portconf, uint32_t kni_port_mask)
+kni_mempool	ipsec-secgw.c	/^static struct rte_mempool *kni_mempool[RTE_MAX_ETHPORTS];$/;"	v	typeref:struct:rte_mempool	file:
+kni_port_mask	ipsec-secgw.c	/^static uint32_t kni_port_mask;$/;"	v	file:
+kni_port_params	kni.c	/^struct kni_port_params {$/;"	s	file:
+kni_port_params::kni	kni.c	/^	struct rte_kni *kni; \/* KNI context pointers *\/$/;"	m	struct:kni_port_params	typeref:struct:kni_port_params::rte_kni	file:	access:public
+kni_port_params::port_id	kni.c	/^	uint16_t port_id;\/* Port ID *\/$/;"	m	struct:kni_port_params	file:	access:public
+kni_port_params_array	kni.c	/^static struct kni_port_params *kni_port_params_array[RTE_MAX_ETHPORTS];$/;"	v	typeref:struct:kni_port_params	file:
+lan_ip	iptables.h	/^	uint32_t lan_ip;$/;"	m	struct:gateway_ctx	access:public
+lan_netmask	iptables.h	/^	uint32_t lan_netmask;$/;"	m	struct:gateway_ctx	access:public
+last_qp	ipsec.h	/^	uint16_t last_qp;$/;"	m	struct:ipsec_ctx	access:public
+lcore_conf	ipsec-secgw.c	/^static struct lcore_conf lcore_conf[RTE_MAX_LCORE];$/;"	v	typeref:struct:lcore_conf	file:
+lcore_conf	ipsec-secgw.c	/^struct lcore_conf {$/;"	s	file:
+lcore_conf::inbound	ipsec-secgw.c	/^	struct ipsec_ctx inbound;$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::ipsec_ctx	file:	access:public
+lcore_conf::nb_rx_queue	ipsec-secgw.c	/^	uint16_t nb_rx_queue;$/;"	m	struct:lcore_conf	file:	access:public
+lcore_conf::outbound	ipsec-secgw.c	/^	struct ipsec_ctx outbound;$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::ipsec_ctx	file:	access:public
+lcore_conf::rt4_ctx	ipsec-secgw.c	/^	struct rt_ctx *rt4_ctx;$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::rt_ctx	file:	access:public
+lcore_conf::rt6_ctx	ipsec-secgw.c	/^	struct rt_ctx *rt6_ctx;$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::rt_ctx	file:	access:public
+lcore_conf::rx_queue_list	ipsec-secgw.c	/^	struct lcore_rx_queue rx_queue_list[MAX_RX_QUEUE_PER_LCORE];$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::lcore_rx_queue	file:	access:public
+lcore_conf::tx_mbufs	ipsec-secgw.c	/^	struct buffer tx_mbufs[RTE_MAX_ETHPORTS];$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::buffer	file:	access:public
+lcore_conf::tx_queue_id	ipsec-secgw.c	/^	uint16_t tx_queue_id[RTE_MAX_ETHPORTS];$/;"	m	struct:lcore_conf	file:	access:public
+lcore_id	ipsec-secgw.c	/^	uint8_t lcore_id;$/;"	m	struct:lcore_params	file:	access:public
+lcore_id	ipsec.h	/^	uint16_t lcore_id;$/;"	m	struct:cdev_key	access:public
+lcore_params	ipsec-secgw.c	/^static struct lcore_params *lcore_params;$/;"	v	typeref:struct:lcore_params	file:
+lcore_params	ipsec-secgw.c	/^struct lcore_params {$/;"	s	file:
+lcore_params::lcore_id	ipsec-secgw.c	/^	uint8_t lcore_id;$/;"	m	struct:lcore_params	file:	access:public
+lcore_params::port_id	ipsec-secgw.c	/^	uint8_t port_id;$/;"	m	struct:lcore_params	file:	access:public
+lcore_params::queue_id	ipsec-secgw.c	/^	uint8_t queue_id;$/;"	m	struct:lcore_params	file:	access:public
+lcore_params_array	ipsec-secgw.c	/^static struct lcore_params lcore_params_array[MAX_LCORE_PARAMS];$/;"	v	typeref:struct:lcore_params	file:
+lcore_rx_queue	ipsec-secgw.c	/^struct lcore_rx_queue {$/;"	s	file:
+lcore_rx_queue::port_id	ipsec-secgw.c	/^	uint8_t port_id;$/;"	m	struct:lcore_rx_queue	file:	access:public
+lcore_rx_queue::queue_id	ipsec-secgw.c	/^	uint8_t queue_id;$/;"	m	struct:lcore_rx_queue	file:	access:public
+len	ipsec-secgw.c	/^	uint16_t len;$/;"	m	struct:buffer	file:	access:public
+len	ipsec.h	/^	uint16_t len;$/;"	m	struct:cdev_qp	access:public
+localIp	xfrm.c	/^	char localIp[16];$/;"	m	struct:shared_data	file:	access:public
+log2_num_buckets	uthash.h	/^   unsigned num_buckets, log2_num_buckets;$/;"	m	struct:UT_hash_table	access:public
+mac	iptables.h	/^	struct ether_addr mac;$/;"	m	struct:arp_table	typeref:struct:arp_table::ether_addr	access:public
+main	ipsec-secgw.c	/^main(int32_t argc, char **argv) {$/;"	f	signature:(int32_t argc, char **argv)
+main_loop	ipsec-secgw.c	/^main_loop(__attribute__((unused)) void *dummy) {$/;"	f	file:	signature:(__attribute__((unused)) void *dummy)
+malloc_port	nat.c	/^static int16_t malloc_port(struct tuple *packet) {$/;"	f	file:	signature:(struct tuple *packet)
+mbuf_pool	ipsec.h	/^	struct rte_mempool *mbuf_pool;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::rte_mempool	access:public
+multi_string	parser.c	/^	cmdline_multi_string_t multi_string;$/;"	m	struct:cfg_rt_add_cfg_item	file:	access:public
+multi_string	parser.c	/^	cmdline_multi_string_t multi_string;$/;"	m	struct:cfg_sa_add_cfg_item	file:	access:public
+multi_string	parser.c	/^	cmdline_multi_string_t multi_string;$/;"	m	struct:cfg_sp_add_cfg_item	file:	access:public
+n_tokens	xfrm.c	/^	uint32_t n_tokens;$/;"	m	struct:shared_data	file:	access:public
+nat_table	iptables.h	/^struct nat_table {$/;"	s
+nat_table::dhh	iptables.h	/^	UT_hash_handle dhh;$/;"	m	struct:nat_table	access:public
+nat_table::dnat	iptables.h	/^	struct tuple dnat;$/;"	m	struct:nat_table	typeref:struct:nat_table::tuple	access:public
+nat_table::shh	iptables.h	/^	UT_hash_handle shh;$/;"	m	struct:nat_table	access:public
+nat_table::snat	iptables.h	/^	struct tuple snat;$/;"	m	struct:nat_table	typeref:struct:nat_table::tuple	access:public
+nb_acl4_rules_in	sp4.c	/^uint32_t nb_acl4_rules_in;$/;"	v
+nb_acl4_rules_in_start	sp4.c	/^uint32_t nb_acl4_rules_in_start;$/;"	v
+nb_acl4_rules_out	sp4.c	/^uint32_t nb_acl4_rules_out;$/;"	v
+nb_acl4_rules_out_start	sp4.c	/^uint32_t nb_acl4_rules_out_start;$/;"	v
+nb_acl6_rules_in	sp6.c	/^uint32_t nb_acl6_rules_in;$/;"	v
+nb_acl6_rules_out	sp6.c	/^uint32_t nb_acl6_rules_out;$/;"	v
+nb_lcore_params	ipsec-secgw.c	/^static uint16_t nb_lcore_params;$/;"	v	file:
+nb_lcores	ipsec-secgw.c	/^static uint32_t nb_lcores;$/;"	v	file:
+nb_qps	ipsec.h	/^	uint16_t nb_qps;$/;"	m	struct:ipsec_ctx	access:public
+nb_rt_ip4	rt.c	/^uint32_t nb_rt_ip4;$/;"	v
+nb_rt_ip6	rt.c	/^uint32_t nb_rt_ip6;$/;"	v
+nb_rx_queue	ipsec-secgw.c	/^	uint16_t nb_rx_queue;$/;"	m	struct:lcore_conf	file:	access:public
+nb_rxd	ipsec-secgw.c	/^static uint16_t nb_rxd = IPSEC_SECGW_RX_DESC_DEFAULT;$/;"	v	file:
+nb_sa_in	sa.c	/^uint32_t nb_sa_in;$/;"	v
+nb_sa_in_start	sa.c	/^uint32_t nb_sa_in_start;$/;"	v
+nb_sa_out	sa.c	/^uint32_t nb_sa_out;$/;"	v
+nb_sa_out_start	sa.c	/^uint32_t nb_sa_out_start;$/;"	v
+nb_txd	ipsec-secgw.c	/^static uint16_t nb_txd = IPSEC_SECGW_TX_DESC_DEFAULT;$/;"	v	file:
+next	uthash.h	/^   void *next;                       \/* next element in app order      *\/$/;"	m	struct:UT_hash_handle	access:public
+noexpand	uthash.h	/^   unsigned ineff_expands, noexpand;$/;"	m	struct:UT_hash_table	access:public
+nonideal_items	uthash.h	/^   unsigned nonideal_items;$/;"	m	struct:UT_hash_table	access:public
+num	ipsec-secgw.c	/^	uint32_t num;$/;"	m	struct:traffic_type	file:	access:public
+num_buckets	uthash.h	/^   unsigned num_buckets, log2_num_buckets;$/;"	m	struct:UT_hash_table	access:public
+num_items	uthash.h	/^   unsigned num_items;$/;"	m	struct:UT_hash_table	access:public
+numa_on	ipsec-secgw.c	/^static int32_t numa_on = 1; \/**< NUMA is enabled by default. *\/$/;"	v	file:
+outbound	ipsec-secgw.c	/^	struct ipsec_ctx outbound;$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::ipsec_ctx	file:	access:public
+outbound_sa_lookup	ipsec.h	/^outbound_sa_lookup(struct sa_ctx *sa_ctx, uint32_t sa_idx[],$/;"	p	signature:(struct sa_ctx *sa_ctx, uint32_t sa_idx[], struct ipsec_sa *sa[], uint16_t nb_pkts)
+outbound_sa_lookup	sa.c	/^outbound_sa_lookup(struct sa_ctx *sa_ctx, uint32_t sa_idx[],$/;"	f	signature:(struct sa_ctx *sa_ctx, uint32_t sa_idx[], struct ipsec_sa *sa[], uint16_t nb_pkts)
+outbound_sp	ipsec-secgw.c	/^outbound_sp(struct sp_ctx *sp, struct traffic_type *ip,$/;"	f	file:	signature:(struct sp_ctx *sp, struct traffic_type *ip, struct traffic_type *ipsec)
+parse_args	ipsec-secgw.c	/^parse_args(int32_t argc, char **argv) {$/;"	f	file:	signature:(int32_t argc, char **argv)
+parse_args_long_options	ipsec-secgw.c	/^parse_args_long_options(struct option *lgopts, int32_t option_index) {$/;"	f	file:	signature:(struct option *lgopts, int32_t option_index)
+parse_arp	arp.c	/^int parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result) {$/;"	f	signature:(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result)
+parse_arp	iptables.h	/^int parse_arp(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result);$/;"	p	signature:(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *result)
+parse_cfg_file	parser.c	/^parse_cfg_file(const char *cfg_filename) {$/;"	f	signature:(const char *cfg_filename)
+parse_cfg_file	parser.h	/^parse_cfg_file(const char *cfg_filename);$/;"	p	signature:(const char *cfg_filename)
+parse_config	ipsec-secgw.c	/^parse_config(const char *q_arg) {$/;"	f	file:	signature:(const char *q_arg)
+parse_decimal	ipsec-secgw.c	/^parse_decimal(const char *str) {$/;"	f	file:	signature:(const char *str)
+parse_ike_ip_mac	iptables.c	/^static void parse_ike_ip_mac(struct rte_mbuf *pkt) {$/;"	f	file:	signature:(struct rte_mbuf *pkt)
+parse_ipv4_addr	parser.c	/^parse_ipv4_addr(const char *token, struct in_addr *ipv4, uint32_t *mask) {$/;"	f	signature:(const char *token, struct in_addr *ipv4, uint32_t *mask)
+parse_ipv4_addr	parser.h	/^parse_ipv4_addr(const char *token, struct in_addr *ipv4, uint32_t *mask);$/;"	p	signature:(const char *token, struct in_addr *ipv4, uint32_t *mask)
+parse_ipv6_addr	parser.c	/^parse_ipv6_addr(const char *token, struct in6_addr *ipv6, uint32_t *mask) {$/;"	f	signature:(const char *token, struct in6_addr *ipv6, uint32_t *mask)
+parse_ipv6_addr	parser.h	/^parse_ipv6_addr(const char *token, struct in6_addr *ipv6, uint32_t *mask);$/;"	p	signature:(const char *token, struct in6_addr *ipv6, uint32_t *mask)
+parse_key_string	sa.c	/^parse_key_string(const char *key_str, uint8_t *key) {$/;"	f	file:	signature:(const char *key_str, uint8_t *key)
+parse_msg	parser.h	/^	char parse_msg[256];$/;"	m	struct:parse_status	access:public
+parse_nlmsg	xfrm.c	/^parse_nlmsg(struct nl_msg *nlmsg, void *arg) {$/;"	f	file:	signature:(struct nl_msg *nlmsg, void *arg)
+parse_nlmsg	xfrm.c	/^parse_nlmsg(struct nl_msg *nlmsg, void *arg);$/;"	p	file:	signature:(struct nl_msg *nlmsg, void *arg)
+parse_pkt	iptables.c	/^parse_pkt(struct ipv4_hdr *ip_hdr, struct udp_hdr **udp_hdr, struct tcp_hdr **tcp_hdr, struct tuple *pkt_tuple) {$/;"	f	file:	signature:(struct ipv4_hdr *ip_hdr, struct udp_hdr **udp_hdr, struct tcp_hdr **tcp_hdr, struct tuple *pkt_tuple)
+parse_portmask	ipsec-secgw.c	/^parse_portmask(const char *portmask) {$/;"	f	file:	signature:(const char *portmask)
+parse_range	parser.c	/^parse_range(const char *token, uint16_t *low, uint16_t *high) {$/;"	f	signature:(const char *token, uint16_t *low, uint16_t *high)
+parse_range	parser.h	/^parse_range(const char *token, uint16_t *low, uint16_t *high);$/;"	p	signature:(const char *token, uint16_t *low, uint16_t *high)
+parse_rt_tokens	parser.h	/^parse_rt_tokens(char **tokens, uint32_t n_tokens,$/;"	p	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_rt_tokens	rt.c	/^parse_rt_tokens(char **tokens, uint32_t n_tokens,$/;"	f	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_sa	xfrm.c	/^parse_sa(struct nlmsghdr *nlh) {$/;"	f	file:	signature:(struct nlmsghdr *nlh)
+parse_sa_tokens	parser.h	/^parse_sa_tokens(char **tokens, uint32_t n_tokens,$/;"	p	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_sa_tokens	sa.c	/^parse_sa_tokens(char **tokens, uint32_t n_tokens,$/;"	f	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_sa_tokens	xfrm.h	/^parse_sa_tokens(char **tokens, uint32_t n_tokens,$/;"	p	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_sp	xfrm.c	/^parse_sp(struct nlmsghdr *nlh) {$/;"	f	file:	signature:(struct nlmsghdr *nlh)
+parse_sp4_tokens	parser.h	/^parse_sp4_tokens(char **tokens, uint32_t n_tokens,$/;"	p	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_sp4_tokens	sp4.c	/^parse_sp4_tokens(char **tokens, uint32_t n_tokens,$/;"	f	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_sp4_tokens	xfrm.h	/^parse_sp4_tokens(char **tokens, uint32_t n_tokens,$/;"	p	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_sp6_tokens	parser.h	/^parse_sp6_tokens(char **tokens, uint32_t n_tokens,$/;"	p	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_sp6_tokens	sp6.c	/^parse_sp6_tokens(char **tokens, uint32_t n_tokens,$/;"	f	signature:(char **tokens, uint32_t n_tokens, struct parse_status *status)
+parse_status	parser.h	/^struct parse_status {$/;"	s
+parse_status::parse_msg	parser.h	/^	char parse_msg[256];$/;"	m	struct:parse_status	access:public
+parse_status::status	parser.h	/^	int status;$/;"	m	struct:parse_status	access:public
+parse_tokenize_string	parser.c	/^parse_tokenize_string(char *string, char *tokens[], uint32_t *n_tokens) {$/;"	f	file:	signature:(char *string, char *tokens[], uint32_t *n_tokens)
+pktmbuf_pool	kni.c	/^static struct rte_mempool **pktmbuf_pool = NULL;$/;"	v	typeref:struct:rte_mempool	file:
+pkts	ipsec-secgw.c	/^	struct rte_mbuf *pkts[MAX_PKT_BURST * 2];$/;"	m	struct:traffic_type	typeref:struct:traffic_type::rte_mbuf	file:	access:public
+pool_init	ipsec-secgw.c	/^pool_init(struct socket_ctx *ctx, int32_t socket_id, uint32_t nb_mbuf) {$/;"	f	file:	signature:(struct socket_ctx *ctx, int32_t socket_id, uint32_t nb_mbuf)
+port_conf	ipsec-secgw.c	/^static struct rte_eth_conf port_conf = {$/;"	v	typeref:struct:rte_eth_conf	file:
+port_conf	kni.c	/^static struct rte_eth_conf *port_conf = NULL;$/;"	v	typeref:struct:rte_eth_conf	file:
+port_id	ipsec-secgw.c	/^	uint8_t port_id;$/;"	m	struct:lcore_params	file:	access:public
+port_id	ipsec-secgw.c	/^	uint8_t port_id;$/;"	m	struct:lcore_rx_queue	file:	access:public
+port_id	kni.c	/^	uint16_t port_id;\/* Port ID *\/$/;"	m	struct:kni_port_params	file:	access:public
+port_init	ipsec-secgw.c	/^port_init(uint8_t portid) {$/;"	f	file:	signature:(uint8_t portid)
+ports_mask	kni.c	/^static uint32_t ports_mask = 0;$/;"	v	file:
+prepare_arp	arp.c	/^void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, struct arp_table *target) {$/;"	f	signature:(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, struct arp_table *target)
+prepare_arp	iptables.h	/^void prepare_arp(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, struct arp_table *target);$/;"	p	signature:(struct gateway_ctx *ctx, unsigned char *pkt, uint32_t arp_op, struct arp_table *target)
+prepare_arp_reply	iptables.c	/^prepare_arp_reply(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *target) {$/;"	f	file:	signature:(struct gateway_ctx *ctx, unsigned char *pkt, struct arp_table *target)
+prepare_arp_request	iptables.c	/^prepare_arp_request(struct rte_mempool *mbuf_pool, uint32_t target_ip) {$/;"	f	file:	signature:(struct rte_mempool *mbuf_pool, uint32_t target_ip)
+prepare_one_packet	ipsec-secgw.c	/^prepare_one_packet(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid) {$/;"	f	file:	signature:(struct rte_mbuf *pkt, struct ipsec_traffic *t, uint8_t portid)
+prepare_traffic	ipsec-secgw.c	/^prepare_traffic(struct rte_mbuf **pkts, struct ipsec_traffic *t,$/;"	f	file:	signature:(struct rte_mbuf **pkts, struct ipsec_traffic *t, uint16_t nb_pkts, uint8_t portid)
+prepare_tx_burst	ipsec-secgw.c	/^prepare_tx_burst(struct rte_mbuf *pkts[], uint16_t nb_pkts) {$/;"	f	file:	signature:(struct rte_mbuf *pkts[], uint16_t nb_pkts)
+prepare_tx_pkt	ipsec-secgw.c	/^prepare_tx_pkt(struct rte_mbuf *pkt) {$/;"	f	file:	signature:(struct rte_mbuf *pkt)
+prepend_ether	iptables.c	/^void prepend_ether(struct ether_hdr *eth, uint32_t *dst_ip) {$/;"	f	signature:(struct ether_hdr *eth, uint32_t *dst_ip)
+prepend_ether	iptables.h	/^void prepend_ether(struct ether_hdr *eth, uint32_t *dst_ip);$/;"	p	signature:(struct ether_hdr *eth, uint32_t *dst_ip)
+prev	uthash.h	/^   void *prev;                       \/* prev element in app order      *\/$/;"	m	struct:UT_hash_handle	access:public
+printHex	arp.c	/^static void printHex(unsigned char *ptr, int len) {$/;"	f	file:	signature:(unsigned char *ptr, int len)
+print_config	kni.c	/^print_config(void) {$/;"	f	file:	signature:(void)
+print_ethaddr	ipsec-secgw.c	/^print_ethaddr(const char *name, const struct ether_addr *eth_addr) {$/;"	f	file:	signature:(const char *name, const struct ether_addr *eth_addr)
+print_ip_mac	arp.c	/^void print_ip_mac(uint32_t ip, struct ether_addr *ha) {$/;"	f	signature:(uint32_t ip, struct ether_addr *ha)
+print_ip_mac	iptables.h	/^void print_ip_mac(uint32_t ip, struct ether_addr *ha);$/;"	p	signature:(uint32_t ip, struct ether_addr *ha)
+print_one_ip4_rule	sp4.c	/^print_one_ip4_rule(const struct acl4_rules *rule, int32_t extra) {$/;"	f	file:	signature:(const struct acl4_rules *rule, int32_t extra)
+print_one_ip6_rule	sp6.c	/^print_one_ip6_rule(const struct acl6_rules *rule, int32_t extra) {$/;"	f	file:	signature:(const struct acl6_rules *rule, int32_t extra)
+print_one_sa_rule	sa.c	/^print_one_sa_rule(const struct ipsec_sa *sa, int inbound) {$/;"	f	file:	signature:(const struct ipsec_sa *sa, int inbound)
+print_tuple	iptables.h	/^void print_tuple(struct tuple *packet);$/;"	p	signature:(struct tuple *packet)
+print_tuple	nat.c	/^void print_tuple(struct tuple *packet) {$/;"	f	signature:(struct tuple *packet)
+print_usage	ipsec-secgw.c	/^print_usage(const char *prgname) {$/;"	f	file:	signature:(const char *prgname)
+process_pkts	ipsec-secgw.c	/^process_pkts(struct lcore_conf *qconf, struct rte_mbuf **pkts,$/;"	f	file:	signature:(struct lcore_conf *qconf, struct rte_mbuf **pkts, uint8_t nb_pkts, uint8_t portid)
+process_pkts_inbound	ipsec-secgw.c	/^process_pkts_inbound(struct ipsec_ctx *ipsec_ctx,$/;"	f	file:	signature:(struct ipsec_ctx *ipsec_ctx, struct ipsec_traffic *traffic)
+process_pkts_inbound_nosp	ipsec-secgw.c	/^process_pkts_inbound_nosp(struct ipsec_ctx *ipsec_ctx,$/;"	f	file:	signature:(struct ipsec_ctx *ipsec_ctx, struct ipsec_traffic *traffic)
+process_pkts_outbound	ipsec-secgw.c	/^process_pkts_outbound(struct ipsec_ctx *ipsec_ctx,$/;"	f	file:	signature:(struct ipsec_ctx *ipsec_ctx, struct ipsec_traffic *traffic)
+process_pkts_outbound_nosp	ipsec-secgw.c	/^process_pkts_outbound_nosp(struct ipsec_ctx *ipsec_ctx,$/;"	f	file:	signature:(struct ipsec_ctx *ipsec_ctx, struct ipsec_traffic *traffic)
+promiscuous_on	ipsec-secgw.c	/^static int32_t promiscuous_on = 1;$/;"	v	file:
+proto	iptables.h	/^	uint8_t proto;$/;"	m	struct:tuple	access:public
+qp	ipsec.h	/^	uint16_t qp;$/;"	m	struct:cdev_qp	access:public
+queue_id	ipsec-secgw.c	/^	uint8_t queue_id;$/;"	m	struct:lcore_params	file:	access:public
+queue_id	ipsec-secgw.c	/^	uint8_t queue_id;$/;"	m	struct:lcore_rx_queue	file:	access:public
+recv_xfrm	xfrm.c	/^recv_xfrm(void) {$/;"	f	signature:(void)
+recv_xfrm	xfrm.h	/^recv_xfrm(void);$/;"	p	signature:(void)
+res	ipsec-secgw.c	/^	uint32_t res[MAX_PKT_BURST * 2];$/;"	m	struct:traffic_type	file:	access:public
+route4_pkts	ipsec-secgw.c	/^route4_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {$/;"	f	file:	signature:(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts)
+route6_pkts	ipsec-secgw.c	/^route6_pkts(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts) {$/;"	f	file:	signature:(struct rt_ctx *rt_ctx, struct rte_mbuf *pkts[], uint8_t nb_pkts)
+rt4_ctx	ipsec-secgw.c	/^	struct rt_ctx *rt4_ctx;$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::rt_ctx	file:	access:public
+rt6_ctx	ipsec-secgw.c	/^	struct rt_ctx *rt6_ctx;$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::rt_ctx	file:	access:public
+rt_init	ipsec.h	/^rt_init(struct socket_ctx *ctx, int32_t socket_id);$/;"	p	signature:(struct socket_ctx *ctx, int32_t socket_id)
+rt_init	rt.c	/^rt_init(struct socket_ctx *ctx, int32_t socket_id) {$/;"	f	signature:(struct socket_ctx *ctx, int32_t socket_id)
+rt_ip4	ipsec.h	/^	struct rt_ctx *rt_ip4;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::rt_ctx	access:public
+rt_ip4	rt.c	/^struct ip4_route rt_ip4[RT_IPV4_MAX_RULES];$/;"	v	typeref:struct:ip4_route
+rt_ip6	ipsec.h	/^	struct rt_ctx *rt_ip6;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::rt_ctx	access:public
+rt_ip6	rt.c	/^struct ip6_route rt_ip6[RT_IPV4_MAX_RULES];$/;"	v	typeref:struct:ip6_route
+rt_keyword	parser.c	/^	cmdline_fixed_string_t rt_keyword;$/;"	m	struct:cfg_rt_add_cfg_item	file:	access:public
+rx_queue_list	ipsec-secgw.c	/^	struct lcore_rx_queue rx_queue_list[MAX_RX_QUEUE_PER_LCORE];$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::lcore_rx_queue	file:	access:public
+sa	ipsec.h	/^	struct ipsec_sa *sa;$/;"	m	struct:ipsec_mbuf_metadata	typeref:struct:ipsec_mbuf_metadata::ipsec_sa	access:public
+sa	sa.c	/^	struct ipsec_sa sa[IPSEC_SA_MAX_ENTRIES];$/;"	m	struct:sa_ctx	typeref:struct:sa_ctx::ipsec_sa	file:	access:public
+sa_add_rules	sa.c	/^sa_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],$/;"	f	file:	signature:(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[], uint32_t *nb_start, uint32_t nb_entries, uint32_t inbound)
+sa_check_add_rules	ipsec.h	/^sa_check_add_rules(struct sa_ctx *lcore_sa_in, struct sa_ctx *lcore_sa_out);$/;"	p	signature:(struct sa_ctx *lcore_sa_in, struct sa_ctx *lcore_sa_out)
+sa_check_add_rules	sa.c	/^sa_check_add_rules(struct sa_ctx *lcore_sa_in, struct sa_ctx *lcore_sa_out) {$/;"	f	signature:(struct sa_ctx *lcore_sa_in, struct sa_ctx *lcore_sa_out)
+sa_create	sa.c	/^sa_create(const char *name, int32_t socket_id) {$/;"	f	file:	signature:(const char *name, int32_t socket_id)
+sa_ctx	ipsec.h	/^	struct sa_ctx *sa_ctx;$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::sa_ctx	access:public
+sa_ctx	sa.c	/^struct sa_ctx {$/;"	s	file:
+sa_ctx::__anon3::a	sa.c	/^		struct rte_crypto_sym_xform a;$/;"	m	struct:sa_ctx::__anon3	typeref:struct:sa_ctx::__anon3::rte_crypto_sym_xform	file:	access:public
+sa_ctx::__anon3::b	sa.c	/^		struct rte_crypto_sym_xform b;$/;"	m	struct:sa_ctx::__anon3	typeref:struct:sa_ctx::__anon3::rte_crypto_sym_xform	file:	access:public
+sa_ctx::sa	sa.c	/^	struct ipsec_sa sa[IPSEC_SA_MAX_ENTRIES];$/;"	m	struct:sa_ctx	typeref:struct:sa_ctx::ipsec_sa	file:	access:public
+sa_ctx::xf	sa.c	/^	} xf[IPSEC_SA_MAX_ENTRIES];$/;"	m	struct:sa_ctx	typeref:struct:sa_ctx::__anon3	file:	access:public
+sa_in	ipsec.h	/^	struct sa_ctx *sa_in;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sa_ctx	access:public
+sa_in	sa.c	/^struct ipsec_sa sa_in[IPSEC_SA_MAX_ENTRIES];$/;"	v	typeref:struct:ipsec_sa
+sa_in_add_rules	sa.c	/^sa_in_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],$/;"	f	file:	signature:(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[], uint32_t nb_entries)
+sa_init	ipsec.h	/^sa_init(struct socket_ctx *ctx, int32_t socket_id);$/;"	p	signature:(struct socket_ctx *ctx, int32_t socket_id)
+sa_init	sa.c	/^sa_init(struct socket_ctx *ctx, int32_t socket_id) {$/;"	f	signature:(struct socket_ctx *ctx, int32_t socket_id)
+sa_keyword	parser.c	/^	cmdline_fixed_string_t sa_keyword;$/;"	m	struct:cfg_sa_add_cfg_item	file:	access:public
+sa_out	ipsec.h	/^	struct sa_ctx *sa_out;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sa_ctx	access:public
+sa_out	sa.c	/^struct ipsec_sa sa_out[IPSEC_SA_MAX_ENTRIES];$/;"	v	typeref:struct:ipsec_sa
+sa_out_add_rules	sa.c	/^sa_out_add_rules(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[],$/;"	f	file:	signature:(struct sa_ctx *sa_ctx, const struct ipsec_sa entries[], uint32_t nb_entries)
+salt	ipsec.h	/^	uint32_t salt;$/;"	m	struct:cnt_blk	access:public
+salt	ipsec.h	/^	uint32_t salt;$/;"	m	struct:ipsec_sa	access:public
+send_arp_gw	iptables.c	/^struct rte_mbuf *send_arp_gw(struct rte_mempool *mbuf_pool) {$/;"	f	signature:(struct rte_mempool *mbuf_pool)
+send_arp_gw	iptables.h	/^struct rte_mbuf *send_arp_gw(struct rte_mempool *mbuf_pool);$/;"	p	signature:(struct rte_mempool *mbuf_pool)
+send_burst	ipsec-secgw.c	/^send_burst(struct lcore_conf *qconf, uint16_t n, uint8_t port) {$/;"	f	file:	signature:(struct lcore_conf *qconf, uint16_t n, uint8_t port)
+send_single_packet	ipsec-secgw.c	/^send_single_packet(struct rte_mbuf *m, uint8_t port) {$/;"	f	file:	signature:(struct rte_mbuf *m, uint8_t port)
+send_to_kni	kni.c	/^send_to_kni(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx) {$/;"	f	signature:(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx)
+send_to_kni	kni.h	/^send_to_kni(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx);$/;"	p	signature:(uint8_t port_id, struct rte_mbuf **pkts, uint32_t nb_rx)
+send_xfrm	xfrm.c	/^send_xfrm(const char *type, const char **tokens, uint32_t n_tokens, struct parse_status *status) {$/;"	f	file:	signature:(const char *type, const char **tokens, uint32_t n_tokens, struct parse_status *status)
+seq	esp.h	/^	uint32_t seq;$/;"	m	struct:esp_hdr	access:public
+seq	ipsec.h	/^	uint64_t seq;$/;"	m	struct:ipsec_sa	access:public
+shared_data	xfrm.c	/^struct shared_data {$/;"	s	file:
+shared_data::localIp	xfrm.c	/^	char localIp[16];$/;"	m	struct:shared_data	file:	access:public
+shared_data::n_tokens	xfrm.c	/^	uint32_t n_tokens;$/;"	m	struct:shared_data	file:	access:public
+shared_data::status	xfrm.c	/^	struct parse_status status;$/;"	m	struct:shared_data	typeref:struct:shared_data::parse_status	file:	access:public
+shared_data::tokens	xfrm.c	/^	char *tokens[20];$/;"	m	struct:shared_data	file:	access:public
+shared_data::tokens_save	xfrm.c	/^	char tokens_save[20][100];$/;"	m	struct:shared_data	file:	access:public
+shared_data::type	xfrm.c	/^	char type[10];$/;"	m	struct:shared_data	file:	access:public
+shared_data::written	xfrm.c	/^	uint32_t written;$/;"	m	struct:shared_data	file:	access:public
+shared_mem	xfrm.c	/^static struct shared_data *shared_mem;$/;"	v	typeref:struct:shared_data	file:
+shh	iptables.h	/^	UT_hash_handle shh;$/;"	m	struct:nat_table	access:public
+signature	uthash.h	/^   uint32_t signature; \/* used only to find hash tables in external analysis *\/$/;"	m	struct:UT_hash_table	access:public
+single_inbound_lookup	sa.c	/^single_inbound_lookup(struct ipsec_sa *sadb, struct rte_mbuf *pkt,$/;"	f	file:	signature:(struct ipsec_sa *sadb, struct rte_mbuf *pkt, struct ipsec_sa **sa_ret)
+single_sa	ipsec-secgw.c	/^static uint32_t single_sa;$/;"	v	file:
+single_sa_idx	ipsec-secgw.c	/^static uint32_t single_sa_idx;$/;"	v	file:
+sizeof	ipsec-secgw.c	/^	__rte_aligned(sizeof(void *));$/;"	p	struct:buffer	file:	access:public	signature:(void *)
+sizeof	ipsec.h	/^	__rte_aligned(sizeof(void *));$/;"	p	struct:cdev_qp	access:public	signature:(void *)
+snat	iptables.h	/^	struct tuple snat;$/;"	m	struct:nat_table	typeref:struct:nat_table::tuple	access:public
+snat	nat.c	/^static void snat(struct gateway_ctx *ctx, struct tuple *packet) {$/;"	f	file:	signature:(struct gateway_ctx *ctx, struct tuple *packet)
+snat_tab	iptables.h	/^	struct nat_table *snat_tab;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::nat_table	access:public
+socket_ctx	ipsec-secgw.c	/^static struct socket_ctx socket_ctx[NB_SOCKETS];$/;"	v	typeref:struct:socket_ctx	file:
+socket_ctx	ipsec.h	/^struct socket_ctx {$/;"	s
+socket_ctx::mbuf_pool	ipsec.h	/^	struct rte_mempool *mbuf_pool;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::rte_mempool	access:public
+socket_ctx::rt_ip4	ipsec.h	/^	struct rt_ctx *rt_ip4;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::rt_ctx	access:public
+socket_ctx::rt_ip6	ipsec.h	/^	struct rt_ctx *rt_ip6;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::rt_ctx	access:public
+socket_ctx::sa_in	ipsec.h	/^	struct sa_ctx *sa_in;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sa_ctx	access:public
+socket_ctx::sa_out	ipsec.h	/^	struct sa_ctx *sa_out;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sa_ctx	access:public
+socket_ctx::sp_ip4_in	ipsec.h	/^	struct sp_ctx *sp_ip4_in;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sp_ctx	access:public
+socket_ctx::sp_ip4_out	ipsec.h	/^	struct sp_ctx *sp_ip4_out;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sp_ctx	access:public
+socket_ctx::sp_ip6_in	ipsec.h	/^	struct sp_ctx *sp_ip6_in;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sp_ctx	access:public
+socket_ctx::sp_ip6_out	ipsec.h	/^	struct sp_ctx *sp_ip6_out;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sp_ctx	access:public
+sp4_check_add_rules	ipsec.h	/^sp4_check_add_rules(struct sp_ctx *lcore_sp4_in, struct sp_ctx *lcore_sp4_out);$/;"	p	signature:(struct sp_ctx *lcore_sp4_in, struct sp_ctx *lcore_sp4_out)
+sp4_check_add_rules	sp4.c	/^sp4_check_add_rules(struct sp_ctx *lcore_sp4_in, struct sp_ctx *lcore_sp4_out) {$/;"	f	signature:(struct sp_ctx *lcore_sp4_in, struct sp_ctx *lcore_sp4_out)
+sp4_ctx	ipsec.h	/^	struct sp_ctx *sp4_ctx;$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::sp_ctx	access:public
+sp4_init	ipsec.h	/^sp4_init(struct socket_ctx *ctx, int32_t socket_id);$/;"	p	signature:(struct socket_ctx *ctx, int32_t socket_id)
+sp4_init	sp4.c	/^sp4_init(struct socket_ctx *ctx, int32_t socket_id) {$/;"	f	signature:(struct socket_ctx *ctx, int32_t socket_id)
+sp6_ctx	ipsec.h	/^	struct sp_ctx *sp6_ctx;$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::sp_ctx	access:public
+sp6_init	ipsec.h	/^sp6_init(struct socket_ctx *ctx, int32_t socket_id);$/;"	p	signature:(struct socket_ctx *ctx, int32_t socket_id)
+sp6_init	sp6.c	/^sp6_init(struct socket_ctx *ctx, int32_t socket_id) {$/;"	f	signature:(struct socket_ctx *ctx, int32_t socket_id)
+sp_ip4_in	ipsec.h	/^	struct sp_ctx *sp_ip4_in;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sp_ctx	access:public
+sp_ip4_out	ipsec.h	/^	struct sp_ctx *sp_ip4_out;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sp_ctx	access:public
+sp_ip6_in	ipsec.h	/^	struct sp_ctx *sp_ip6_in;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sp_ctx	access:public
+sp_ip6_out	ipsec.h	/^	struct sp_ctx *sp_ip6_out;$/;"	m	struct:socket_ctx	typeref:struct:socket_ctx::sp_ctx	access:public
+sp_keyword	parser.c	/^	cmdline_fixed_string_t sp_keyword;$/;"	m	struct:cfg_sp_add_cfg_item	file:	access:public
+spi	esp.h	/^	uint32_t spi;$/;"	m	struct:esp_hdr	access:public
+spi	ipsec.h	/^	uint32_t spi;$/;"	m	struct:ipsec_sa	access:public
+spi_in	xfrm.c	/^uint32_t spi_in, spi_out;$/;"	v
+spi_out	xfrm.c	/^uint32_t spi_in, spi_out;$/;"	v
+src	ipsec.h	/^	struct ip_addr src;$/;"	m	struct:ipsec_sa	typeref:struct:ipsec_sa::ip_addr	access:public
+src	kni.h	/^	uint64_t src, dst;$/;"	m	struct:ethaddr_info	access:public
+src_ip	iptables.h	/^	uint32_t src_ip;$/;"	m	struct:tuple	access:public
+src_port	iptables.h	/^	uint16_t src_port;$/;"	m	struct:tuple	access:public
+status	parser.h	/^	int status;$/;"	m	struct:parse_status	access:public
+status	xfrm.c	/^	struct parse_status status;$/;"	m	struct:shared_data	typeref:struct:shared_data::parse_status	file:	access:public
+supported_auth_algo	sa.c	/^struct supported_auth_algo {$/;"	s	file:
+supported_auth_algo::aad_len	sa.c	/^	uint8_t aad_len;$/;"	m	struct:supported_auth_algo	file:	access:public
+supported_auth_algo::algo	sa.c	/^	enum rte_crypto_auth_algorithm algo;$/;"	m	struct:supported_auth_algo	typeref:enum:supported_auth_algo::rte_crypto_auth_algorithm	file:	access:public
+supported_auth_algo::digest_len	sa.c	/^	uint16_t digest_len;$/;"	m	struct:supported_auth_algo	file:	access:public
+supported_auth_algo::key_len	sa.c	/^	uint16_t key_len;$/;"	m	struct:supported_auth_algo	file:	access:public
+supported_auth_algo::key_not_req	sa.c	/^	uint8_t key_not_req;$/;"	m	struct:supported_auth_algo	file:	access:public
+supported_auth_algo::keyword	sa.c	/^	const char *keyword;$/;"	m	struct:supported_auth_algo	file:	access:public
+supported_cipher_algo	sa.c	/^struct supported_cipher_algo {$/;"	s	file:
+supported_cipher_algo::algo	sa.c	/^	enum rte_crypto_cipher_algorithm algo;$/;"	m	struct:supported_cipher_algo	typeref:enum:supported_cipher_algo::rte_crypto_cipher_algorithm	file:	access:public
+supported_cipher_algo::block_size	sa.c	/^	uint16_t block_size;$/;"	m	struct:supported_cipher_algo	file:	access:public
+supported_cipher_algo::iv_len	sa.c	/^	uint16_t iv_len;$/;"	m	struct:supported_cipher_algo	file:	access:public
+supported_cipher_algo::key_len	sa.c	/^	uint16_t key_len;$/;"	m	struct:supported_cipher_algo	file:	access:public
+supported_cipher_algo::keyword	sa.c	/^	const char *keyword;$/;"	m	struct:supported_cipher_algo	file:	access:public
+sym_cop	ipsec.h	/^	struct rte_crypto_sym_op sym_cop;$/;"	m	struct:ipsec_mbuf_metadata	typeref:struct:ipsec_mbuf_metadata::rte_crypto_sym_op	access:public
+tail	uthash.h	/^   struct UT_hash_handle *tail; \/* tail hh in app order, for fast append    *\/$/;"	m	struct:UT_hash_table	typeref:struct:UT_hash_table::UT_hash_handle	access:public
+tbl	ipsec.h	/^	struct cdev_qp tbl[MAX_QP_PER_LCORE];$/;"	m	struct:ipsec_ctx	typeref:struct:ipsec_ctx::cdev_qp	access:public
+tbl	uthash.h	/^   struct UT_hash_table *tbl;$/;"	m	struct:UT_hash_handle	typeref:struct:UT_hash_handle::UT_hash_table	access:public
+tokens	xfrm.c	/^	char *tokens[20];$/;"	m	struct:shared_data	file:	access:public
+tokens_save	xfrm.c	/^	char tokens_save[20][100];$/;"	m	struct:shared_data	file:	access:public
+traffic_type	ipsec-secgw.c	/^struct traffic_type {$/;"	s	file:
+traffic_type::data	ipsec-secgw.c	/^	const uint8_t *data[MAX_PKT_BURST * 2];$/;"	m	struct:traffic_type	file:	access:public
+traffic_type::num	ipsec-secgw.c	/^	uint32_t num;$/;"	m	struct:traffic_type	file:	access:public
+traffic_type::pkts	ipsec-secgw.c	/^	struct rte_mbuf *pkts[MAX_PKT_BURST * 2];$/;"	m	struct:traffic_type	typeref:struct:traffic_type::rte_mbuf	file:	access:public
+traffic_type::res	ipsec-secgw.c	/^	uint32_t res[MAX_PKT_BURST * 2];$/;"	m	struct:traffic_type	file:	access:public
+tuple	iptables.h	/^struct tuple {$/;"	s
+tuple::dst_ip	iptables.h	/^	uint32_t dst_ip;$/;"	m	struct:tuple	access:public
+tuple::dst_port	iptables.h	/^	uint16_t dst_port;$/;"	m	struct:tuple	access:public
+tuple::proto	iptables.h	/^	uint8_t proto;$/;"	m	struct:tuple	access:public
+tuple::src_ip	iptables.h	/^	uint32_t src_ip;$/;"	m	struct:tuple	access:public
+tuple::src_port	iptables.h	/^	uint16_t src_port;$/;"	m	struct:tuple	access:public
+tx_mbufs	ipsec-secgw.c	/^	struct buffer tx_mbufs[RTE_MAX_ETHPORTS];$/;"	m	struct:lcore_conf	typeref:struct:lcore_conf::buffer	file:	access:public
+tx_queue_id	ipsec-secgw.c	/^	uint16_t tx_queue_id[RTE_MAX_ETHPORTS];$/;"	m	struct:lcore_conf	file:	access:public
+type	xfrm.c	/^	char type[10];$/;"	m	struct:shared_data	file:	access:public
+uint32_t	uthash.h	/^typedef unsigned int uint32_t;$/;"	t
+uint32_t_to_char	ipsec.h	51;"	d
+uint8_t	uthash.h	/^typedef unsigned char uint8_t;$/;"	t
+unprotected_port_mask	ipsec-secgw.c	/^static uint32_t unprotected_port_mask;$/;"	v	file:
+uthash_expand_fyi	uthash.h	92;"	d
+uthash_fatal	uthash.h	79;"	d
+uthash_free	uthash.h	85;"	d
+uthash_malloc	uthash.h	82;"	d
+uthash_noexpand_fyi	uthash.h	89;"	d
+wan_gateway	iptables.h	/^	uint32_t wan_gateway;$/;"	m	struct:gateway_ctx	access:public
+wan_gateway_ha	iptables.h	/^	struct ether_addr wan_gateway_ha;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::ether_addr	access:public
+wan_ha	iptables.h	/^	struct ether_addr wan_ha;$/;"	m	struct:gateway_ctx	typeref:struct:gateway_ctx::ether_addr	access:public
+wan_ip	iptables.h	/^	uint32_t wan_ip;$/;"	m	struct:gateway_ctx	access:public
+wan_netmask	iptables.h	/^	uint32_t wan_netmask;$/;"	m	struct:gateway_ctx	access:public
+written	xfrm.c	/^	uint32_t written;$/;"	m	struct:shared_data	file:	access:public
+xf	sa.c	/^	} xf[IPSEC_SA_MAX_ENTRIES];$/;"	m	struct:sa_ctx	typeref:struct:sa_ctx::__anon3	file:	access:public
+xforms	ipsec.h	/^	struct rte_crypto_sym_xform *xforms;$/;"	m	struct:ipsec_sa	typeref:struct:ipsec_sa::rte_crypto_sym_xform	access:public
+xfrm_add_addr	xfrm.c	/^xfrm_add_addr(uint32_t addr) {$/;"	f	file:	signature:(uint32_t addr)
+xfrm_init	xfrm.c	/^xfrm_init(void) {$/;"	f	signature:(void)
+xfrm_init	xfrm.h	/^xfrm_init(void);$/;"	p	signature:(void)
