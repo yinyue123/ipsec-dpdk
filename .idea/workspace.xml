@@ -16,9 +16,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/mydpdkdns/.idea/vcs.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/mydpdkdns/.idea/workspace.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/shadowVPN/.idea/vcs.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/notes/用法.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/notes/第三章-检测结果.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/notes/第二章-检测结果.pdf" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mydpdkdns" afterPath="$PROJECT_DIR$/mydpdkdns" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shadowVPN" afterPath="$PROJECT_DIR$/shadowVPN" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xfrm-listen" afterPath="$PROJECT_DIR$/xfrm-listen" />
@@ -30,8 +27,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mydpdkdns/tools/stop.sh" afterPath="$PROJECT_DIR$/mydpdkdns/tools/stop.sh" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mydpdkdns/tools/unbind.sh" afterPath="$PROJECT_DIR$/mydpdkdns/tools/unbind.sh" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mydpdkdns/tools/upeth.sh" afterPath="$PROJECT_DIR$/mydpdkdns/tools/upeth.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notes/目录.md" afterPath="$PROJECT_DIR$/notes/目录.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notes/第4章 ESP报文装包拆包处理.md" afterPath="$PROJECT_DIR$/notes/第4章 ESP报文装包拆包处理.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shadowVPN/samples/chnroutes.sh" afterPath="$PROJECT_DIR$/shadowVPN/samples/chnroutes.sh" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shadowVPN/samples/foreigh.sh" afterPath="$PROJECT_DIR$/shadowVPN/samples/foreigh.sh" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/xfrm-listen/xfrm_listen.c" afterPath="$PROJECT_DIR$/xfrm-listen/xfrm_listen.c" />
@@ -57,31 +52,39 @@
       <file leaf-file-name="iptables.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/iptables.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
+            <state relative-caret-position="3540">
               <caret line="236" column="25" selection-start-line="236" selection-start-column="25" selection-end-line="236" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ipsec-test.cfg" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ipsec-test.cfg" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec-test.cfg">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
+            <state relative-caret-position="285">
               <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ipsec-secgw.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec-secgw.c">
+      <file leaf-file-name="cmd_ifcfg.sh" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ipsec-secgw/cmd_ifcfg.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4440">
-              <caret line="296" column="21" selection-start-line="255" selection-start-column="31" selection-end-line="255" selection-end-column="36" />
-              <folding>
-                <element signature="e#2766#2782#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="168">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="cmd_env.sh" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ipsec-secgw/cmd_env.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="88">
+              <caret line="4" column="55" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="55" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -111,16 +114,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ipsec.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1005">
-              <caret line="67" column="44" selection-start-line="67" selection-start-column="41" selection-end-line="67" selection-end-column="44" />
               <folding />
             </state>
           </provider>
@@ -221,7 +214,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="3" />
     <option name="y" value="23" />
-    <option name="width" value="1103" />
+    <option name="width" value="1271" />
     <option name="height" value="873" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -555,17 +548,18 @@
       <workItem from="1559726585746" duration="14168000" />
       <workItem from="1559830389011" duration="1297000" />
       <workItem from="1559871620839" duration="247000" />
+      <workItem from="1559877656047" duration="133000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="557978000" />
+    <option name="totallyTimeSpent" value="558111000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="3" y="23" width="1103" height="873" extended-state="0" />
+    <frame x="3" y="23" width="1271" height="873" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19492294" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16915815" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2176617" sideWeight="0.49077868" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2176617" sideWeight="0.5092213" order="10" side_tool="true" content_ui="tabs" />
@@ -602,20 +596,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/ipsec-secgw/cmd_ifcfg.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mydpdkdns/include/decoder.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="38" column="16" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/kni/main.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="12045">
@@ -880,7 +860,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2835">
           <caret line="189" column="43" selection-start-line="189" selection-start-column="43" selection-end-line="189" selection-end-column="43" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -952,7 +931,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/iptables.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
+        <state relative-caret-position="3540">
           <caret line="236" column="25" selection-start-line="236" selection-start-column="25" selection-end-line="236" selection-end-column="25" />
           <folding />
         </state>
@@ -960,8 +939,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ipsec-secgw/ipsec-test.cfg">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
+        <state relative-caret-position="285">
           <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ipsec-secgw/cmd_env.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="4" column="55" selection-start-line="4" selection-start-column="48" selection-end-line="4" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ipsec-secgw/cmd_ifcfg.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding />
         </state>
       </provider>
