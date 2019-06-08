@@ -1,4 +1,5 @@
 第3章 IPSec网关设计
+    本文讨论了IPSec中IKE和ESP的特点。
 	3.1 IPSec网关设计与实现
 ​	本程序主要涉及IPSec的IKE和ESP两部分，IKE用作协商密钥和传输规则，而ESP用来传输数据的。IKE又分为IKEv1和IKEv2两个版本。由于IKE阶段数据包较少，实现非常复杂，因此可以使用其他IPSec VPN实现IKE过程，ESP阶段数据量巨大，实现相对容易，需要使用DPDK进行加速。ESP部分通信数据加解密使用对称加密算法，若使用软加密，则加密速度成为瓶颈，可使用硬加密来提升加密速度。
 	由于ESP部分需要加密，而IKE部分不需要加密，当数据到达网卡后，需要对数据进行分流，ESP部分交由DPDK进行处理，而IKE和其他数据需要传入Linux内核协议栈。DPDK和Linux内核态协议栈交换报文有两种模式：KNI或TUN/TAP。KNI比Linux现有的TUN/TAP接口速度更快，因为和TUN/TAP相比，KNI消除了系统调用和其数据拷贝。本程序采用KNI来实现DPDK和Linux内核态协议栈通信。当数据到达网卡后，DPDK取到数据，获取数据包IP头的协议类型，若是IPv4或IPv6的ESP协议，则交由DPDK继续处理，否则交由Linux内核进行处理。这样就完成了分流功能。
